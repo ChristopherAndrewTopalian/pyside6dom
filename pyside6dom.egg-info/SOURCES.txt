@@ -1,0 +1,9 @@
+LICENSE
+README.md
+pyproject.toml
+pyside6dom/__init__.py
+pyside6dom.egg-info/PKG-INFO
+pyside6dom.egg-info/SOURCES.txt
+pyside6dom.egg-info/dependency_links.txt
+pyside6dom.egg-info/requires.txt
+pyside6dom.egg-info/top_level.txt
