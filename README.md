@@ -1,4 +1,4 @@
-# PySide6DOM 0.1.0
+# PySide6DOM v0.1.2
 **Bring the simplicity of the Web DOM to Python PySide6 Desktop Applications.**
 
 # Installation
@@ -188,6 +188,257 @@ def handle_engage():
 submit_btn.onclick = handle_engage
 
 # Launch the App
+run_app()
+```
+---
+
+Adding an API Reference "key" is the exact right move. Developers scan README files for a quick list of supported tags and properties before they even look at the example scripts. Providing this key makes your framework look incredibly polished and professionally documented.
+
+Here is the exact Markdown to paste into your `README.md`. It updates the version header, provides the clean API key, and features your new CSS-driven Settings Panel as the ultimate showcase.
+
+```markdown
+# pyside6dom 0.1.2
+
+A pure, web-style Document Object Model (DOM) interface for building PySide6 desktop applications natively in Python. Write desktop GUIs using the web syntax you already know.
+
+### Installation
+```bash
+pip install pyside6dom
+
+```
+
+---
+
+## 📖 API Reference Key
+
+**Core Functions:**
+
+* `ce(tag)`: Create Element. Returns a new DOMElement.
+* `ge(id)`: Get Element. Retrieves an element by its `.id`.
+* `ba(child, parent=None)`: Append Child. Adds an element to the layout.
+* `set_global_style(css)`: Applies a universal CSS stylesheet to the entire app.
+* `init_window(title, width, height)`: Initializes the PySide6 application.
+* `run_app()`: Starts the event loop.
+
+**Supported Tags & Properties:**
+
+* **`text`, `p`, `h1`, `span**`: `.textContent`
+* **`button`**: `.textContent`, `.onclick`
+* **`input`**: `.value`, `.placeholder`, `.oninput`
+* **`slider`**: `.value`, `.oninput`
+* **`checkbox`** *(New!)*: `.checked`, `.textContent`, `.oninput`
+* **`select`, `dropdown**` *(New!)*: `.options` (list), `.value` (current text), `.oninput`
+* **`div`**: Standard container for grouping elements.
+* **`scroll_div`**: A vertically scrolling container for dynamic content.
+
+*All elements support `.id` and inline `.style("css_string")`.*
+
+---
+
+## 🚀 Quickstart Example: Settings Panel
+
+This example demonstrates global CSS styling, checkboxes, dropdowns, and real-time event handling using pure DOM syntax.
+
+```python
+from pyside6dom import *
+
+# Initialize Window
+init_window("Settings Panel", width=400, height=500)
+
+# Global Stylesheet (CSS)
+set_global_style("""
+    QWidget {
+        background-color: #1e1e1e;
+        color: #ffffff;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+    }
+    QLabel#title_heading {
+        font-size: 22px;
+        font-weight: bold;
+        color: #00ffcc;
+        margin-bottom: 10px;
+    }
+    QPushButton {
+        background-color: #007acc;
+        color: white;
+        border-radius: 4px;
+        padding: 10px;
+        font-weight: bold;
+        margin-top: 15px;
+    }
+    QPushButton:hover { background-color: #0099ff; }
+    QPushButton:pressed { background-color: #005c99; }
+    
+    QComboBox {
+        padding: 6px;
+        background-color: #2b2b2b;
+        border: 1px solid #555;
+        border-radius: 3px;
+    }
+    QComboBox QAbstractItemView {
+        background-color: #2b2b2b;
+        selection-background-color: #007acc;
+        selection-color: white;
+    }
+    QScrollArea {
+        border: 1px solid #444;
+        background-color: #111;
+        margin-top: 10px;
+    }
+""")
+
+# Build the UI
+header = ce("h1")
+header.id = "title_heading"
+header.textContent = "⚙️ Settings Panel"
+ba(header)
+
+mode_label = ce("text")
+mode_label.textContent = "Select Operating Mode:"
+ba(mode_label)
+
+mode_select = ce("select")
+mode_select.id = "app_mode"
+mode_select.options = ["Standard", "Advanced", "Developer"]
+ba(mode_select)
+
+debug_checkbox = ce("checkbox")
+debug_checkbox.id = "debug_flag"
+debug_checkbox.textContent = "Enable Debug Logging"
+debug_checkbox.checked = True
+ba(debug_checkbox)
+
+apply_btn = ce("button")
+apply_btn.textContent = "Apply Settings"
+ba(apply_btn)
+
+log_window = ce("scroll_div")
+ba(log_window)
+
+# Handle Events
+def handle_apply():
+    selected = ge("app_mode").value
+    debug = ge("debug_flag").checked
+    
+    log = ce("p")
+    log.textContent = f"> Mode: {selected} | Debug: {debug}"
+    log.style("color: #00ff00; font-family: monospace;")
+    ba(log, log_window)
+
+apply_btn.onclick = handle_apply
+
+# Launch
+run_app()
+
+```
+
+---
+
+## Here is another example:
+
+```python
+# pyside6dom_example.py
+
+import sys
+import os
+
+from pyside6dom import *
+
+init_window("Settings Panel", width=400, height=500)
+
+# ===================================== #
+#         WORLDWIDE STYLESHEET (CSS)
+# ===================================== #
+set_global_style("""
+    QWidget {
+        background-color: #1e1e1e;
+        color: #ffffff;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+    }
+    QLabel {
+        padding-top: 5px;
+    }
+    QLabel#title_heading {
+        font-size: 22px;
+        font-weight: bold;
+        color: #00ffcc;
+        margin-bottom: 10px;
+    }
+    QPushButton {
+        background-color: #007acc;
+        color: white;
+        border-radius: 4px;
+        padding: 10px;
+        font-weight: bold;
+        margin-top: 15px;
+    }
+    QPushButton:hover { background-color: #0099ff; }
+    QPushButton:pressed { background-color: #005c99; }
+    
+    QComboBox {
+        padding: 6px;
+        background-color: #2b2b2b;
+        border: 1px solid #555;
+        border-radius: 3px;
+    }
+    /* This fixes the missing hover highlight in dropdowns! */
+    QComboBox QAbstractItemView {
+        background-color: #2b2b2b;
+        selection-background-color: #007acc;
+        selection-color: white;
+    }
+    
+    QScrollArea {
+        border: 1px solid #444;
+        background-color: #111;
+        margin-top: 10px;
+    }
+""")
+
+# ===================================== #
+#               UI BUILDER
+# ===================================== #
+
+header = ce("h1")
+header.id = "title_heading"
+header.textContent = "⚙️ Settings Panel"
+ba(header)
+
+mode_label = ce("text")
+mode_label.textContent = "Select Operating Mode:"
+ba(mode_label)
+
+mode_select = ce("select")
+mode_select.id = "app_mode"
+mode_select.options = ["Standard", "Advanced", "Developer"]
+ba(mode_select)
+
+debug_checkbox = ce("checkbox")
+debug_checkbox.id = "debug_flag"
+debug_checkbox.textContent = "Enable Debug Logging"
+debug_checkbox.checked = True
+ba(debug_checkbox)
+
+apply_btn = ce("button")
+apply_btn.textContent = "Apply Settings"
+ba(apply_btn)
+
+log_window = ce("scroll_div")
+ba(log_window)
+
+def handle_apply():
+    selected = ge("app_mode").value
+    debug = ge("debug_flag").checked
+    
+    log = ce("p")
+    log.textContent = f"> Mode: {selected} | Debug: {debug}"
+    log.style("color: #00ff00; font-family: monospace;") # Inline overrides still work!
+    ba(log, log_window)
+
+apply_btn.onclick = handle_apply
+
 run_app()
 ```
 

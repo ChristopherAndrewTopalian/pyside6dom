@@ -3,14 +3,23 @@
 import sys
 from PySide6.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QPushButton, 
-    QLineEdit, QLabel, QSlider, QScrollArea
+    QLineEdit, QLabel, QSlider, QScrollArea, QCheckBox, 
+    QComboBox, QSizePolicy
 )
 from PySide6.QtCore import Qt
+
+# ========================================== #
+#           WORLDWIDE REGISTRY
+# ========================================== 
 
 _dom_registry = {}
 _app_instance = None
 _root_window = None
 _main_container = None
+
+# ========================================== #
+#            DOM ELEMENT WRAPPER             #
+# ========================================== 
 
 class DOMElement:
     def __init__(self, tag, qt_widget):
@@ -40,12 +49,14 @@ class DOMElement:
     def value(self):
         if isinstance(self.raw, QLineEdit): return self.raw.text()
         elif isinstance(self.raw, QSlider): return self.raw.value() / 10.0
+        elif isinstance(self.raw, QComboBox): return self.raw.currentText()
         return None
 
     @value.setter
     def value(self, val):
         if isinstance(self.raw, QLineEdit): self.raw.setText(str(val))
         elif isinstance(self.raw, QSlider): self.raw.setValue(int(float(val) * 10))
+        elif isinstance(self.raw, QComboBox): self.raw.setCurrentText(str(val))
 
     @property
     def placeholder(self):
@@ -54,6 +65,27 @@ class DOMElement:
     @placeholder.setter
     def placeholder(self, text):
         if hasattr(self.raw, "setPlaceholderText"): self.raw.setPlaceholderText(str(text))
+
+    @property
+    def checked(self):
+        if isinstance(self.raw, QCheckBox): return self.raw.isChecked()
+        return False
+
+    @checked.setter
+    def checked(self, val):
+        if isinstance(self.raw, QCheckBox): self.raw.setChecked(bool(val))
+
+    @property
+    def options(self):
+        if isinstance(self.raw, QComboBox):
+            return [self.raw.itemText(i) for i in range(self.raw.count())]
+        return []
+
+    @options.setter
+    def options(self, val_list):
+        if isinstance(self.raw, QComboBox) and isinstance(val_list, list):
+            self.raw.clear()
+            self.raw.addItems([str(v) for v in val_list])
 
     @property
     def onclick(self): return None
@@ -71,30 +103,55 @@ class DOMElement:
             self.raw.textChanged.connect(lambda text: callback_func(text))
         elif isinstance(self.raw, QSlider):
             self.raw.valueChanged.connect(lambda val: callback_func(val / 10.0))
+        elif isinstance(self.raw, QCheckBox):
+            self.raw.toggled.connect(lambda val: callback_func(val))
+        elif isinstance(self.raw, QComboBox):
+            self.raw.currentTextChanged.connect(lambda text: callback_func(text))
 
     def style(self, css_string):
         self.raw.setStyleSheet(css_string)
 
 
+# ========================================== #
+#               DOM PARSER (ce)              #
+# ========================================== 
+
 def ce(tag):
     tag = tag.lower()
+    
     if tag == "button":
         w = QPushButton()
-        w.setStyleSheet("padding: 8px 14px; background-color: #2b2b2b; color: white; border-radius: 4px;")
+        w.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
         return DOMElement(tag, w)
+        
     elif tag in ("text", "p", "span", "h1"):
         w = QLabel()
-        w.setStyleSheet("color: #ffffff; font-size: 14px;")
+        w.setWordWrap(True)
+        # FIX: Never squish text vertically
+        w.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
         return DOMElement(tag, w)
+        
     elif tag == "input":
         w = QLineEdit()
-        w.setStyleSheet("padding: 6px; background-color: #1a1a1a; color: white; border: 1px solid #444;")
+        w.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         return DOMElement(tag, w)
+        
     elif tag == "slider":
         w = QSlider(Qt.Orientation.Horizontal)
         w.setMinimum(0)
         w.setMaximum(100)
         return DOMElement(tag, w)
+        
+    elif tag == "checkbox":
+        w = QCheckBox()
+        w.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
+        return DOMElement(tag, w)
+        
+    elif tag in ("select", "dropdown"):
+        w = QComboBox()
+        w.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        return DOMElement(tag, w)
+        
     elif tag == "div":
         w = QWidget()
         layout = QVBoxLayout(w)
@@ -103,17 +160,29 @@ def ce(tag):
         elem = DOMElement(tag, w)
         elem.layout = layout
         return elem
+        
     elif tag == "scroll_div":
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
+        # FIX: Kill the horizontal scrollbar
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        
         content = QWidget()
         layout = QVBoxLayout(content)
         layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        layout.setSpacing(4)
+        
         scroll.setWidget(content)
         elem = DOMElement(tag, scroll)
         elem.layout = layout
         return elem
+        
     raise ValueError(f"Unknown tag: {tag}")
+
+
+# ========================================== #
+#        LAYOUT & WINDOW MANAGEMENT          #
+# ==========================================
 
 def ge(element_id):
     return _dom_registry.get(element_id, None)
@@ -125,14 +194,20 @@ def ba(child, parent=None):
     elif isinstance(target, QVBoxLayout):
         target.addWidget(child.raw)
 
+def set_global_style(css_string):
+    """Applies a universal stylesheet to the entire application, just like a <style> block."""
+    if _app_instance:
+        _app_instance.setStyleSheet(css_string)
+
 def init_window(title="App Window", width=420, height=500):
     global _app_instance, _root_window, _main_container
     _app_instance = QApplication(sys.argv)
     _app_instance.setStyle("Fusion")
+    
     _root_window = QWidget()
     _root_window.setWindowTitle(title)
     _root_window.resize(width, height)
-    _root_window.setStyleSheet("background-color: rgb(30, 30, 30);")
+    
     _main_layout = QVBoxLayout(_root_window)
     _main_container = ce("scroll_div")
     _main_layout.addWidget(_main_container.raw)
