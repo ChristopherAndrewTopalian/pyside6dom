@@ -88,7 +88,7 @@ run_app()
 
 ---
 
-### How to Download this Package
+### How to Download this GitHub Repository
 1. Click the green Code Button on this github page
 2. Choose Download ZIP
 3. Save the Zip File
