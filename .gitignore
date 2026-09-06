@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# PyPI local authentication credentials
+.pypirc
+
 # Distribution / packaging
 build/
 dist/
