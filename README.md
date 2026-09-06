@@ -1,7 +1,7 @@
 # PySide6DOM
 **Bring the simplicity of the Web DOM to Python PySide6 Desktop Applications.**
 
-## Installation
+# Installation
 ```bash
 pip install pyside6dom
 ```
