@@ -1,4 +1,4 @@
-# PySide6DOM v0.1.2
+# PySide6DOM v0.1.3
 **Bring the simplicity of the Web DOM to Python PySide6 Desktop Applications.**
 
 # Installation
@@ -192,11 +192,6 @@ run_app()
 ```
 ---
 
-Adding an API Reference "key" is the exact right move. Developers scan README files for a quick list of supported tags and properties before they even look at the example scripts. Providing this key makes your framework look incredibly polished and professionally documented.
-
-Here is the exact Markdown to paste into your `README.md`. It updates the version header, provides the clean API key, and features your new CSS-driven Settings Panel as the ultimate showcase.
-
-```markdown
 # pyside6dom 0.1.2
 
 A pure, web-style Document Object Model (DOM) interface for building PySide6 desktop applications natively in Python. Write desktop GUIs using the web syntax you already know.
