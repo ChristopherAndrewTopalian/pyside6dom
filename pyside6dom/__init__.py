@@ -4,7 +4,7 @@ import sys
 from PySide6.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QPushButton, 
     QLineEdit, QLabel, QSlider, QScrollArea, QCheckBox, 
-    QComboBox, QSizePolicy
+    QComboBox, QSizePolicy, QPlainTextEdit
 )
 from PySide6.QtCore import Qt, QTimer
 
@@ -78,6 +78,7 @@ class DOMElement:
     @property
     def value(self):
         if isinstance(self.raw, QLineEdit): return self.raw.text()
+        elif isinstance(self.raw, QPlainTextEdit): return self.raw.toPlainText() #
         elif isinstance(self.raw, QSlider): return self.raw.value() / 10.0
         elif isinstance(self.raw, QComboBox): return self.raw.currentText()
         return None
@@ -85,6 +86,7 @@ class DOMElement:
     @value.setter
     def value(self, val):
         if isinstance(self.raw, QLineEdit): self.raw.setText(str(val))
+        elif isinstance(self.raw, QPlainTextEdit): self.raw.setPlainText(str(val))
         elif isinstance(self.raw, QSlider): self.raw.setValue(int(float(val) * 10))
         elif isinstance(self.raw, QComboBox): self.raw.setCurrentText(str(val))
 
@@ -131,6 +133,8 @@ class DOMElement:
     def oninput(self, callback_func):
         if isinstance(self.raw, QLineEdit):
             self.raw.textChanged.connect(lambda text: callback_func(text))
+        elif isinstance(self.raw, QPlainTextEdit):
+            self.raw.textChanged.connect(lambda: callback_func(self.raw.toPlainText()))
         elif isinstance(self.raw, QSlider):
             self.raw.valueChanged.connect(lambda val: callback_func(val / 10.0))
         elif isinstance(self.raw, QCheckBox):
@@ -164,6 +168,11 @@ def ce(tag):
     elif tag == "input":
         w = QLineEdit()
         w.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        return DOMElement(tag, w)
+
+    elif tag == "textarea":
+        w = QPlainTextEdit()
+        w.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         return DOMElement(tag, w)
         
     elif tag == "slider":
