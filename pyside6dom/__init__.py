@@ -227,10 +227,13 @@ def run_app():
 #
 #     http://www.apache.org/licenses/LICENSE-2.0
 #
-# College of Scripting Music & Science
+# GitHub: https://github.com/ChristopherAndrewTopalian/pyside6dom
+#
+# PyPI: https://pypi.org/project/pyside6dom/
 #
 # GitHub: https://github.com/ChristopherAndrewTopalian
 #
 # GitHub: https://github.com/ChristopherTopalian
+#
 # Google Sites: https://sites.google.com/view/CollegeOfScripting
 

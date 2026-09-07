@@ -1,4 +1,4 @@
-# PySide6DOM v0.1.3
+# PySide6DOM v0.1.4
 **Bring the simplicity of the Web DOM to Python PySide6 Desktop Applications.**
 
 # Installation
@@ -19,21 +19,12 @@ If you know how to build a web page using `createElement`, `getElementById`, and
 
 ---
 
-### 📂 Repository Structure
-
-This repository includes two learning paths:
-
-* **`001_pyside6dom/` (Modular / Production Ready):** Separates the heavy GUI engine into a background module (`pyside6dom_modular.py`) so your main application script remains incredibly clean.
-* **`002_pyside6dom_single_file/` (Training Wheels):** Contains everything in a single script, allowing you to see exactly how the DOM wrappers interact with the raw PySide6 classes under the hood.
-
----
-
 ### 🚀 The Code: Web Logic meets Python Power
 
 Look how clean and intuitive building a native desktop app becomes. No complex classes, no confusing layout managers - just straightforward DOM logic.
 
 ```python
-from pyside6dom import ce, ge, ba, init_window, run_app
+from pyside6dom import *
 
 # Initialize the Application
 init_window("Telemetry Station", width=440, height=520)
@@ -44,6 +35,10 @@ header.id = "main_heading"
 header.textContent = "Telemetry Link Online"
 header.style("font-size: 18px; font-weight: bold; margin-bottom: 10px;")
 ba(header) # (appendChild)
+
+welcomeMessage = ce('text')
+welcomeMessage.textContent = 'Welcome'
+ba(welcomeMessage)
 
 # Create an Input Field
 command_input = ce("input")
@@ -58,6 +53,7 @@ submit_btn.textContent = "Transmit Command"
 # Define what happens on click
 def handle_click():
     txt = ge("user_input").value
+    welcomeMessage.textContent = txt
     print(f"Transmitting Data: {txt}")
 
 submit_btn.onclick = handle_click
@@ -217,7 +213,7 @@ pip install pyside6dom
 
 **Supported Tags & Properties:**
 
-* **`text`, `p`, `h1`, `span**`: `.textContent`
+* **`text`, `p`, `h1`, `span`**: `.textContent`
 * **`button`**: `.textContent`, `.onclick`
 * **`input`**: `.value`, `.placeholder`, `.oninput`
 * **`slider`**: `.value`, `.oninput`
@@ -439,6 +435,91 @@ run_app()
 
 ---
 
+## Easy Example: 
+
+```python
+# pyside6dom_easy_example.py
+
+from pyside6dom import *
+
+init_window("Our App", width = 600, height = 400)
+
+welcomeMessage = ce('text')
+welcomeMessage.textContent = 'Welcome'
+ba(welcomeMessage)
+
+sayHiBtn = ce('button')
+sayHiBtn.textContent = 'Hi'
+def handle_click():
+    welcomeMessage.textContent = 'Hi'
+sayHiBtn.onclick = handle_click
+ba(sayHiBtn)
+
+sayHowdyBtn = ce('button')
+sayHowdyBtn.textContent = 'Howdy'
+def handle_click():
+    welcomeMessage.textContent = 'Howdy'
+sayHowdyBtn.onclick = handle_click
+ba(sayHowdyBtn)
+
+sayThisBtn = ce('button')
+sayThisBtn.textContent = 'This'
+def handle_click(message):
+    welcomeMessage.textContent = message
+sayThisBtn.onclick = lambda: handle_click('Hey Now')
+ba(sayThisBtn)
+
+run_app()
+```
+
+---
+
+## Scrollable Div Example:
+
+```python
+# pyside6dom_scroll_box_example.py
+
+from pyside6dom import *
+
+init_window("Our App", width = 600, height = 400)
+
+welcomeMessage = ce('text')
+welcomeMessage.textContent = 'Welcome'
+welcomeMessage.style("font-size: 30px; font-weight: bold;")
+ba(welcomeMessage)
+
+# Create a specific scrollable container for the buttons
+messageBtns_scroll_box = ce('scroll_div')
+messageBtns_scroll_box.style("border: 2px solid #555; background-color: #1a1a1a; min-height: 200px;")
+ba(messageBtns_scroll_box)
+
+# Create buttons and append them TO the scroll box
+sayHiBtn = ce('button')
+sayHiBtn.textContent = 'Hi'
+def handle_click_hi():
+    welcomeMessage.textContent = 'Hi'
+sayHiBtn.onclick = handle_click_hi
+ba(sayHiBtn, messageBtns_scroll_box) # Notice the second argument
+
+sayHowdyBtn = ce('button')
+sayHowdyBtn.textContent = 'Howdy'
+def handle_click_howdy():
+    welcomeMessage.textContent = 'Howdy'
+sayHowdyBtn.onclick = handle_click_howdy
+ba(sayHowdyBtn, messageBtns_scroll_box)
+
+sayThisBtn = ce('button')
+sayThisBtn.textContent = 'This'
+def handle_click_message(message):
+    welcomeMessage.textContent = message
+sayThisBtn.onclick = lambda: handle_click_message('Hey Now')
+ba(sayThisBtn, messageBtns_scroll_box)
+
+run_app()
+```
+
+---
+
 https://github.com/ChristopherAndrewTopalian/pyside6dom
 
 ### How to Download the GitHub Repository
@@ -463,8 +544,13 @@ Hapy Scripting :-)
    Version 2.0, January 2004
    http://www.apache.org/licenses/  
 
-// https://github.com/ChristopherTopalian  
+// GitHub: https://github.com/ChristopherAndrewTopalian/pyside6dom
+
+// PyPI: https://pypi.org/project/pyside6dom/
+
 // https://github.com/ChristopherAndrewTopalian  
+
+// https://github.com/ChristopherTopalian  
 
 // https://sites.google.com/view/CollegeOfScripting
 
