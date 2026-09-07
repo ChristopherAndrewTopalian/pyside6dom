@@ -6,7 +6,37 @@ from PySide6.QtWidgets import (
     QLineEdit, QLabel, QSlider, QScrollArea, QCheckBox, 
     QComboBox, QSizePolicy
 )
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QTimer
+
+# ========================================== #
+#               TIMER MANAGEMENT             #
+# ========================================== 
+
+_timers = {}
+_timer_counter = 0
+
+def set_interval(callback_func, ms):
+    """Executes a function repeatedly, calling it every X milliseconds."""
+    global _timer_counter
+    _timer_counter += 1
+    timer_id = f"timer_{_timer_counter}"
+    
+    t = QTimer()
+    t.timeout.connect(callback_func)
+    t.start(ms)
+    
+    _timers[timer_id] = t
+    return timer_id
+
+def clear_interval(timer_id):
+    """Stops and removes a timer by its ID."""
+    if timer_id in _timers:
+        _timers[timer_id].stop()
+        del _timers[timer_id]
+
+# THE ALIASES
+setInterval = set_interval
+clearInterval = clear_interval
 
 # ========================================== #
 #           WORLDWIDE REGISTRY

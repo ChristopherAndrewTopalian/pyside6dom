@@ -1,4 +1,4 @@
-# PySide6DOM v0.1.5
+# PySide6DOM v0.1.6
 **Bring the simplicity of the Web DOM to Python PySide6 Desktop Applications.**
 
 # Installation
@@ -76,11 +76,20 @@ run_app()
 
 ---
 
-**Created by Christopher Andrew Topalian**
+**pyside6dom Created by Christopher Andrew Topalian**
 
 *College of Scripting Music & Science*
 
 > *Disclaimer: This is an independent open-source educational project. "PySide" and "Qt" are registered trademarks of The Qt Company. This project is not affiliated with, endorsed by, or sponsored by The Qt Company.*
+
+---
+
+COMMON COMMANDS:
+### Install:
+> pip install pyside6dom
+
+### Upgrade: 
+> pip install --upgrade pyside6dom
 
 ---
 
@@ -208,6 +217,7 @@ pip install pyside6dom
 * `ge(id)`: Get Element. Retrieves an element by its `.id`.
 * `ba(child, parent=None)`: Append Child. Adds an element to the layout.
 * `set_global_style(css)`: Applies a universal CSS stylesheet to the entire app.
+*  `setInterval`: begins a timer just like JavaScript  
 * `init_window(title, width, height)`: Initializes the PySide6 application.
 * `run_app()`: Starts the event loop.
 
@@ -520,15 +530,6 @@ run_app()
 
 ---
 
-COMMON COMMANDS:
-### Install:
-> pip install pyside6dom
-
-### Upgrade: 
-> pip install --upgrade pyside6dom
-
----
-
 # MORE EXAMPLES:
 
 ```python
@@ -638,6 +639,91 @@ ba(enter_btn)
 result_scroll_box = ce('scroll_div')
 result_scroll_box.style("min-height: 50px; border: 1px solid rgb(255, 255, 255); background-color: rgb(0, 0, 0); margin-top: 10px; padding: 5px;")
 ba(result_scroll_box)
+
+run_app()
+```
+
+---
+
+```python
+# pyside6dom_example.py
+
+from pyside6dom import *
+
+init_window("Area of a Rectangle Calculator", 600, 450)
+
+area_label = ce('h1')
+area_label.textContent = 'Area of a Rectangle'
+area_label.style("font-size: 32px; font-weight: bold; color: rgb(0, 255, 255); margin-bottom: 10px;")
+ba(area_label)
+
+length_input = ce('input')
+length_input.placeholder = 'Enter Length...'
+ba(length_input)
+
+width_input = ce('input')
+width_input.placeholder = 'Enter Width...'
+ba(width_input)
+
+enter_btn = ce('button')
+enter_btn.textContent = 'Calculate Area'
+def handle_click():
+    # Grab and calculate
+    length = float(length_input.value)
+    width = float(width_input.value)
+    area = length * width
+
+    # Create a brand new element for this specific calculation
+    history_entry = ce('p')
+    history_entry.textContent = f"Length: {length}  |  Width: {width}  →  Area: {area}"
+    history_entry.style("font-size: 18px; color: rgb(0, 255, 255); font-family: Arial; border-bottom: 1px dashed rgb(255, 255, 255); padding-bottom: 5px;")
+
+    # Append the new element directly into the scroll box
+    ba(history_entry, result_scroll_box)
+
+    # Clear both input boxes so they are ready for the next numbers
+    length_input.value = ""
+    width_input.value = ""
+
+enter_btn.onclick = handle_click
+ba(enter_btn)
+
+# The container that will hold our history
+result_scroll_box = ce('scroll_div')
+result_scroll_box.style("min-height: 50px; border: 1px solid rgb(255, 255, 255); background-color: rgb(0, 0, 0); margin-top: 10px; padding: 5px;")
+ba(result_scroll_box)
+
+run_app()
+```
+
+---
+
+## Updating Clock
+```python
+# pyside6dom_setInterval_clock.py
+
+from pyside6dom import *
+from datetime import datetime
+
+init_window("Digital Clock", 400, 200)
+
+clock_label = ce('h1')
+clock_label.style("font-size: 60px; font-weight: bold; color: rgb(0, 255, 255); qproperty-alignment: AlignCenter; margin-top: 20px;")
+ba(clock_label)
+
+date_label = ce('text')
+date_label.style("font-size: 24px; color: rgb(255, 255, 255); qproperty-alignment: AlignCenter;")
+ba(date_label)
+
+def update_clock():
+    now = datetime.now()
+    clock_label.textContent = now.strftime("%I:%M:%S %p")
+    date_label.textContent = now.strftime("%B %d, %Y")
+
+update_clock()
+
+# Just like JavaScript
+setInterval(update_clock, 1000)
 
 run_app()
 ```

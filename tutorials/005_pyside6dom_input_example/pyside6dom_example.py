@@ -2,7 +2,7 @@
 
 from pyside6dom import *
 
-init_window("Round", 600, 400)
+init_window("Show Result", 600, 400)
 
 number_input = ce('input')
 number_input.placeholder = 'Enter number'
