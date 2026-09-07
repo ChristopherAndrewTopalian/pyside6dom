@@ -1,4 +1,4 @@
-# PySide6DOM v0.1.4
+# PySide6DOM v0.1.5
 **Bring the simplicity of the Web DOM to Python PySide6 Desktop Applications.**
 
 # Installation
@@ -514,6 +514,130 @@ def handle_click_message(message):
     welcomeMessage.textContent = message
 sayThisBtn.onclick = lambda: handle_click_message('Hey Now')
 ba(sayThisBtn, messageBtns_scroll_box)
+
+run_app()
+```
+
+---
+
+COMMON COMMANDS:
+### Install:
+> pip install pyside6dom
+
+### Upgrade: 
+> pip install --upgrade pyside6dom
+
+---
+
+# MORE EXAMPLES:
+
+```python
+# pyside6dom_example.py
+
+from pyside6dom import *
+
+init_window("Round", 600, 400)
+
+number_input = ce('input')
+number_input.placeholder = 'Enter number'
+ba(number_input)
+
+enter_btn = ce('button')
+enter_btn.textContent = 'Enter'
+def handle_click():
+    print(number_input.value)
+    ge('result_label').textContent = number_input.value
+enter_btn.onclick = handle_click
+ba(enter_btn)
+
+result_label = ce('text')
+result_label.id = 'result_label'
+result_label.textContent = 'Result'
+result_label.style("font-size: 30px; font-weight: bold")
+ba(result_label)
+
+run_app()
+```
+
+---
+
+```python
+# pyside6dom_example.py
+
+from pyside6dom import *
+
+init_window("Area of Square Calculator", 600, 400)
+
+area_label = ce('text')
+area_label.textContent = 'Area of a Square Calculator'
+area_label.style("font-size: 40px; font-weight: bold; color: rgb(0, 255, 255);")
+ba(area_label)
+
+side_input = ce('input')
+side_input.placeholder = 'Enter a Side Length'
+ba(side_input)
+
+enter_btn = ce('button')
+enter_btn.textContent = 'Enter'
+def handle_click():
+    side = float(side_input.value)
+    area = side * side
+    ge('result_label').textContent = area
+enter_btn.onclick = handle_click
+ba(enter_btn)
+
+result_label = ce('text')
+result_label.id = 'result_label'
+result_label.textContent = 'Result'
+result_label.style("font-size: 40px; font-weight: bold")
+ba(result_label)
+
+run_app()
+```
+
+---
+
+```python
+# pyside6dom_example.py
+
+from pyside6dom import *
+
+init_window("Area of a Square Calculator", 600, 450)
+
+area_label = ce('h1')
+area_label.textContent = 'Area of a Square'
+area_label.style("font-size: 32px; font-weight: bold; color: rgb(0, 255, 255); margin-bottom: 10px;")
+ba(area_label)
+
+side_input = ce('input')
+side_input.placeholder = 'Enter a Side Length...'
+ba(side_input)
+
+enter_btn = ce('button')
+enter_btn.textContent = 'Calculate Area'
+def handle_click():
+    # Grab and calculate
+    side = float(side_input.value)
+    area = side * side
+
+    # Create a brand new element for this specific calculation
+    history_entry = ce('p')
+    history_entry.textContent = f"Side: {side}  →  Area: {area}"
+    history_entry.style("font-size: 18px; color: rgb(0, 255, 255); font-family: Arial; border-bottom: 1px dashed rgb(255, 255, 255); padding-bottom: 5px;")
+
+    # Append the new element directly into the scroll box
+    ba(history_entry, result_scroll_box)
+
+    # Clear the input box so it is ready for the next number
+    side_input.value = ""
+
+enter_btn.onclick = handle_click
+ba(enter_btn)
+
+# The container that will hold our history
+result_scroll_box = ce('scroll_div')
+result_scroll_box.style("min-height: 50px; border: 1px solid rgb(255, 255, 255); background-color: rgb(0, 0, 0); margin-top: 10px; padding: 5px;")
+ba(result_scroll_box)
 
 run_app()
 ```
