@@ -125,7 +125,9 @@ class DOMElement:
 
     @onclick.setter
     def onclick(self, callback_func):
-        if hasattr(self.raw, "clicked"): self.raw.clicked.connect(callback_func)
+        if hasattr(self.raw, "clicked"): 
+            # We use a lambda to absorb Qt's sneaky boolean, then call the function cleanly
+            self.raw.clicked.connect(lambda checked=False: callback_func())
 
     @property
     def oninput(self): return None
@@ -144,6 +146,7 @@ class DOMElement:
             self.raw.currentTextChanged.connect(lambda text: callback_func(text))
 
 
+    '''
     def style(self, css_string):
         # If the user put brackets in their string (like "QPushButton:hover { color: red }"), 
         # they are doing advanced Qt styling. Let it pass through untouched!
@@ -162,7 +165,27 @@ class DOMElement:
             # Wrap the string in a strict ID selector (e.g., #dom_node_12345 { border: ... })
             scoped_css = f"#{obj_name} {{ {css_string} }}"
             self.raw.setStyleSheet(scoped_css)
+    '''
 
+    def style(self, css_string):
+        # Fix CSS history here too! (The side door)
+        css_string = css_string.replace("font-color", "color")
+        
+        # If the user put brackets in their string (like "QPushButton:hover { color: red }"), 
+        # they are doing advanced Qt styling. Let it pass through untouched!
+        if "{" in css_string:
+            self.raw.setStyleSheet(css_string)
+            
+        # If there are no brackets, it's a web-style inline string ("border: 1px solid white").
+        else:
+            obj_name = self.raw.objectName()
+            if not obj_name:
+                obj_name = f"dom_node_{id(self.raw)}"
+                self.raw.setObjectName(obj_name)
+            
+            # Wrap the string in a strict ID selector
+            scoped_css = f"#{obj_name} {{ {css_string} }}"
+            self.raw.setStyleSheet(scoped_css)
 
 # ========================================== #
 #               DOM PARSER (ce)              #
@@ -264,6 +287,7 @@ def set_theme(css_string):
     css_string = css_string.replace("textarea", "QPlainTextEdit")
     css_string = css_string.replace("scroll_div", "QScrollArea")
     css_string = css_string.replace("text", "QLabel")
+    css_string = css_string.replace("font-color", "color")
     
     # Try to apply immediately. If it fails, save it for later!
     app = QApplication.instance()

@@ -1,4 +1,4 @@
-# PySide6DOM v0.1.9
+# PySide6DOM v0.2.0
 **Bring the simplicity of the Web DOM to Python PySide6 Desktop Applications.**
 
 # Installation
@@ -954,6 +954,97 @@ ba(reset_btn)
 tenths_of_second = 0
 timer_id = None
 is_running = False
+
+run_app()
+```
+
+---
+
+## List of Dictionaries
+
+```python
+# list_of_dictionaries_show_all.py
+
+from pyside6dom import *
+
+people = [
+    {
+        "name": "Jane",
+        "score": 93
+    },
+
+    {
+        "name": "Joan",
+        "score": 90
+    },
+
+    {
+        "name": "Melissa",
+        "score": 98
+    },
+
+    {
+        "name": "Jennifer",
+        "score": 91
+    },
+
+    {
+        "name": "Tabitha",
+        "score": 88
+    },
+
+    {
+        "name": "Sabrina",
+        "score": 85
+    },
+
+    {
+        "name": "Nicole",
+        "score": 94
+    },
+
+    {
+        "name": "Britney",
+        "score": 92
+    },
+
+    {
+        "name": "Zoe",
+        "score": 82
+    },
+
+    {
+        "name": "Clarissa",
+        "score": 79
+    },
+
+    {
+        "name": "Bonnie",
+        "score": 100
+    },
+]
+
+init_window('Scores', 700, 500)
+
+people_scroll_box = ce('scroll_div')
+people_scroll_box.id = 'people_scroll_box'
+people_scroll_box.style("border: 1px solid rgb(255, 255, 255);")
+ba(people_scroll_box)
+
+for person in people:
+    name = ce('button')
+    name.textContent = f"{person['name']}: {person['score']}"
+    name.style("font-size: 30px; font-weight: bold; font-color: aqua;")
+    # we can type font-color or color, either is fine
+    
+    # Freeze the current person into a local variable 'p'
+    def handle_click(p=person):
+        print(f"{p['name']}: {p['score']}")
+        
+    name.onclick = handle_click
+    ba(name, people_scroll_box)
+
+####
 
 run_app()
 ```
