@@ -46,6 +46,7 @@ _dom_registry = {}
 _app_instance = None
 _root_window = None
 _main_container = None
+_pending_theme = None
 
 # ========================================== #
 #            DOM ELEMENT WRAPPER             #
@@ -142,8 +143,25 @@ class DOMElement:
         elif isinstance(self.raw, QComboBox):
             self.raw.currentTextChanged.connect(lambda text: callback_func(text))
 
+
     def style(self, css_string):
-        self.raw.setStyleSheet(css_string)
+        # If the user put brackets in their string (like "QPushButton:hover { color: red }"), 
+        # they are doing advanced Qt styling. Let it pass through untouched!
+        if "{" in css_string:
+            self.raw.setStyleSheet(css_string)
+            
+        # If there are no brackets, it's a web-style inline string ("border: 1px solid white").
+        # We need to isolate it so it doesn't ruin child elements!
+        else:
+            # Grab the widget's ID, or create a totally unique one using its memory address
+            obj_name = self.raw.objectName()
+            if not obj_name:
+                obj_name = f"dom_node_{id(self.raw)}"
+                self.raw.setObjectName(obj_name)
+            
+            # Wrap the string in a strict ID selector (e.g., #dom_node_12345 { border: ... })
+            scoped_css = f"#{obj_name} {{ {css_string} }}"
+            self.raw.setStyleSheet(scoped_css)
 
 
 # ========================================== #
@@ -233,15 +251,43 @@ def ba(child, parent=None):
     elif isinstance(target, QVBoxLayout):
         target.addWidget(child.raw)
 
-def set_global_style(css_string):
-    """Applies a universal stylesheet to the entire application, just like a <style> block."""
-    if _app_instance:
-        _app_instance.setStyleSheet(css_string)
+def set_theme(css_string):
+    """
+    Translates standard HTML/CSS selectors into PySide6 QSS classes,
+    allowing users to style the app using pure web syntax.
+    """
+    global _pending_theme  # <--- Bring in the buffer
+
+    css_string = css_string.replace("body", "QMainWindow, QWidget#central_widget")
+    css_string = css_string.replace("button", "QPushButton")
+    css_string = css_string.replace("input", "QLineEdit")
+    css_string = css_string.replace("textarea", "QPlainTextEdit")
+    css_string = css_string.replace("scroll_div", "QScrollArea")
+    css_string = css_string.replace("text", "QLabel")
+    
+    # Try to apply immediately. If it fails, save it for later!
+    app = QApplication.instance()
+    if app:
+        app.setStyleSheet(css_string)
+    else:
+        _pending_theme = css_string
+
+# The Aliases (Keeps old scripts alive, allows preference)
+set_global_style = set_theme
+
+########
 
 def init_window(title="App Window", width=420, height=500):
-    global _app_instance, _root_window, _main_container
-    _app_instance = QApplication(sys.argv)
+    global _app_instance, _root_window, _main_container, _pending_theme
+    
+    # Safely get or create the app
+    _app_instance = QApplication.instance() or QApplication(sys.argv)
     _app_instance.setStyle("Fusion")
+    
+    # <--- NEW: Catch the pending theme --->
+    if _pending_theme:
+        _app_instance.setStyleSheet(_pending_theme)
+        _pending_theme = None
     
     _root_window = QWidget()
     _root_window.setWindowTitle(title)
