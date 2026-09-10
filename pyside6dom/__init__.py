@@ -8,6 +8,18 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt, QTimer
 
+####
+
+# shortcut for print, console.log
+def cl(*args):
+    print(*args)
+
+# class to act as the 'console' namespace
+class console:
+    log = cl
+
+####
+
 # ========================================== #
 #               TIMER MANAGEMENT             #
 # ========================================== 
@@ -307,8 +319,8 @@ def init_window(title="App Window", width=420, height=500):
     # Safely get or create the app
     _app_instance = QApplication.instance() or QApplication(sys.argv)
     _app_instance.setStyle("Fusion")
-    
-    # <--- NEW: Catch the pending theme --->
+
+    # Catch the pending theme
     if _pending_theme:
         _app_instance.setStyleSheet(_pending_theme)
         _pending_theme = None

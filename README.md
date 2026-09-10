@@ -1,4 +1,4 @@
-# PySide6DOM v0.2.0
+# PySide6DOM v0.2.1
 **Bring the simplicity of the Web DOM to Python PySide6 Desktop Applications.**
 
 # Installation
@@ -234,7 +234,8 @@ pip install pyside6dom
 * **`select`, `dropdown**`: `.options` (list), `.value` (current text), `.oninput`
 * **`div`**: Standard container for grouping elements.
 * **`scroll_div`**: A vertically scrolling container for dynamic content.
-* **`textarea`** *(New!)*
+* **`textarea`**
+* **`cl`** or **`console.log`** 
 
 *All elements support `.id` and inline `.style("css_string")`.*
 
@@ -1047,6 +1048,245 @@ for person in people:
 ####
 
 run_app()
+```
+
+---
+
+## List of Dictionaries Show All
+```python
+# list_of_dictionaries_show_all.py
+
+from pyside6dom import *
+
+people = [
+    {
+        "name": "Jane",
+        "score": 93
+    },
+
+    {
+        "name": "Joan",
+        "score": 90
+    },
+
+    {
+        "name": "Melissa",
+        "score": 98
+    },
+
+    {
+        "name": "Jennifer",
+        "score": 91
+    },
+
+    {
+        "name": "Tabitha",
+        "score": 88
+    },
+
+    {
+        "name": "Sabrina",
+        "score": 85
+    },
+
+    {
+        "name": "Nicole",
+        "score": 94
+    },
+
+    {
+        "name": "Britney",
+        "score": 92
+    },
+
+    {
+        "name": "Zoe",
+        "score": 82
+    },
+
+    {
+        "name": "Clarissa",
+        "score": 79
+    },
+
+    {
+        "name": "Bonnie",
+        "score": 100
+    },
+]
+
+init_window('Scores', 700, 500)
+
+output_label = ce('text')
+output_label.style('font-size: 30px; font-weight: bold')
+ba(output_label)
+
+people_scroll_box = ce('scroll_div')
+people_scroll_box.id = 'people_scroll_box'
+people_scroll_box.style("border: 1px solid rgb(255, 255, 255);")
+ba(people_scroll_box)
+
+for person in people:
+    name_btn = ce('button')
+    name_btn.textContent = f"{person['name']}: {person['score']}"
+    name_btn.style("font-size: 30px; font-weight: bold; color: aqua;")
+    # we can type color or font-color, either is fine
+
+    # Freeze the current person into a local variable 'p'
+    def handle_click(p=person):
+        print(f"{p['name']}: {p['score']}")
+        output_label.textContent = f"{p['name']}: {p['score']}"
+        
+    name_btn.onclick = handle_click
+    ba(name_btn, people_scroll_box)
+
+####
+
+run_app()
+```
+
+---
+
+## Dictionary of Dictionaries show all
+```python
+# dictionary_of_dictionaries_show_all.py
+
+from pyside6dom import *
+
+people = {
+    "jane_doe": {
+        "first_name": "Jane",
+        "last_name": "Doe",
+        "score": 93
+    },
+    "joan_smith": {
+        "first_name": "Joan",
+        "last_name": "Smith",
+        "score": 90
+    },
+    "melissa_taylor": {
+        "first_name": "Melissa",
+        "last_name": "Taylor",
+        "score": 98
+    },
+    "jennifer_parker": {
+        "first_name": "Jennifer",
+        "last_name": "Parker",
+        "score": 91
+    },
+    "tabitha_brooks": {
+        "first_name": "Tabitha",
+        "last_name": "Brooks",
+        "score": 88
+    },
+    "sabrina_clark": {
+        "first_name": "Sabrina",
+        "last_name": "Clark",
+        "score": 85
+    },
+    "nicole_morgan": {
+        "first_name": "Nicole",
+        "last_name": "Morgan",
+        "score": 94
+    },
+    "britney_cooper": {
+        "first_name": "Britney",
+        "last_name": "Cooper",
+        "score": 92
+    },
+    "zoe_baker": {
+        "first_name": "Zoe",
+        "last_name": "Baker",
+        "score": 82
+    },
+    "clarissa_hayes": {
+        "first_name": "Clarissa",
+        "last_name": "Hayes",
+        "score": 79
+    },
+    "bonnie_bell": {
+        "first_name": "Bonnie",
+        "last_name": "Bell",
+        "score": 100
+    }
+}
+
+init_window('Scores', 700, 600)
+
+output_label = ce('text')
+ba(output_label)
+
+people_scroll_box = ce('scroll_div')
+people_scroll_box.id = 'people_scroll_box'
+people_scroll_box.style("border: 1px solid rgb(255, 255, 255);")
+ba(people_scroll_box)
+
+for person_key, person_data in people.items():
+    name_btn = ce('button')
+    # Display the properly capitalized first and last name on the button
+    name_btn.textContent = f"{person_data['first_name']} {person_data['last_name']}: {person_data['score']}"
+    name_btn.style("font-size: 25px; font-weight: bold; color: aqua;")
+
+    # Freeze the lowercase key AND the inner dictionary data
+    def handle_click(p_key=person_key, p_data=person_data):
+        # Print the lowercase key first to prove we are pulling it from the top level
+        print(f"Dictionary Key: '{p_key}' -> Student: {p_data['first_name']} {p_data['last_name']}, Score: {p_data['score']}")
+
+        output_label.textContent = f"Dictionary Key: '{p_key}' -> Student: {p_data['first_name']} {p_data['last_name']}, Score: {p_data['score']}"
+
+    name_btn.onclick = handle_click
+    ba(name_btn, people_scroll_box)
+
+####
+
+run_app()
+```
+
+---
+
+## Class
+```python
+from pyside6dom import *
+
+set_theme("""
+text {
+    font-size: 40px;
+    font-weight: bold;
+}
+""")
+
+####
+
+class Dog:
+    def __init__(this, name, weight):
+        this.name = name
+        this.weight = weight
+
+####
+
+fido = Dog("Fido", 16)
+rex = Dog("Rex", 20)
+
+####
+
+init_window('Dog Class', 700, 500)
+
+dog_label = ce('text')
+dog_label.textContent = fido.name + ' weighs ' + str(fido.weight) + ' lbs'
+ba(dog_label)
+
+# our shortcut cl
+# we could alternatively write console.log or
+# we could write print instead
+cl(fido.name + ' weighs ' + str(fido.weight) + ' lbs')
+
+run_app()
+
+####
+
+'''
+Fido weighs 16 lbs
+'''
 ```
 
 ---

@@ -71,23 +71,28 @@ people = [
 
 init_window('Scores', 700, 500)
 
+output_label = ce('text')
+output_label.style('font-size: 30px; font-weight: bold')
+ba(output_label)
+
 people_scroll_box = ce('scroll_div')
 people_scroll_box.id = 'people_scroll_box'
 people_scroll_box.style("border: 1px solid rgb(255, 255, 255);")
 ba(people_scroll_box)
 
 for person in people:
-    name = ce('button')
-    name.textContent = f"{person['name']}: {person['score']}"
-    name.style("font-size: 30px; font-weight: bold; font-color: aqua;")
-    # we can type font-color or color, either is fine
+    name_btn = ce('button')
+    name_btn.textContent = f"{person['name']}: {person['score']}"
+    name_btn.style("font-size: 30px; font-weight: bold; color: aqua;")
+    # we can type color or font-color, either is fine
 
     # Freeze the current person into a local variable 'p'
     def handle_click(p=person):
         print(f"{p['name']}: {p['score']}")
+        output_label.textContent = f"{p['name']}: {p['score']}"
         
-    name.onclick = handle_click
-    ba(name, people_scroll_box)
+    name_btn.onclick = handle_click
+    ba(name_btn, people_scroll_box)
 
 ####
 
