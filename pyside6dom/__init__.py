@@ -171,37 +171,21 @@ class DOMElement:
             self.raw.currentTextChanged.connect(lambda text: callback_func(text))
 
 
-    '''
     def style(self, css_string):
-        # If the user put brackets in their string (like "QPushButton:hover { color: red }"), 
-        # they are doing advanced Qt styling. Let it pass through untouched!
-        if "{" in css_string:
-            self.raw.setStyleSheet(css_string)
-            
-        # If there are no brackets, it's a web-style inline string ("border: 1px solid white").
-        # We need to isolate it so it doesn't ruin child elements!
-        else:
-            # Grab the widget's ID, or create a totally unique one using its memory address
-            obj_name = self.raw.objectName()
-            if not obj_name:
-                obj_name = f"dom_node_{id(self.raw)}"
-                self.raw.setObjectName(obj_name)
-            
-            # Wrap the string in a strict ID selector (e.g., #dom_node_12345 { border: ... })
-            scoped_css = f"#{obj_name} {{ {css_string} }}"
-            self.raw.setStyleSheet(scoped_css)
-    '''
-
-    def style(self, css_string):
-        # Fix CSS history here too! (The side door)
+        # Run all the web-to-Qt translations first
         css_string = css_string.replace("font-color", "color")
-        
-        # If the user put brackets in their string (like "QPushButton:hover { color: red }"), 
-        # they are doing advanced Qt styling. Let it pass through untouched!
+        css_string = css_string.replace("button", "QPushButton")
+        css_string = css_string.replace("input", "QLineEdit")
+        css_string = css_string.replace("textarea", "QPlainTextEdit")
+        css_string = css_string.replace("scroll_div", "QScrollArea")
+        css_string = css_string.replace("text", "QLabel")
+
+        # Advanced CSS with brackets (e.g., "button:hover { color: red; }")
+        # Thanks to the replacements above, "button:hover" is now "QPushButton:hover"
         if "{" in css_string:
             self.raw.setStyleSheet(css_string)
-            
-        # If there are no brackets, it's a web-style inline string ("border: 1px solid white").
+
+        # Inline web-style CSS (e.g., "border: 1px solid white;")
         else:
             obj_name = self.raw.objectName()
             if not obj_name:

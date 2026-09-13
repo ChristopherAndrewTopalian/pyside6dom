@@ -1,11 +1,11 @@
-# PySide6DOM v0.2.3
+# PySide6DOM v0.2.4
 **Bring the simplicity of the Web DOM to Python PySide6 Desktop Applications.**
 
 # Installation
 ```bash
 pip install pyside6dom
 ```
-![002](media/textures/002.webp)  
+![](media/textures/002.webp)  
 
 ### Upgrade: 
 > pip install --upgrade pyside6dom
@@ -33,7 +33,7 @@ Look how clean and intuitive building a native desktop app becomes. No complex c
 from pyside6dom import *
 
 # Initialize the Application
-init_window("Telemetry Station", width=440, height=520)
+init_window("Telemetry Station", 440, 520)
 
 # Create a Header (createElement)
 header = ce("text")
@@ -96,9 +96,6 @@ COMMON COMMANDS:
 
 ### Upgrade: 
 > pip install --upgrade pyside6dom
-
-### To make sure upgrade goes through
-pip install --upgrade --no-cache-dir pyside6dom
 
 ---
 <details>
@@ -211,8 +208,7 @@ run_app()
 
 ---
 
-# pyside6dom 0.1.2
-
+# pyside6dom
 A pure, web-style Document Object Model (DOM) interface for building PySide6 desktop applications natively in Python. Write desktop GUIs using the web syntax you already know.
 
 ### Installation
@@ -230,7 +226,7 @@ pip install pyside6dom
 * `ce(tag)`: Create Element. Returns a new DOMElement.
 * `ge(id)`: Get Element. Retrieves an element by its `.id`.
 * `ba(child, parent=None)`: Append Child. Adds an element to the layout.
-* `set_global_style(css)`: Applies a universal CSS stylesheet to the entire app.
+* `set_global_style(css) or set_theme(css)`: Applies a universal CSS stylesheet to the entire app.
 *  `setInterval`: begins a timer just like JavaScript  
 * `init_window(title, width, height)`: Initializes the PySide6 application.
 * `run_app()`: Starts the event loop.
