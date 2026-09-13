@@ -10,7 +10,6 @@ init_window('Read CSV File', 700, 400)
 output = ce('text')
 # Inject the Pandas HTML directly into the text element
 output.innerHTML = theData.to_html(index=False, border=1)
-
 ba(output)
 
 run_app()
