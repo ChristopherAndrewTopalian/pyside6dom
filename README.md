@@ -1,10 +1,16 @@
-# PySide6DOM v0.2.1
+# PySide6DOM v0.2.2
 **Bring the simplicity of the Web DOM to Python PySide6 Desktop Applications.**
 
 # Installation
 ```bash
 pip install pyside6dom
 ```
+![002](media/textures/002.webp)  
+
+### Upgrade: 
+> pip install --upgrade pyside6dom
+
+---
 
 **PySide6DOM** bridges the gap between web development and systems programming. It wraps the raw power of the PySide6 (C++/Qt) rendering engine inside the familiar, intuitive Document Object Model (DOM) paradigm used by JavaScript and HTML.
 
@@ -95,6 +101,8 @@ COMMON COMMANDS:
 pip install --upgrade --no-cache-dir pyside6dom
 
 ---
+<details>
+<summary> Example </summary>
 
 ```python
 # pyside6dom_example.py
@@ -198,6 +206,9 @@ submit_btn.onclick = handle_engage
 # Launch the App
 run_app()
 ```
+
+</details>
+
 ---
 
 # pyside6dom 0.1.2
@@ -236,6 +247,7 @@ pip install pyside6dom
 * **`scroll_div`**: A vertically scrolling container for dynamic content.
 * **`textarea`**
 * **`cl`** or **`console.log`** 
+* **`innerHTML`**
 
 *All elements support `.id` and inline `.style("css_string")`.*
 
@@ -1287,6 +1299,31 @@ run_app()
 '''
 Fido weighs 16 lbs
 '''
+```
+
+---
+
+# Pandas
+
+## Read CSV Show with innerHTML 
+
+```python
+# read_csv_show_with_innerHTML.py
+
+import pandas as pd
+from pyside6dom import *
+
+theData = pd.read_csv('data.csv')
+
+init_window('Read CSV File', 700, 400)
+
+output = ce('text')
+# Inject the Pandas HTML directly into the text element
+output.innerHTML = theData.to_html(index=False, border=1)
+
+ba(output)
+
+run_app()
 ```
 
 ---

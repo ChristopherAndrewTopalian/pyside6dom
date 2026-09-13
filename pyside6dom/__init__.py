@@ -89,6 +89,19 @@ class DOMElement:
         if hasattr(self.raw, "setText"): self.raw.setText(str(value))
 
     @property
+    def innerHTML(self):
+        if hasattr(self.raw, "text"): return self.raw.text()
+        return ""
+
+    @innerHTML.setter
+    def innerHTML(self, value):
+        if hasattr(self.raw, "setText"):
+            # Force the QLabel to render as Rich HTML rather than plain text
+            if isinstance(self.raw, QLabel):
+                self.raw.setTextFormat(Qt.TextFormat.RichText)
+            self.raw.setText(str(value))
+
+    @property
     def value(self):
         if isinstance(self.raw, QLineEdit): return self.raw.text()
         elif isinstance(self.raw, QPlainTextEdit): return self.raw.toPlainText() #
