@@ -1,4 +1,4 @@
-# PySide6DOM v0.2.8
+# PySide6DOM v0.2.9
 **Bring the simplicity of the Web DOM to Python PySide6 Desktop Applications.**
 
 # Installation
@@ -112,6 +112,34 @@ run_app()
 *All elements support the following properties:*
 * `.id`: Unique string identifier for retrieval with `ge(id)`.
 * `.style("css_string")`: Inline CSS styling targeting the specific element.
+
+---
+
+## 🎨 CSS Styling & Tag Mapping
+
+The engine translates standard HTML tags into PySide6 widgets behind the scenes. This allows you to write clean, web-style CSS for your desktop applications. 
+
+*(Note: If you are already a PySide6 veteran, standard Qt class names like `QPushButton` will still work perfectly!)*
+
+### Layout & Containers
+* **`body`** ➔ `QMainWindow` (and central widget)
+* **`div`** ➔ `QWidget`
+* **`scroll_div`** ➔ `QScrollArea`
+
+### Text & Media
+* **`text`, `h1`, `p`, `span`, `img`** ➔ `QLabel`
+
+### Interactive Controls
+* **`button`** ➔ `QPushButton`
+* **`input`** ➔ `QLineEdit`
+* **`textarea`** ➔ `QPlainTextEdit`
+* **`checkbox`** ➔ `QCheckBox`
+* **`slider`** ➔ `QSlider`
+* **`select`** (or **`dropdown`**) ➔ `QComboBox`
+* **`select option`** ➔ `QComboBox QAbstractItemView` (The dropdown list items)
+
+### CSS Properties
+* **`font-color`** ➔ `color`
 
 ---
 
@@ -264,19 +292,19 @@ init_window("Settings Panel", 400, 500)
 
 # Global Stylesheet (CSS)
 set_theme("""
-    QWidget {
+    div {
         background-color: #1e1e1e;
         color: #ffffff;
         font-family: Arial, sans-serif;
         font-size: 14px;
     }
-    QLabel#title_heading {
+    h1#title_heading {
         font-size: 22px;
         font-weight: bold;
         color: #00ffcc;
         margin-bottom: 10px;
     }
-    QPushButton {
+    button {
         background-color: #007acc;
         color: white;
         border-radius: 4px;
@@ -284,21 +312,21 @@ set_theme("""
         font-weight: bold;
         margin-top: 15px;
     }
-    QPushButton:hover { background-color: #0099ff; }
-    QPushButton:pressed { background-color: #005c99; }
+    button:hover { background-color: #0099ff; }
+    button:pressed { background-color: #005c99; }
     
-    QComboBox {
+    select {
         padding: 6px;
         background-color: #2b2b2b;
         border: 1px solid #555;
         border-radius: 3px;
     }
-    QComboBox QAbstractItemView {
+    select option {
         background-color: #2b2b2b;
         selection-background-color: #007acc;
         selection-color: white;
     }
-    QScrollArea {
+    scroll_div {
         border: 1px solid #444;
         background-color: #111;
         margin-top: 10px;
@@ -368,22 +396,22 @@ init_window("Settings Panel", 400, 500)
 #  WORLDWIDE STYLESHEET (CSS)
 # ===
 set_theme("""
-    QWidget {
+    div {
         background-color: #1e1e1e;
         color: #ffffff;
         font-family: Arial, sans-serif;
         font-size: 14px;
     }
-    QLabel {
+    text {
         padding-top: 5px;
     }
-    QLabel#title_heading {
+    h1#title_heading {
         font-size: 22px;
         font-weight: bold;
         color: #00ffcc;
         margin-bottom: 10px;
     }
-    QPushButton {
+    button {
         background-color: #007acc;
         color: white;
         border-radius: 4px;
@@ -391,23 +419,23 @@ set_theme("""
         font-weight: bold;
         margin-top: 15px;
     }
-    QPushButton:hover { background-color: #0099ff; }
-    QPushButton:pressed { background-color: #005c99; }
+    button:hover { background-color: #0099ff; }
+    button:pressed { background-color: #005c99; }
     
-    QComboBox {
+    select {
         padding: 6px;
         background-color: #2b2b2b;
         border: 1px solid #555;
         border-radius: 3px;
     }
     /* This fixes the missing hover highlight in dropdowns! */
-    QComboBox QAbstractItemView {
+    select option {
         background-color: #2b2b2b;
         selection-background-color: #007acc;
         selection-color: white;
     }
     
-    QScrollArea {
+    scroll_div {
         border: 1px solid #444;
         background-color: #111;
         margin-top: 10px;

@@ -6,7 +6,7 @@
 from pyside6dom import *
 
 # Initialize the Application
-init_window("PySide6DOM Feature Showcase", width=450, height=650)
+init_window("PySide6DOM Feature Showcase",450, 650)
 
 # Worldwide Header
 header = ce("h1")
@@ -57,7 +57,7 @@ ba(action_panel)
 submit_btn = ce("button")
 submit_btn.textContent = "ENGAGE THRUSTERS"
 submit_btn.style("""
-    QPushButton { 
+    button { 
         background-color: #007acc; 
         color: white; 
         border-radius: 6px; 
@@ -65,8 +65,8 @@ submit_btn.style("""
         font-size: 16px; 
         font-weight: bold;
     }
-    QPushButton:hover { background-color: #0099ff; }
-    QPushButton:pressed { background-color: #005c99; }
+    button:hover { background-color: #0099ff; }
+    button:pressed { background-color: #005c99; }
 """)
 ba(submit_btn, action_panel) # Appended to action_panel, NOT the main window
 
