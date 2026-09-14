@@ -1,15 +1,12 @@
 # pyside6dom_example.py
 
-import sys
-import os
-
 from pyside6dom import *
 
-init_window("Settings Panel", width=400, height=500)
+init_window("Settings Panel", 400, 500)
 
-# ===================================== #
-#         WORLDWIDE STYLESHEET (CSS)
-# ===================================== #
+# ===
+#   WORLDWIDE STYLESHEET (CSS)
+# ===
 set_global_style("""
     QWidget {
         background-color: #1e1e1e;
@@ -57,9 +54,9 @@ set_global_style("""
     }
 """)
 
-# ===================================== #
-#               UI BUILDER
-# ===================================== #
+# ===
+#  UI BUILDER
+# ===
 
 header = ce("h1")
 header.id = "title_heading"
@@ -94,7 +91,7 @@ def handle_apply():
     
     log = ce("p")
     log.textContent = f"> Mode: {selected} | Debug: {debug}"
-    log.style("color: #00ff00; font-family: monospace;") # Inline overrides still work!
+    log.style("color: #00ff00; font-family: monospace;") # Inline overrides still work
     ba(log, log_window)
 
 apply_btn.onclick = handle_apply

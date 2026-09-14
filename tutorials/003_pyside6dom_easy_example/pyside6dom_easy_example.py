@@ -2,7 +2,7 @@
 
 from pyside6dom import *
 
-init_window("Our App", width = 600, height = 400)
+init_window("Our App", 600, 400)
 
 welcomeMessage = ce('text')
 welcomeMessage.textContent = 'Welcome'
@@ -23,7 +23,7 @@ sayHowdyBtn.onclick = handle_click
 ba(sayHowdyBtn)
 
 sayThisBtn = ce('button')
-sayThisBtn.textContent = 'This'
+sayThisBtn.textContent = 'Custom'
 def handle_click(message):
     welcomeMessage.textContent = message
 sayThisBtn.onclick = lambda: handle_click('Hey Now')

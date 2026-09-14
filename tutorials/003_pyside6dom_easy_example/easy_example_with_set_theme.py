@@ -1,40 +1,56 @@
-# pyside6dom_scroll_box_example.py
+# easy_example_with_set_theme.py
 
 from pyside6dom import *
+
+set_theme("""
+    body {
+        background-color: rgb(30, 30, 30);
+    }
+    button {
+        background-color: rgb(0, 0, 0);
+        color: cyan;
+        /* we write 1px before solid */
+        border: 1px solid rgb(255, 255, 255);
+        border-radius: 5px;
+    }
+    button:hover {
+        background-color: #555;
+        border-color: rgb(0, 255, 255);
+    }
+    button:pressed {
+        font-weight: bold;
+    }
+    input {
+        border: 1px solid white;
+    }
+""")
 
 init_window("Our App", 600, 400)
 
 welcomeMessage = ce('text')
 welcomeMessage.textContent = 'Welcome'
-welcomeMessage.style("font-size: 30px; font-weight: bold;")
 ba(welcomeMessage)
 
-# Create a specific scrollable container for the buttons
-messageBtns_scroll_box = ce('scroll_div')
-messageBtns_scroll_box.style("border: 2px solid #555; background-color: #1a1a1a; min-height: 200px;")
-ba(messageBtns_scroll_box)
-
-# Create buttons and append them TO the scroll box
 sayHiBtn = ce('button')
 sayHiBtn.textContent = 'Hi'
-def handle_click_hi():
+def handle_click():
     welcomeMessage.textContent = 'Hi'
-sayHiBtn.onclick = handle_click_hi
-ba(sayHiBtn, messageBtns_scroll_box) # Notice the second argument
+sayHiBtn.onclick = handle_click
+ba(sayHiBtn)
 
 sayHowdyBtn = ce('button')
 sayHowdyBtn.textContent = 'Howdy'
-def handle_click_howdy():
+def handle_click():
     welcomeMessage.textContent = 'Howdy'
-sayHowdyBtn.onclick = handle_click_howdy
-ba(sayHowdyBtn, messageBtns_scroll_box)
+sayHowdyBtn.onclick = handle_click
+ba(sayHowdyBtn)
 
 sayThisBtn = ce('button')
-sayThisBtn.textContent = 'This'
-def handle_click_message(message):
+sayThisBtn.textContent = 'Custom'
+def handle_click(message):
     welcomeMessage.textContent = message
-sayThisBtn.onclick = lambda: handle_click_message('Hey Now')
-ba(sayThisBtn, messageBtns_scroll_box)
+sayThisBtn.onclick = lambda: handle_click('Hey Now')
+ba(sayThisBtn)
 
 run_app()
 

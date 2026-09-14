@@ -1,4 +1,4 @@
-# PySide6DOM v0.2.4
+# PySide6DOM v0.2.5
 **Bring the simplicity of the Web DOM to Python PySide6 Desktop Applications.**
 
 # Installation
@@ -14,7 +14,7 @@ pip install pyside6dom
 
 **PySide6DOM** bridges the gap between web development and systems programming. It wraps the raw power of the PySide6 (C++/Qt) rendering engine inside the familiar, intuitive Document Object Model (DOM) paradigm used by JavaScript and HTML.
 
-If you know how to build a web page using `createElement`, `getElementById`, and `appendChild`, you already know how to build high-performance, standalone Python desktop applications.
+If you know how to build a web page using `createElement (ce)`, `getElementById (ge)`, and `append (ba)`, you already know how to build high-performance, standalone Python desktop applications.
 
 ### 🌟 Why Use PySide6DOM?
 
@@ -110,7 +110,7 @@ COMMON COMMANDS:
 from pyside6dom import *
 
 # Initialize the Application
-init_window("PySide6DOM Feature Showcase", width=450, height=650)
+init_window("PySide6DOM Feature Showcase", 450, 650)
 
 # Worldwide Header
 header = ce("h1")
@@ -161,7 +161,7 @@ ba(action_panel)
 submit_btn = ce("button")
 submit_btn.textContent = "ENGAGE THRUSTERS"
 submit_btn.style("""
-    QPushButton { 
+    button { 
         background-color: #007acc; 
         color: white; 
         border-radius: 6px; 
@@ -169,8 +169,8 @@ submit_btn.style("""
         font-size: 16px; 
         font-weight: bold;
     }
-    QPushButton:hover { background-color: #0099ff; }
-    QPushButton:pressed { background-color: #005c99; }
+    button:hover { background-color: #0099ff; }
+    button:pressed { background-color: #005c99; }
 """)
 ba(submit_btn, action_panel) # Appended to action_panel, NOT the main window
 
@@ -257,10 +257,10 @@ This example demonstrates global CSS styling, checkboxes, dropdowns, and real-ti
 from pyside6dom import *
 
 # Initialize Window
-init_window("Settings Panel", width=400, height=500)
+init_window("Settings Panel", 400, 500)
 
 # Global Stylesheet (CSS)
-set_global_style("""
+set_theme("""
     QWidget {
         background-color: #1e1e1e;
         color: #ffffff;
@@ -359,12 +359,12 @@ import os
 
 from pyside6dom import *
 
-init_window("Settings Panel", width=400, height=500)
+init_window("Settings Panel", 400, 500)
 
-# ===================================== #
-#         WORLDWIDE STYLESHEET (CSS)
-# ===================================== #
-set_global_style("""
+# ===
+#  WORLDWIDE STYLESHEET (CSS)
+# ===
+set_theme("""
     QWidget {
         background-color: #1e1e1e;
         color: #ffffff;
@@ -411,9 +411,9 @@ set_global_style("""
     }
 """)
 
-# ===================================== #
-#               UI BUILDER
-# ===================================== #
+# ===
+#  UI BUILDER
+# ===
 
 header = ce("h1")
 header.id = "title_heading"
@@ -465,7 +465,7 @@ run_app()
 
 from pyside6dom import *
 
-init_window("Our App", width = 600, height = 400)
+init_window("Our App", 600, 400)
 
 welcomeMessage = ce('text')
 welcomeMessage.textContent = 'Welcome'
@@ -504,7 +504,7 @@ run_app()
 
 from pyside6dom import *
 
-init_window("Our App", width = 600, height = 400)
+init_window("Our App", 600, 400)
 
 welcomeMessage = ce('text')
 welcomeMessage.textContent = 'Welcome'
@@ -550,7 +550,7 @@ run_app()
 
 from pyside6dom import *
 
-init_window("Round", 600, 400)
+init_window("Our App", 600, 400)
 
 number_input = ce('input')
 number_input.placeholder = 'Enter number'
