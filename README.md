@@ -1,4 +1,4 @@
-# PySide6DOM v0.2.5
+# PySide6DOM v0.2.6
 **Bring the simplicity of the Web DOM to Python PySide6 Desktop Applications.**
 
 # Installation
@@ -72,13 +72,46 @@ run_app()
 
 ---
 
-### 🛠️ Core API Reference
+## 📖 API Reference
 
-| Function | Web Equivalent | Description |
-| --- | --- | --- |
-| `ce(tag)` | `document.createElement()` | Creates a new native widget. Supports: `"button"`, `"text"`, `"input"`, `"slider"`, `"div"`, `"scroll_div"`. |
-| `ge(id)` | `document.getElementById()` | Retrieves a previously created element by its unique `.id` property. |
-| `ba(element)` | `document.body.appendChild()` | Appends the element to the main application window (or a specific parent container). |
+### Core Engine Functions
+* `init_window(title, width, height)`: Initializes the main window and layout.
+* `run_app()`: Starts the Qt application event loop.
+* `ce(tag)`: *(`document.createElement`)* Creates a native widget wrapped as a DOMElement.
+* `ge(id)`: *(`document.getElementById`)* Retrieves a previously created element by its `.id`.
+* `ba(child, parent=None)`: *(`appendChild`)* Appends an element to the main window or a parent container.
+* `set_global_style(css)` / `set_theme(css)`: Applies a universal CSS stylesheet to the entire application.
+* `setInterval(callback, ms)`: Repeatedly runs a callback at the specified millisecond interval.
+* `cl(*args)` / `console.log(*args)`: Logs output to the console, mirroring web debugging.
+
+---
+
+### Supported Tags & Widget Bindings
+* **`text` / `p` / `h1` / `span`**: Text labels. 
+  * Properties: `.textContent`, `.innerHTML`
+* **`button`**: Standard push button.
+  * Properties: `.textContent`, `.onclick`
+* **`input`**: Single-line text input field.
+  * Properties: `.value`, `.placeholder`, `.oninput`
+* **`textarea`**: Multi-line text edit area.
+  * Properties: `.value`, `.placeholder`, `.oninput`
+* **`slider`**: Numeric range slider.
+  * Properties: `.value`, `.oninput`
+* **`checkbox`**: Toggle checkbox.
+  * Properties: `.checked`, `.textContent`, `.oninput`
+* **`select` / `dropdown`**: Dropdown selection menu.
+  * Properties: `.options` (list), `.value` (selected text), `.oninput`
+* **`img`**: Image display element.
+  * Properties: `.src` (file path)
+* **`div`**: Standard container widget for grouping elements.
+* **`scroll_div`**: Scrollable container area for overflow content.
+
+---
+
+### Universal Properties & Methods
+*All elements support the following properties:*
+* `.id`: Unique string identifier for retrieval with `ge(id)`.
+* `.style("css_string")`: Inline CSS styling targeting the specific element.
 
 ---
 
@@ -216,36 +249,6 @@ A pure, web-style Document Object Model (DOM) interface for building PySide6 des
 pip install pyside6dom
 
 ```
-
----
-
-## 📖 API Reference Key
-
-**Core Functions:**
-
-* `ce(tag)`: Create Element. Returns a new DOMElement.
-* `ge(id)`: Get Element. Retrieves an element by its `.id`.
-* `ba(child, parent=None)`: Append Child. Adds an element to the layout.
-* `set_global_style(css) or set_theme(css)`: Applies a universal CSS stylesheet to the entire app.
-*  `setInterval`: begins a timer just like JavaScript  
-* `init_window(title, width, height)`: Initializes the PySide6 application.
-* `run_app()`: Starts the event loop.
-
-**Supported Tags & Properties:**
-
-* **`text`, `p`, `h1`, `span`**: `.textContent`
-* **`button`**: `.textContent`, `.onclick`
-* **`input`**: `.value`, `.placeholder`, `.oninput`
-* **`slider`**: `.value`, `.oninput`
-* **`checkbox`** *(New!)*: `.checked`, `.textContent`, `.oninput`
-* **`select`, `dropdown**`: `.options` (list), `.value` (current text), `.oninput`
-* **`div`**: Standard container for grouping elements.
-* **`scroll_div`**: A vertically scrolling container for dynamic content.
-* **`textarea`**
-* **`cl`** or **`console.log`** 
-* **`innerHTML`**
-
-*All elements support `.id` and inline `.style("css_string")`.*
 
 ---
 

@@ -7,6 +7,7 @@ from PySide6.QtWidgets import (
     QComboBox, QSizePolicy, QPlainTextEdit
 )
 from PySide6.QtCore import Qt, QTimer
+from PySide6.QtGui import QPixmap
 
 ####
 
@@ -115,6 +116,18 @@ class DOMElement:
         elif isinstance(self.raw, QPlainTextEdit): self.raw.setPlainText(str(val))
         elif isinstance(self.raw, QSlider): self.raw.setValue(int(float(val) * 10))
         elif isinstance(self.raw, QComboBox): self.raw.setCurrentText(str(val))
+
+    @property
+    def src(self):
+        return self._src if hasattr(self, "_src") else ""
+
+    @src.setter
+    def src(self, file_path):
+        self._src = file_path
+        # Ensure we are applying this to a QLabel that was created as an 'img'
+        if isinstance(self.raw, QLabel) and self.tag == "img":
+            pixmap = QPixmap(str(file_path))
+            self.raw.setPixmap(pixmap)
 
     @property
     def placeholder(self):
@@ -265,6 +278,12 @@ def ce(tag):
         elem = DOMElement(tag, scroll)
         elem.layout = layout
         return elem
+
+    elif tag == "img":
+        w = QLabel()
+        w.setScaledContents(True) # Makes it behave like HTML CSS sizing
+        w.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        return DOMElement(tag, w)
         
     raise ValueError(f"Unknown tag: {tag}")
 
