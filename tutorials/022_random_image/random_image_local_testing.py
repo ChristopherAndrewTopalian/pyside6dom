@@ -1,4 +1,4 @@
-# image_local_testing.py
+# random_image_local_testing.py
 
 import sys
 import os
@@ -10,13 +10,17 @@ project_root = os.path.dirname(os.path.dirname(current_dir))
 sys.path.insert(0, project_root)
 # --------------------------
 
+import random
 from pyside6dom import *
+
+theImages = ['001.png', '002.png', '003.png']
 
 # Initialize the Application
 init_window("Showing an Image", 1100, 650)
 
 theImage = ce('img')
-theImage.src = '001.png'
+theImage.src = random.choice(theImages)
+theImage.width = 700
 ba(theImage)
 
 # Launch the App

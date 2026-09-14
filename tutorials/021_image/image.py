@@ -3,7 +3,7 @@
 from pyside6dom import *
 
 # Initialize the Application
-init_window("PySide6DOM Feature Showcase", 1100, 650)
+init_window("Showing an Image", 1100, 650)
 
 theImage = ce('img')
 theImage.src = '001.png'

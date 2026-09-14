@@ -1,4 +1,4 @@
-# PySide6DOM v0.2.6
+# PySide6DOM v0.2.7
 **Bring the simplicity of the Web DOM to Python PySide6 Desktop Applications.**
 
 # Installation
@@ -101,7 +101,7 @@ run_app()
   * Properties: `.checked`, `.textContent`, `.oninput`
 * **`select` / `dropdown`**: Dropdown selection menu.
   * Properties: `.options` (list), `.value` (selected text), `.oninput`
-* **`img`**: Image display element.
+* **`img`**: Image display element with Aspect Ratio
   * Properties: `.src` (file path)
 * **`div`**: Standard container widget for grouping elements.
 * **`scroll_div`**: Scrollable container area for overflow content.

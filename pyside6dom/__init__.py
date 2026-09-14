@@ -129,6 +129,58 @@ class DOMElement:
             pixmap = QPixmap(str(file_path))
             self.raw.setPixmap(pixmap)
 
+    '''
+    @property
+    def width(self):
+        return self.raw.width()
+
+    @width.setter
+    def width(self, val):
+        self.raw.setFixedWidth(int(val))
+
+    @property
+    def height(self):
+        return self.raw.height()
+
+    @height.setter
+    def height(self, val):
+        self.raw.setFixedHeight(int(val))
+    '''
+
+    @property
+    def width(self):
+        return self.raw.width()
+
+    @width.setter
+    def width(self, val):
+        val = int(val)
+        self.raw.setFixedWidth(val)
+        
+        # HTML Image Emulation: Auto-calculate proportional height
+        if self.tag == "img" and self.raw.pixmap():
+            orig_w = self.raw.pixmap().width()
+            orig_h = self.raw.pixmap().height()
+            if orig_w > 0:
+                prop_h = int(val * (orig_h / orig_w))
+                self.raw.setFixedHeight(prop_h)
+
+    @property
+    def height(self):
+        return self.raw.height()
+
+    @height.setter
+    def height(self, val):
+        val = int(val)
+        self.raw.setFixedHeight(val)
+        
+        # HTML Image Emulation: Auto-calculate proportional width
+        if self.tag == "img" and self.raw.pixmap():
+            orig_w = self.raw.pixmap().width()
+            orig_h = self.raw.pixmap().height()
+            if orig_h > 0:
+                prop_w = int(val * (orig_w / orig_h))
+                self.raw.setFixedWidth(prop_w)
+
     @property
     def placeholder(self):
         return self.raw.placeholderText() if hasattr(self.raw, "placeholderText") else ""
