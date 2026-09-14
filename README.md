@@ -1,4 +1,4 @@
-# PySide6DOM v0.2.7
+# PySide6DOM v0.2.8
 **Bring the simplicity of the Web DOM to Python PySide6 Desktop Applications.**
 
 # Installation
@@ -80,9 +80,9 @@ run_app()
 * `ce(tag)`: *(`document.createElement`)* Creates a native widget wrapped as a DOMElement.
 * `ge(id)`: *(`document.getElementById`)* Retrieves a previously created element by its `.id`.
 * `ba(child, parent=None)`: *(`appendChild`)* Appends an element to the main window or a parent container.
-* `set_global_style(css)` / `set_theme(css)`: Applies a universal CSS stylesheet to the entire application.
+* `set_global_style(css)` or `set_theme(css)`: Applies a universal CSS stylesheet to the entire application.
 * `setInterval(callback, ms)`: Repeatedly runs a callback at the specified millisecond interval.
-* `cl(*args)` / `console.log(*args)`: Logs output to the console, mirroring web debugging.
+* `cl(*args)` or `console.log(*args)`: Logs output to the console, mirroring web debugging.
 
 ---
 
@@ -105,7 +105,7 @@ run_app()
   * Properties: `.src` (file path)
 * **`div`**: Standard container widget for grouping elements.
 * **`scroll_div`**: Scrollable container area for overflow content.
-
+* `**CSS keywords**`: div, text, button, scroll_div, select, option,
 ---
 
 ### Universal Properties & Methods

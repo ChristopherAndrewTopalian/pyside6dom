@@ -238,15 +238,43 @@ class DOMElement:
 
     def style(self, css_string):
         # Run all the web-to-Qt translations first
+
+        '''
         css_string = css_string.replace("font-color", "color")
         css_string = css_string.replace("button", "QPushButton")
         css_string = css_string.replace("input", "QLineEdit")
         css_string = css_string.replace("textarea", "QPlainTextEdit")
         css_string = css_string.replace("scroll_div", "QScrollArea")
         css_string = css_string.replace("text", "QLabel")
+        '''
+
+        # WEB TO QT CSS TRANSLATOR
+        css_string = css_string.replace("body", "QMainWindow, QWidget#central_widget")
+        css_string = css_string.replace("font-color", "color")
+        
+        # Translate compound words FIRST
+        css_string = css_string.replace("scroll_div", "QScrollArea")
+        
+        # Translate base tags
+        css_string = css_string.replace("div", "QWidget")
+        css_string = css_string.replace("button", "QPushButton")
+        css_string = css_string.replace("input", "QLineEdit")
+        css_string = css_string.replace("textarea", "QPlainTextEdit")
+        css_string = css_string.replace("select", "QComboBox")
+        css_string = css_string.replace("dropdown", "QComboBox")
+        css_string = css_string.replace("checkbox", "QCheckBox")
+        css_string = css_string.replace("slider", "QSlider")
+        
+        # Translate all text/image tags to QLabel
+        css_string = css_string.replace("text", "QLabel")
+        css_string = css_string.replace("img", "QLabel")
+        css_string = css_string.replace("h1", "QLabel")
+        css_string = css_string.replace("p", "QLabel")
+        css_string = css_string.replace("span", "QLabel")
+        css_string = css_string.replace("option", "QAbstractItemView")
 
         # Advanced CSS with brackets (e.g., "button:hover { color: red; }")
-        # Thanks to the replacements above, "button:hover" is now "QPushButton:hover"
+        # because of the replacements above, "button:hover" is now "QPushButton:hover"
         if "{" in css_string:
             self.raw.setStyleSheet(css_string)
 
@@ -361,6 +389,7 @@ def set_theme(css_string):
     """
     global _pending_theme  # <--- Bring in the buffer
 
+    '''
     css_string = css_string.replace("body", "QMainWindow, QWidget#central_widget")
     css_string = css_string.replace("button", "QPushButton")
     css_string = css_string.replace("input", "QLineEdit")
@@ -368,6 +397,32 @@ def set_theme(css_string):
     css_string = css_string.replace("scroll_div", "QScrollArea")
     css_string = css_string.replace("text", "QLabel")
     css_string = css_string.replace("font-color", "color")
+    '''
+
+    # WEB TO QT CSS TRANSLATOR 
+    css_string = css_string.replace("body", "QMainWindow, QWidget#central_widget")
+    css_string = css_string.replace("font-color", "color")
+    
+    # Translate compound words FIRST
+    css_string = css_string.replace("scroll_div", "QScrollArea")
+    
+    # Translate base tags
+    css_string = css_string.replace("div", "QWidget")
+    css_string = css_string.replace("button", "QPushButton")
+    css_string = css_string.replace("input", "QLineEdit")
+    css_string = css_string.replace("textarea", "QPlainTextEdit")
+    css_string = css_string.replace("select", "QComboBox")
+    css_string = css_string.replace("dropdown", "QComboBox")
+    css_string = css_string.replace("checkbox", "QCheckBox")
+    css_string = css_string.replace("slider", "QSlider")
+    
+    # Translate all text/image tags to QLabel
+    css_string = css_string.replace("text", "QLabel")
+    css_string = css_string.replace("img", "QLabel")
+    css_string = css_string.replace("h1", "QLabel")
+    css_string = css_string.replace("p", "QLabel")
+    css_string = css_string.replace("span", "QLabel")
+    css_string = css_string.replace("option", "QAbstractItemView")
     
     # Try to apply immediately. If it fails, save it for later!
     app = QApplication.instance()
