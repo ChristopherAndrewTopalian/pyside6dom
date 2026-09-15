@@ -1,5 +1,6 @@
 # pyside6dom.py
 
+import os
 import sys
 from PySide6.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QPushButton, 
@@ -8,6 +9,9 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QPixmap
+from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput
+from PySide6.QtMultimediaWidgets import QVideoWidget
+from PySide6.QtCore import QUrl
 
 ####
 
@@ -18,8 +22,6 @@ def cl(*args):
 # class to act as the 'console' namespace
 class console:
     log = cl
-
-####
 
 # ========================================== #
 #               TIMER MANAGEMENT             #
@@ -124,28 +126,19 @@ class DOMElement:
     @src.setter
     def src(self, file_path):
         self._src = file_path
-        # Ensure we are applying this to a QLabel that was created as an 'img'
+        
+        # Handle Images
         if isinstance(self.raw, QLabel) and self.tag == "img":
             pixmap = QPixmap(str(file_path))
             self.raw.setPixmap(pixmap)
+            
+        # Handle Video
+        elif self.tag == "video" and hasattr(self, "player"):
+            if str(file_path).startswith("http"):
+                self.player.setSource(QUrl(file_path))
+            else:
+                self.player.setSource(QUrl.fromLocalFile(os.path.abspath(file_path)))
 
-    '''
-    @property
-    def width(self):
-        return self.raw.width()
-
-    @width.setter
-    def width(self, val):
-        self.raw.setFixedWidth(int(val))
-
-    @property
-    def height(self):
-        return self.raw.height()
-
-    @height.setter
-    def height(self, val):
-        self.raw.setFixedHeight(int(val))
-    '''
 
     @property
     def width(self):
@@ -239,15 +232,6 @@ class DOMElement:
     def style(self, css_string):
         # Run all the web-to-Qt translations first
 
-        '''
-        css_string = css_string.replace("font-color", "color")
-        css_string = css_string.replace("button", "QPushButton")
-        css_string = css_string.replace("input", "QLineEdit")
-        css_string = css_string.replace("textarea", "QPlainTextEdit")
-        css_string = css_string.replace("scroll_div", "QScrollArea")
-        css_string = css_string.replace("text", "QLabel")
-        '''
-
         # WEB TO QT CSS TRANSLATOR
         css_string = css_string.replace("body", "QMainWindow, QWidget#central_widget")
         css_string = css_string.replace("font-color", "color")
@@ -272,6 +256,7 @@ class DOMElement:
         css_string = css_string.replace("p", "QLabel")
         css_string = css_string.replace("span", "QLabel")
         css_string = css_string.replace("option", "QAbstractItemView")
+        css_string = css_string.replace("video", "QVideoWidget")
 
         # Advanced CSS with brackets (e.g., "button:hover { color: red; }")
         # because of the replacements above, "button:hover" is now "QPushButton:hover"
@@ -288,6 +273,14 @@ class DOMElement:
             # Wrap the string in a strict ID selector
             scoped_css = f"#{obj_name} {{ {css_string} }}"
             self.raw.setStyleSheet(scoped_css)
+
+    def play(self):
+        if self.tag == "video" and hasattr(self, "player"):
+            self.player.play()
+
+    def pause(self):
+        if self.tag == "video" and hasattr(self, "player"):
+            self.player.pause()
 
 # ========================================== #
 #               DOM PARSER (ce)              #
@@ -364,7 +357,22 @@ def ce(tag):
         w.setScaledContents(True) # Makes it behave like HTML CSS sizing
         w.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         return DOMElement(tag, w)
+
+    elif tag == "video":
+        w = QVideoWidget()
+        w.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        elem = DOMElement(tag, w)
         
+        # Create the invisible brain and speaker
+        elem.player = QMediaPlayer()
+        elem.audio = QAudioOutput()
+        
+        # Wire them together
+        elem.player.setAudioOutput(elem.audio)
+        elem.player.setVideoOutput(w)
+
+        return elem
+
     raise ValueError(f"Unknown tag: {tag}")
 
 
@@ -388,16 +396,6 @@ def set_theme(css_string):
     allowing users to style the app using pure web syntax.
     """
     global _pending_theme  # <--- Bring in the buffer
-
-    '''
-    css_string = css_string.replace("body", "QMainWindow, QWidget#central_widget")
-    css_string = css_string.replace("button", "QPushButton")
-    css_string = css_string.replace("input", "QLineEdit")
-    css_string = css_string.replace("textarea", "QPlainTextEdit")
-    css_string = css_string.replace("scroll_div", "QScrollArea")
-    css_string = css_string.replace("text", "QLabel")
-    css_string = css_string.replace("font-color", "color")
-    '''
 
     # WEB TO QT CSS TRANSLATOR 
     css_string = css_string.replace("body", "QMainWindow, QWidget#central_widget")
@@ -423,6 +421,7 @@ def set_theme(css_string):
     css_string = css_string.replace("p", "QLabel")
     css_string = css_string.replace("span", "QLabel")
     css_string = css_string.replace("option", "QAbstractItemView")
+    css_string = css_string.replace("video", "QVideoWidget")
     
     # Try to apply immediately. If it fails, save it for later!
     app = QApplication.instance()

@@ -7,7 +7,7 @@ init_window("Many CSS Keywords", 400, 500)
 set_theme("""
     div {
         background-color: #1e1e1e;
-        color: #ffffff;
+        color: rgb(255, 255, 255);
         font-family: Arial, sans-serif;
         font-size: 14px;
     }

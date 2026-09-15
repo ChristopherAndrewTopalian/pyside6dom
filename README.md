@@ -1,4 +1,4 @@
-# PySide6DOM v0.2.9
+# PySide6DOM v0.3.0
 **Bring the simplicity of the Web DOM to Python PySide6 Desktop Applications.**
 
 # Installation
@@ -9,6 +9,9 @@ pip install pyside6dom
 
 ### Upgrade: 
 > pip install --upgrade pyside6dom
+
+## PySide6DOM Tutorials:
+[Tutorials](https://github.com/ChristopherAndrewTopalian/pyside6dom/tree/main/tutorials)
 
 ---
 
@@ -80,7 +83,7 @@ run_app()
 * `ce(tag)`: *(`document.createElement`)* Creates a native widget wrapped as a DOMElement.
 * `ge(id)`: *(`document.getElementById`)* Retrieves a previously created element by its `.id`.
 * `ba(child, parent=None)`: *(`appendChild`)* Appends an element to the main window or a parent container.
-* `set_global_style(css)` or `set_theme(css)`: Applies a universal CSS stylesheet to the entire application.
+* `set_theme(css)` or `set_global_style(css)`: Applies a universal CSS stylesheet to the entire application.
 * `setInterval(callback, ms)`: Repeatedly runs a callback at the specified millisecond interval.
 * `cl(*args)` or `console.log(*args)`: Logs output to the console, mirroring web debugging.
 
@@ -103,9 +106,10 @@ run_app()
   * Properties: `.options` (list), `.value` (selected text), `.oninput`
 * **`img`**: Image display element with Aspect Ratio
   * Properties: `.src` (file path)
+* **`video`**: Video display element
 * **`div`**: Standard container widget for grouping elements.
 * **`scroll_div`**: Scrollable container area for overflow content.
-* `**CSS keywords**`: div, text, button, scroll_div, select, option,
+* **`CSS keywords`**: div, text, button, scroll_div, select, option,
 ---
 
 ### Universal Properties & Methods
@@ -384,9 +388,6 @@ run_app()
 
 ```python
 # pyside6dom_example.py
-
-import sys
-import os
 
 from pyside6dom import *
 
