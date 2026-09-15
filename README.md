@@ -1,4 +1,4 @@
-# PySide6DOM v0.3.0
+# PySide6DOM v0.3.1
 **Bring the simplicity of the Web DOM to Python PySide6 Desktop Applications.**
 
 # Installation
@@ -11,7 +11,7 @@ pip install pyside6dom
 > pip install --upgrade pyside6dom
 
 ## PySide6DOM Tutorials:
-[Tutorials](https://github.com/ChristopherAndrewTopalian/pyside6dom/tree/main/tutorials)
+## [Tutorials](https://github.com/ChristopherAndrewTopalian/pyside6dom/tree/main/tutorials)
 
 ---
 
@@ -106,7 +106,7 @@ run_app()
   * Properties: `.options` (list), `.value` (selected text), `.oninput`
 * **`img`**: Image display element with Aspect Ratio
   * Properties: `.src` (file path)
-* **`video`**: Video display element
+* **`video`**: Video display element with Aspect Ratio
 * **`div`**: Standard container widget for grouping elements.
 * **`scroll_div`**: Scrollable container area for overflow content.
 * **`CSS keywords`**: div, text, button, scroll_div, select, option,
