@@ -97,16 +97,6 @@ class DOMElement:
         if hasattr(self.raw, "text"): return self.raw.text()
         return ""
 
-    '''
-    @innerHTML.setter
-    def innerHTML(self, value):
-        if hasattr(self.raw, "setText"):
-            # Force the QLabel to render as Rich HTML rather than plain text
-            if isinstance(self.raw, QLabel):
-                self.raw.setTextFormat(Qt.TextFormat.RichText)
-            self.raw.setText(str(value))
-    '''
-
     @innerHTML.setter
     def innerHTML(self, value):
         if hasattr(self.raw, "setText"):
@@ -259,34 +249,6 @@ class DOMElement:
 
     def style(self, css_string):
         # Run all the web-to-Qt translations first
-
-        '''
-        # WEB TO QT CSS TRANSLATOR
-        css_string = css_string.replace("body", "QMainWindow, QWidget#central_widget")
-        css_string = css_string.replace("font-color", "color")
-        
-        # Translate compound words FIRST
-        css_string = css_string.replace("scroll_div", "QScrollArea")
-        
-        # Translate base tags
-        css_string = css_string.replace("div", "QWidget")
-        css_string = css_string.replace("button", "QPushButton")
-        css_string = css_string.replace("input", "QLineEdit")
-        css_string = css_string.replace("textarea", "QPlainTextEdit")
-        css_string = css_string.replace("select", "QComboBox")
-        css_string = css_string.replace("dropdown", "QComboBox")
-        css_string = css_string.replace("checkbox", "QCheckBox")
-        css_string = css_string.replace("slider", "QSlider")
-        
-        # Translate all text/image tags to QLabel
-        css_string = css_string.replace("text", "QLabel")
-        css_string = css_string.replace("img", "QLabel")
-        css_string = css_string.replace("h1", "QLabel")
-        css_string = css_string.replace("p", "QLabel")
-        css_string = css_string.replace("span", "QLabel")
-        css_string = css_string.replace("option", "QAbstractItemView")
-        css_string = css_string.replace("video", "QVideoWidget")
-        '''
 
         # WEB TO QT CSS TRANSLATOR
         css_string = css_string.replace("body", "QMainWindow, QWidget#central_widget")
@@ -453,34 +415,6 @@ def set_theme(css_string):
     """
     global _pending_theme  # <--- Bring in the buffer
 
-    '''
-    # WEB TO QT CSS TRANSLATOR 
-    css_string = css_string.replace("body", "QMainWindow, QWidget#central_widget")
-    css_string = css_string.replace("font-color", "color")
-    
-    # Translate compound words FIRST
-    css_string = css_string.replace("scroll_div", "QScrollArea")
-    
-    # Translate base tags
-    css_string = css_string.replace("div", "QWidget")
-    css_string = css_string.replace("button", "QPushButton")
-    css_string = css_string.replace("input", "QLineEdit")
-    css_string = css_string.replace("textarea", "QPlainTextEdit")
-    css_string = css_string.replace("select", "QComboBox")
-    css_string = css_string.replace("dropdown", "QComboBox")
-    css_string = css_string.replace("checkbox", "QCheckBox")
-    css_string = css_string.replace("slider", "QSlider")
-    
-    # Translate all text/image tags to QLabel
-    css_string = css_string.replace("text", "QLabel")
-    css_string = css_string.replace("img", "QLabel")
-    css_string = css_string.replace("h1", "QLabel")
-    css_string = css_string.replace("p", "QLabel")
-    css_string = css_string.replace("span", "QLabel")
-    css_string = css_string.replace("option", "QAbstractItemView")
-    css_string = css_string.replace("video", "QVideoWidget")
-    '''
-
     # WEB TO QT CSS TRANSLATOR
     css_string = css_string.replace("body", "QMainWindow, QWidget#central_widget")
     css_string = css_string.replace("font-color", "color")
@@ -488,7 +422,7 @@ def set_theme(css_string):
     # Translate compound words FIRST
     css_string = re.sub(r'\bscroll_div\b', 'QScrollArea', css_string)
     
-    # Translate base tags using \b (word boundaries) so it doesn't break CSS properties!
+    # Translate base tags using \b (word boundaries) so it doesn't break CSS properties
     css_string = re.sub(r'\bdiv\b', 'QWidget', css_string)
     css_string = re.sub(r'\bbutton\b', 'QPushButton', css_string)
     css_string = re.sub(r'\binput\b', 'QLineEdit', css_string)
