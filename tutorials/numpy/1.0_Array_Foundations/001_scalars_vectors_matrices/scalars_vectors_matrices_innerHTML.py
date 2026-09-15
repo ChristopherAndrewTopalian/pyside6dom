@@ -1,4 +1,4 @@
-# scalars_vectors_matrices.py
+# scalars_vectors_matrices_innerHTML.py
 
 import numpy as np
 from pyside6dom import *

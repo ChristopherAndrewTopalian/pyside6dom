@@ -1,4 +1,4 @@
-# PySide6DOM v0.3.1
+# PySide6DOM v0.3.2
 **Bring the simplicity of the Web DOM to Python PySide6 Desktop Applications.**
 
 # Installation
@@ -11,7 +11,7 @@ pip install pyside6dom
 > pip install --upgrade pyside6dom
 
 ## PySide6DOM Tutorials:
-## [Tutorials](https://github.com/ChristopherAndrewTopalian/pyside6dom/tree/main/tutorials)
+> ## [Tutorials](https://github.com/ChristopherAndrewTopalian/pyside6dom/tree/main/tutorials)
 
 ---
 
@@ -279,7 +279,6 @@ A pure, web-style Document Object Model (DOM) interface for building PySide6 des
 ### Installation
 ```bash
 pip install pyside6dom
-
 ```
 
 ---
