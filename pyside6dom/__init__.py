@@ -97,6 +97,7 @@ class DOMElement:
         if hasattr(self.raw, "text"): return self.raw.text()
         return ""
 
+    '''
     @innerHTML.setter
     def innerHTML(self, value):
         if hasattr(self.raw, "setText"):
@@ -104,6 +105,32 @@ class DOMElement:
             if isinstance(self.raw, QLabel):
                 self.raw.setTextFormat(Qt.TextFormat.RichText)
             self.raw.setText(str(value))
+    '''
+
+    @innerHTML.setter
+    def innerHTML(self, value):
+        if hasattr(self.raw, "setText"):
+            if isinstance(self.raw, QLabel):
+                # Force the QLabel to render as Rich HTML
+                self.raw.setTextFormat(Qt.TextFormat.RichText)
+                
+                html_str = str(value)
+                
+                # THE MAGIC WEB FIX: 
+                # If they pass a table (like from Pandas) but no styles, make it beautiful automatically
+                if "<table" in html_str and "<style>" not in html_str:
+                    default_table_css = """
+                    <style>
+                        table { border-collapse: collapse; margin-top: 10px; }
+                        th, td { padding: 6px 12px; border: 1px solid #777; }
+                        th { background-color: #333333; color: #00ffcc; font-weight: bold; }
+                    </style>
+                    """
+                    html_str = default_table_css + html_str
+                    
+                self.raw.setText(html_str)
+            else:
+                self.raw.setText(str(value))
 
     @property
     def value(self):
