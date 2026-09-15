@@ -1,19 +1,35 @@
-# one_dimensional_array.py
+# read_csv_len.py
 
-import numpy as np
+import pandas as pd
 from pyside6dom import *
 
-init_window("One Dimensional Array", 400, 300)
+theData = pd.read_csv('data.csv')
 
-# We make a one-dimensional array
-our_array = np.array([10, 17, 41, 19, 16, 8])
+init_window('Read CSV len', 700, 400)
 
-# Display it
-array_txt = ce('text')
-array_txt.textContent = f"Our 1D Array:\n{our_array}"
-ba(array_txt)
+how_many_txt = ce('text')
+how_many_txt.textContent = f"{len(theData)} people"
+ba(how_many_txt)
+
+output_text = ce('text')
+output_text.innerHTML = theData.to_html(index=False, border=1)
+ba(output_text)
+
+print(f"{len(theData)} people")
+print(theData.to_string())
 
 run_app()
+
+####
+
+'''
+4 people
+             Name  Score
+0         Tabitha  98
+1            Jane  95
+2        Jennifer  90
+3  Alison, Martin  89
+'''
 
 ####
 
