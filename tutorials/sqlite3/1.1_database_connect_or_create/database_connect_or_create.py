@@ -65,9 +65,24 @@ cursor.fetchall() - Grabs all remaining matching rows at once as a list.
 cursor.fetchmany(10) - Grabs the next 10 rows (ideal for streaming chunks of data without overloading memory).
 '''
 
+####
+
 # Dedicated to God the Father
-# All Rights Reserved Christopher Andrew Topalian Copyright 2000-2026
-# https://github.com/ChristopherAndrewTopalian
-# https://github.com/ChristopherTopalian
-# https://sites.google.com/view/CollegeOfScripting
+# (c) Copyright 2026 Christopher Andrew Topalian
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# GitHub: https://github.com/ChristopherAndrewTopalian/pyside6dom
+#
+# PyPI: https://pypi.org/project/pyside6dom/
+#
+# GitHub: https://github.com/ChristopherAndrewTopalian
+#
+# GitHub: https://github.com/ChristopherTopalian
+#
+# Google Sites: https://sites.google.com/view/CollegeOfScripting
 
