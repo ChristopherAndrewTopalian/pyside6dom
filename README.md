@@ -1,4 +1,4 @@
-# PySide6DOM v0.4.0
+# PySide6DOM v0.4.1
 **Bring the simplicity of the Web DOM to Python PySide6 Desktop Applications.**
 
 # Installation
@@ -18,6 +18,30 @@ pip install pyside6dom
 **PySide6DOM** bridges the gap between web development and systems programming. It wraps the raw power of the PySide6 (C++/Qt) rendering engine inside the familiar, intuitive Document Object Model (DOM) paradigm used by JavaScript and HTML.
 
 If you know how to build a web page using `createElement (ce)`, `getElementById (ge)`, and `append (ba)`, you already know how to build high-performance, standalone Python desktop applications.
+
+---
+
+# Notice how it looks very similar to JavaScript DOM scripting!
+
+```python
+# styling_text.py
+
+from pyside6dom import *
+
+init_window('Our App', 700, 600)
+
+ourTitle = ce('text')
+ourTitle.textContent = 'Hi Everyone'
+ourTitle.style.fontFamily = 'Arial'
+ourTitle.style.fontSize = '70px'
+ourTitle.style.fontWeight = 'bold'
+ourTitle.style.color = 'rgb(255, 255, 255)'
+ba(ourTitle)
+
+run_app()
+```
+
+---
 
 ### 🌟 Why Use PySide6DOM?
 
