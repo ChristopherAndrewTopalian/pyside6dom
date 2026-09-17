@@ -89,6 +89,12 @@ class DOMStyle:
 
         # Apply it to the underlying PySide6 widget using your .raw property!
         self._element.raw.setStyleSheet(css_string)
+
+    # THE FIX FOR BACKWARD COMPATIBILITY
+    def __call__(self, css_string):
+        # When someone types element.style("..."), this catches the string 
+        # and forwards it to the method you renamed to set_style!
+        self._element.set_style(css_string)
 ##----------------------------------------
 
 # ========================================== #
