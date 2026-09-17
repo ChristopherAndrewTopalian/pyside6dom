@@ -64,6 +64,33 @@ _root_window = None
 _main_container = None
 _pending_theme = None
 
+##----------------------------------------
+# DOMStyle allows element.style.color = 'white'
+##----------------------------------------
+class DOMStyle:
+    def __init__(self, element):
+        # Store a reference to the DOMElement wrapper
+        object.__setattr__(self, '_element', element)
+        object.__setattr__(self, '_styles', {})
+
+    def __setattr__(self, key, value):
+        # Convert JavaScript camelCase to CSS kebab-case 
+        # (e.g., backgroundColor -> background-color)
+        css_property = re.sub(r'(?<!^)(=[A-Z])', r'-\1', key).lower()
+        css_property = ''.join(['-' + c.lower() if c.isupper() else c for c in key])
+
+        # Store the new style in our dictionary
+        self._styles[css_property] = value
+
+        # Build the complete CSS string from all stored styles
+        css_string = ""
+        for prop, val in self._styles.items():
+            css_string += f"{prop}: {val}; "
+
+        # Apply it to the underlying PySide6 widget using your .raw property!
+        self._element.raw.setStyleSheet(css_string)
+##----------------------------------------
+
 # ========================================== #
 #            DOM ELEMENT WRAPPER             #
 # ========================================== 
@@ -74,6 +101,13 @@ class DOMElement:
         self.raw = qt_widget
         self._id = ""
         self._children = []
+        # Instantiate the style engine in the background
+        self._dom_style = DOMStyle(self)
+
+    # This intercepts `.style` so Qt doesn't crash
+    @property
+    def style(self):
+        return self._dom_style
 
     @property
     def id(self): return self._id
@@ -247,7 +281,7 @@ class DOMElement:
             self.raw.currentTextChanged.connect(lambda text: callback_func(text))
 
 
-    def style(self, css_string):
+    def set_style(self, css_string):
         # Run all the web-to-Qt translations first
 
         # WEB TO QT CSS TRANSLATOR

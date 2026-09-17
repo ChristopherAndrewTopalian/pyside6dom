@@ -1,4 +1,4 @@
-# PySide6DOM v0.3.8
+# PySide6DOM v0.3.9
 **Bring the simplicity of the Web DOM to Python PySide6 Desktop Applications.**
 
 # Installation
@@ -116,6 +116,9 @@ run_app()
 *All elements support the following properties:*
 * `.id`: Unique string identifier for retrieval with `ge(id)`.
 * `.style("css_string")`: Inline CSS styling targeting the specific element.
+
+We can now say:  
+element.style.color = 'rgb(0, 255, 255)'
 
 ---
 
