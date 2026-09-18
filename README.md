@@ -15,7 +15,7 @@ pip install pyside6dom
 
 ---
 
-**PySide6DOM** bridges the gap between web development and systems programming. It wraps the raw power of the PySide6 (C++/Qt) rendering engine inside the familiar, intuitive Document Object Model (DOM) paradigm used by JavaScript and HTML.
+**PySide6DOM** bridges the gap between web development and systems programming. It wraps the raw power of the PySide6 (C++/Qt) rendering engine inside the familiar, intuitive Document Object Model (DOM) paradigm used by JavaScript and HTML.  
 
 If you know how to build a web page using `createElement (ce)`, `getElementById (ge)`, and `append (ba)`, you already know how to build high-performance, standalone Python desktop applications.
 
