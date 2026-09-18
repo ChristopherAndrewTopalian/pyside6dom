@@ -270,48 +270,6 @@ class DOMElement:
             # We use a lambda to absorb Qt's sneaky boolean, then call the function cleanly
             self.raw.clicked.connect(lambda checked=False: callback_func())
 
-    '''
-    @property
-    def oninput(self): return None
-
-    @oninput.setter
-    def oninput(self, callback_func):
-        if isinstance(self.raw, QLineEdit):
-            self.raw.textChanged.connect(lambda text: callback_func(text))
-        elif isinstance(self.raw, QPlainTextEdit):
-            self.raw.textChanged.connect(lambda: callback_func(self.raw.toPlainText()))
-        elif isinstance(self.raw, QSlider):
-            self.raw.valueChanged.connect(lambda val: callback_func(val / 10.0))
-        elif isinstance(self.raw, QCheckBox):
-            self.raw.toggled.connect(lambda val: callback_func(val))
-        elif isinstance(self.raw, QComboBox):
-            self.raw.currentTextChanged.connect(lambda text: callback_func(text))
-    '''
-
-    '''
-    @property
-    def oninput(self):
-        return getattr(self, '_oninput', None)
-
-    @oninput.setter
-    def oninput(self, callback_func):
-        self._oninput = callback_func
-        expected_args = callback_func.__code__.co_argcount
-        
-        # Check if the element is a Text Input
-        if hasattr(self.raw, 'textChanged'):
-            if expected_args == 0:
-                self.raw.textChanged.connect(lambda text: callback_func())
-            else:
-                self.raw.textChanged.connect(lambda text: callback_func(text))
-
-        # Check if the element is a Slider
-        elif hasattr(self.raw, 'valueChanged'):
-            if expected_args == 0:
-                self.raw.valueChanged.connect(lambda val: callback_func())
-            else:
-                self.raw.valueChanged.connect(lambda val: callback_func(val))
-    '''
 
     @property
     def oninput(self):
