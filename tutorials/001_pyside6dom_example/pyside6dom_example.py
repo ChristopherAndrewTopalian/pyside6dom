@@ -1,12 +1,9 @@
 # pyside6dom_example.py
 
-# after we have installed pyside6dom using
-# pip install pyside6dom
-
 from pyside6dom import *
 
 # Initialize the Application
-init_window("PySide6DOM Feature Showcase",450, 650)
+init_window("PySide6DOM Feature Showcase", 450, 650)
 
 # Worldwide Header
 header = ce("h1")
@@ -28,8 +25,9 @@ typing_echo.textContent = "Awaiting pilot identification..."
 typing_echo.style("color: #aaaaaa; font-style: italic; margin-bottom: 20px;")
 ba(typing_echo)
 
-def on_type(text):
-    ge("echo_label").textContent = f"Live typing: {text}"
+# JS-Style zero-argument function
+def on_type():
+    ge("echo_label").textContent = f"Live typing: {pilot_input.value}"
 pilot_input.oninput = on_type
 
 # Slider with Real-Time 'oninput' Event
@@ -41,10 +39,10 @@ ba(throttle_label)
 
 throttle_slider = ce("slider")
 throttle_slider.id = "throttle"
-# The slider scales 0-100 under the hood based on our ce() setup
-def on_slide(val):
-    # val comes in as a float from our parser, we multiply back for display
-    ge("throttle_display").textContent = f"Engine Throttle: {int(val * 10)}%"
+
+# JS-Style zero-argument function
+def on_slide():
+    ge("throttle_display").textContent = f"Engine Throttle: {int(throttle_slider.value * 10)}%"
 throttle_slider.oninput = on_slide
 ba(throttle_slider)
 
@@ -58,17 +56,17 @@ submit_btn = ce("button")
 submit_btn.textContent = "ENGAGE THRUSTERS"
 submit_btn.style("""
     button { 
-        background-color: #007acc; 
+        background-color: rgb(0, 0, 0); 
         color: white; 
         border-radius: 6px; 
         padding: 12px; 
         font-size: 16px; 
         font-weight: bold;
     }
-    button:hover { background-color: #0099ff; }
-    button:pressed { background-color: #005c99; }
+    button:hover { background-color: rgb(0, 180, 180); }
+    button:pressed { background-color: rgb(255, 255, 255); }
 """)
-ba(submit_btn, action_panel) # Appended to action_panel, NOT the main window
+ba(submit_btn, action_panel) 
 
 # Scrolling Log Window (scroll_div) for dynamic output
 log_title = ce("h1")
@@ -82,7 +80,7 @@ ba(log_window)
 
 # Button Click Event (Gathering data via 'ge' and appending to scroll_div)
 def handle_engage():
-    # Grab values from the registry
+    # Grab values from the registry exactly like DOM manipulation
     pilot = ge("pilot_name").value or "Unknown Pilot"
     throttle = ge("throttle").value * 10
 

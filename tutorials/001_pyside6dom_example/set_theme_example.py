@@ -1,5 +1,7 @@
 # easy.py
 
+# easy.py
+
 from pyside6dom import *
 
 set_theme("""
@@ -45,8 +47,9 @@ typing_echo.textContent = "Awaiting pilot identification..."
 typing_echo.style("color: #aaaaaa; font-style: italic; margin-bottom: 20px;")
 ba(typing_echo)
 
-def on_type(text):
-    ge("echo_label").textContent = f"Live typing: {text}"
+# JS-Style zero-argument function
+def on_type():
+    ge("echo_label").textContent = f"Live typing: {pilot_input.value}"
 pilot_input.oninput = on_type
 
 # Slider with Real-Time 'oninput' Event
@@ -58,10 +61,11 @@ ba(throttle_label)
 
 throttle_slider = ce("slider")
 throttle_slider.id = "throttle"
-# The slider scales 0-100 under the hood based on our ce() setup
-def on_slide(val):
-    # val comes in as a float from our parser, we multiply back for display
-    ge("throttle_display").textContent = f"Engine Throttle: {int(val * 10)}%"
+
+# JS-Style zero-argument function
+def on_slide():
+    # val comes in as a float natively, we multiply back for display
+    ge("throttle_display").textContent = f"Engine Throttle: {int(throttle_slider.value * 10)}%"
 throttle_slider.oninput = on_slide
 ba(throttle_slider)
 
