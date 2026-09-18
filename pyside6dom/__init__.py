@@ -288,6 +288,7 @@ class DOMElement:
             self.raw.currentTextChanged.connect(lambda text: callback_func(text))
     '''
 
+    '''
     @property
     def oninput(self):
         return getattr(self, '_oninput', None)
@@ -310,6 +311,36 @@ class DOMElement:
                 self.raw.valueChanged.connect(lambda val: callback_func())
             else:
                 self.raw.valueChanged.connect(lambda val: callback_func(val))
+    '''
+
+    @property
+    def oninput(self):
+        return getattr(self, '_oninput', None)
+
+    @oninput.setter
+    def oninput(self, callback_func):
+        self._oninput = callback_func
+        expected_args = callback_func.__code__.co_argcount
+        
+        # A smart wrapper that absorbs any number of arguments (0, 1, or more)
+        def signal_router(*args):
+            if expected_args == 0:
+                callback_func()
+            else:
+                # If PySide6 emitted an argument (like a normal input or slider)
+                if len(args) > 0:
+                    callback_func(args[0])
+                # If PySide6 emitted NOTHING (like a textarea), grab the value manually
+                else:
+                    callback_func(self.value)
+
+        # Connect Inputs & TextAreas
+        if hasattr(self.raw, 'textChanged'):
+            self.raw.textChanged.connect(signal_router)
+                
+        # Connect Sliders
+        elif hasattr(self.raw, 'valueChanged'):
+            self.raw.valueChanged.connect(signal_router)
 
     def set_style(self, css_string):
         # Run all the web-to-Qt translations first

@@ -1,4 +1,4 @@
-# pyside6dom_example.py
+# textarea.py
 
 from pyside6dom import *
 
@@ -9,22 +9,23 @@ theTitle.textContent = "Notes"
 theTitle.style("color: rgb(0, 255, 255); margin-bottom: 10px;")
 ba(theTitle)
 
-# The new textarea tag
 note_pad = ce('textarea')
 note_pad.placeholder = "Start typing your notes here...\n(Press Enter for a new line)"
 note_pad.style("background-color: rgb(26, 26, 26); color: rgb(0, 255, 255); font-family: Arial; font-size: 24px;")
+
+# Zero-argument function exactly like vanilla JS
+def update_count():
+    # We pull the text length directly from the element's value
+    char_count.textContent = f"Characters: {len(note_pad.value)}"
+
+# Grouped right with the element creation
+note_pad.oninput = update_count
 ba(note_pad)
 
 char_count = ce('text')
 char_count.textContent = "Characters: 0"
 char_count.style("color: rgb(130, 130, 130); text-align: right;")
 ba(char_count)
-
-# Real-time event mapping
-def update_count(text):
-    char_count.textContent = f"Characters: {len(text)}"
-
-note_pad.oninput = update_count
 
 run_app()
 

@@ -1,4 +1,4 @@
-# PySide6DOM v0.4.2
+# PySide6DOM v0.4.3
 **Bring the simplicity of the Web DOM to Python PySide6 Desktop Applications.**
 
 # Installation
@@ -795,42 +795,6 @@ update_clock()
 
 # Just like JavaScript
 setInterval(update_clock, 1000)
-
-run_app()
-```
-
----
-
-## textarea for Notes
-
-```python
-# pyside6dom_example.py
-
-from pyside6dom import *
-
-init_window("Notepad App", 500, 400)
-
-theTitle = ce('h1')
-theTitle.textContent = "Notes"
-theTitle.style("color: rgb(0, 255, 255); margin-bottom: 10px;")
-ba(theTitle)
-
-# The new textarea tag
-note_pad = ce('textarea')
-note_pad.placeholder = "Start typing your notes here...\n(Press Enter for a new line)"
-note_pad.style("background-color: rgb(26, 26, 26); color: rgb(0, 255, 255); font-family: Arial; font-size: 24px;")
-ba(note_pad)
-
-char_count = ce('text')
-char_count.textContent = "Characters: 0"
-char_count.style("color: rgb(130, 130, 130); text-align: right;")
-ba(char_count)
-
-# Real-time event mapping
-def update_count(text):
-    char_count.textContent = f"Characters: {len(text)}"
-
-note_pad.oninput = update_count
 
 run_app()
 ```
