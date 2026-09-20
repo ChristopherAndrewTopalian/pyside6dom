@@ -6,7 +6,7 @@ import re
 from PySide6.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QPushButton, 
     QLineEdit, QLabel, QSlider, QScrollArea, QCheckBox, 
-    QComboBox, QSizePolicy, QPlainTextEdit
+    QComboBox, QSizePolicy, QPlainTextEdit, QTextBrowser
 )
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QPixmap
@@ -328,6 +328,7 @@ class DOMElement:
         css_string = re.sub(r'\bspan\b', 'QLabel', css_string)
         css_string = re.sub(r'\boption\b', 'QAbstractItemView', css_string)
         css_string = re.sub(r'\bvideo\b', 'QVideoWidget', css_string)
+        css_string = re.sub(r'\btable_view\b', 'QTextBrowser', css_string)
 
         # Advanced CSS with brackets (e.g., "button:hover { color: red; }")
         # because of the replacements above, "button:hover" is now "QPushButton:hover"
@@ -364,11 +365,44 @@ def ce(tag):
         w = QPushButton()
         w.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
         return DOMElement(tag, w)
-        
-    elif tag in ("text", "p", "span", "h1"):
+
+    elif tag in ("h1", "h2", "h3", "h4", "h5", "h6"):
         w = QLabel()
         w.setWordWrap(True)
-        # FIX: Never squish text vertically
+        w.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
+        
+        elem = DOMElement(tag, w)
+        
+        # HTML browser-standard font sizes (based on a 16px root)
+        heading_sizes = {
+            "h1": "32px",  # 2.00em
+            "h2": "24px",  # 1.50em
+            "h3": "19px",  # 1.17em
+            "h4": "16px",  # 1.00em
+            "h5": "13px",  # 0.83em
+            "h6": "11px"   # 0.67em
+        }
+
+        # Apply the default native HTML styling
+        elem.style.fontWeight = 'bold'
+        elem.style.fontSize = heading_sizes[tag]
+        return elem
+
+    elif tag == "p":
+        w = QLabel()
+        w.setWordWrap(True)  # Paragraphs must always wrap
+        w.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
+
+        elem = DOMElement(tag, w)
+
+        # HTML browser-standard paragraph size
+        elem.style.fontSize = '16px'
+        elem.style.fontWeight = 'normal'
+        return elem
+
+    elif tag in ("text", "span", "label"):
+        w = QLabel()
+        w.setWordWrap(False) # Inline data strings do not wrap; they trigger horizontal scrollbars!
         w.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
         return DOMElement(tag, w)
         
@@ -406,22 +440,33 @@ def ce(tag):
         elem = DOMElement(tag, w)
         elem.layout = layout
         return elem
-        
+
     elif tag == "scroll_div":
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
-        # FIX: Kill the horizontal scrollbar
-        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        
+
+        # Act like HTML 'overflow: auto'
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+
         content = QWidget()
         layout = QVBoxLayout(content)
         layout.setAlignment(Qt.AlignmentFlag.AlignTop)
         layout.setSpacing(4)
-        
+
+        # Zero out margins so the layout doesn't trigger a phantom horizontal scrollbar
+        layout.setContentsMargins(0, 0, 0, 0)
+
         scroll.setWidget(content)
         elem = DOMElement(tag, scroll)
         elem.layout = layout
         return elem
+
+    elif tag == "table_view":
+        w = QTextBrowser()
+        # This tells the browser NOT to squish the table, forcing the horizontal scrollbar!
+        w.setLineWrapMode(QTextBrowser.LineWrapMode.NoWrap) 
+        return DOMElement(tag, w)
 
     elif tag == "img":
         w = QLabel()
@@ -493,6 +538,7 @@ def set_theme(css_string):
     css_string = re.sub(r'\bspan\b', 'QLabel', css_string)
     css_string = re.sub(r'\boption\b', 'QAbstractItemView', css_string)
     css_string = re.sub(r'\bvideo\b', 'QVideoWidget', css_string)
+    css_string = re.sub(r'\btable_view\b', 'QTextBrowser', css_string)
     
     # Try to apply immediately. If it fails, save it for later!
     app = QApplication.instance()

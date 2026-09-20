@@ -1,4 +1,15 @@
+# earthquake_realtime_data_optimized_local_testing.py
+
 # earthquake_realtime_data_optimized.py
+
+import sys
+import os
+
+# Local Testing: Go exactly THREE levels up to the root
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(os.path.dirname(os.path.dirname(current_dir))) 
+sys.path.insert(0, project_root)
+# --------------------------
 
 import pandas as pd
 from pyside6dom import *
