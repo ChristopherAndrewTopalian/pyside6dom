@@ -140,14 +140,13 @@ class DOMElement:
     @innerHTML.setter
     def innerHTML(self, value):
         if hasattr(self.raw, "setText"):
-            if isinstance(self.raw, QLabel):
-                # Force the QLabel to render as Rich HTML
-                self.raw.setTextFormat(Qt.TextFormat.RichText)
-                
+            # Update this line to include QTextBrowser!
+            if isinstance(self.raw, (QLabel, QTextBrowser)):
+                if isinstance(self.raw, QLabel):
+                    self.raw.setTextFormat(Qt.TextFormat.RichText)
+
                 html_str = str(value)
-                
-                # THE MAGIC WEB FIX: 
-                # If they pass a table (like from Pandas) but no styles, make it beautiful automatically
+
                 if "<table" in html_str and "<style>" not in html_str:
                     default_table_css = """
                     <style>
@@ -157,7 +156,7 @@ class DOMElement:
                     </style>
                     """
                     html_str = default_table_css + html_str
-                    
+
                 self.raw.setText(html_str)
             else:
                 self.raw.setText(str(value))
