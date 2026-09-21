@@ -1,12 +1,19 @@
-# simple.py
+# icon_local_testing.py
+
+import sys
+import os
+
+# Local Testing
+# This grabs the folder the script is in, then goes up one or two levels to the root.
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(os.path.dirname(current_dir)) 
+sys.path.insert(0, project_root)
+# --------------------------
 
 from pyside6dom import *
 
-init_window('Our App', 700, 500)
-
-howdy_txt = ce('text')
-howdy_txt.textContent = 'Hi Everyone'
-ba(howdy_txt)
+# Just drop your image path in as the 4th argument
+init_window('Our App', 900, 700, '001.png')
 
 run_app()
 

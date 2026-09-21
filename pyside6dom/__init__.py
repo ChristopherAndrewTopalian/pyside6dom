@@ -9,7 +9,7 @@ from PySide6.QtWidgets import (
     QComboBox, QSizePolicy, QPlainTextEdit, QTextBrowser
 )
 from PySide6.QtCore import Qt, QTimer
-from PySide6.QtGui import QPixmap
+from PySide6.QtGui import QPixmap, QIcon
 from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput
 from PySide6.QtMultimediaWidgets import QVideoWidget
 from PySide6.QtCore import QUrl
@@ -551,6 +551,7 @@ set_global_style = set_theme
 
 ########
 
+'''
 def init_window(title="App Window", width=420, height=500):
     global _app_instance, _root_window, _main_container, _pending_theme
     
@@ -566,6 +567,39 @@ def init_window(title="App Window", width=420, height=500):
     _root_window = QWidget()
     _root_window.setWindowTitle(title)
     _root_window.resize(width, height)
+    
+    _main_layout = QVBoxLayout(_root_window)
+    _main_container = ce("scroll_div")
+    _main_layout.addWidget(_main_container.raw)
+'''
+
+def init_window(title="App Window", width=420, height=500, icon_path=None):
+    global _app_instance, _root_window, _main_container, _pending_theme
+    
+    # THE CROSS-PLATFORM TASKBAR FIX
+    # os.name == 'nt' ensures this ONLY runs on Windows.
+    # Mac ('posix') and Linux ('posix') will completely ignore this block.
+    if os.name == 'nt':
+        import ctypes
+        myappid = 'CollegeOfScripting.PySide6DOM.App.1' 
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+    
+    # Safely get or create the app
+    _app_instance = QApplication.instance() or QApplication(sys.argv)
+    _app_instance.setStyle("Fusion")
+
+    # Catch the pending theme
+    if _pending_theme:
+        _app_instance.setStyleSheet(_pending_theme)
+        _pending_theme = None
+    
+    _root_window = QWidget()
+    _root_window.setWindowTitle(title)
+    _root_window.resize(width, height)
+    
+    # APPLY THE ICON (This works natively on all platforms)
+    if icon_path and os.path.exists(icon_path):
+        _app_instance.setWindowIcon(QIcon(icon_path))
     
     _main_layout = QVBoxLayout(_root_window)
     _main_container = ce("scroll_div")

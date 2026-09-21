@@ -1,4 +1,4 @@
-# PySide6DOM v0.4.8
+# PySide6DOM v0.4.9
 **Bring the simplicity of the Web DOM to Python PySide6 Desktop Applications.**
 
 # Installation
@@ -92,7 +92,7 @@ run_app()
 ## 📖 API Reference
 
 ### Core Engine Functions
-* `init_window(title, width, height)`: Initializes the main window and layout.
+* `init_window(title, width, height, icon)`: Initializes the main window and layout with icon for title bar and tray.
 * `run_app()`: Starts the Qt application event loop.
 * `ce(tag)`: *(`document.createElement`)* Creates a native widget wrapped as a DOMElement.
 * `ge(id)`: *(`document.getElementById`)* Retrieves a previously created element by its `.id`.
