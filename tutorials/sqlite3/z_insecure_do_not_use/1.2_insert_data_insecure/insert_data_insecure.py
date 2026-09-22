@@ -1,39 +1,33 @@
 # insert_data.py
 
 import sqlite3
+
 from pyside6dom import *
 
 conn = sqlite3.connect('military_warehouse.db')
 cursor = conn.cursor()
 
-# The SQL command using the '?' Security Shield placeholders
+# The SQL command to INSERT data
 sql_insert = """
 INSERT INTO Inventory (part_name, quantity, price) 
-VALUES (?, ?, ?)
-"""
-
-# The data safely isolated in a standard Python list
-military_items = [
+VALUES 
     ('Night Vision Goggles', 45, 2500.00),
     ('Kevlar Vest', 150, 450.50),
-    ('Field Medical Kit', 300, 75.25)
-]
+    ('Field Medical Kit', 300, 75.25);
+"""
 
-# executemany handles the secure merge and loops through the list
-cursor.executemany(sql_insert, military_items)
-
+cursor.execute(sql_insert)
 conn.commit() # Always commit when making changes!
 conn.close()
 
-print("Military Warehouse data securely inserted!")
+print("Military Warehouse data inserted successfully!")
 
 ####
 
 init_window("Insert Data", 700, 500)
 
-status_message = ce('h2')
-status_message.innerHTML = 'Data Inserted Securely'
-status_message.style.color = '#00ffcc'
+status_message = ce('text')
+status_message.textContent = 'Data Inserted'
 ba(status_message)
 
 run_app()

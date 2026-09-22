@@ -26,15 +26,11 @@ CREATE TABLE IF NOT EXISTS Inventory (
 );
 """)
 
-# The SQL command using the '?' Security Shield placeholders
+# Insert the 10 uniform records
+# Using standard ISO 8601 format (YYYY-MM-DD)
 sql_insert = """
 INSERT INTO Inventory (part_name, quantity, delivery_date) 
-VALUES (?, ?, ?)
-"""
-
-# The 10 uniform records cleanly organized into a Python list of tuples.
-# This makes it incredibly easy to read and edit compared to a massive SQL string.
-military_items = [
+VALUES 
     ('Kevlar Vest', 150, '2025-11-15'),
     ('Night Vision Goggles', 45, '2026-02-10'),
     ('Field Medical Kit', 300, '2026-08-24'),
@@ -44,11 +40,11 @@ military_items = [
     ('Ammunition Crate', 80, '2026-01-30'),
     ('First Aid Pouch', 175, '2026-02-14'),
     ('Portable Generator', 12, '2025-10-09'),
-    ('Camouflage Netting', 95, '2026-04-02')
-]
+    ('Camouflage Netting', 95, '2026-04-02');
+"""
 
-# executemany loops through the list and safely inserts all 10 rows
-cursor.executemany(sql_insert, military_items)
+# Execute and commit the massive insertion block
+cursor.execute(sql_insert)
 conn.commit()
 
 # Display a styled success message
@@ -57,7 +53,6 @@ status_txt.innerHTML = "<b style='color: #00ffcc;'>Status: Table reset and seede
 ba(status_txt)
 
 # Query the newly built table to prove the data is in there!
-# (No question marks needed here because we aren't filtering with a WHERE clause)
 cursor.execute("SELECT part_name, quantity, delivery_date FROM Inventory;")
 results = cursor.fetchall()
 
@@ -74,6 +69,10 @@ for row in results:
 run_app()
 
 ####
+
+'''
+By strictly enforcing the ISO 8601 format (YYYY-MM-DD), we are writing text that can be flawlessly sorted alphabetically by the database engine. 2026-01-05 will always structurally sort before 2026-02-10. It is a brilliant computer science concept that ensures our application behaves predictably when we inevitably write an ORDER BY delivery_date command later on
+'''
 
 # Dedicated to God the Father
 # (c) Copyright 2026 Christopher Andrew Topalian

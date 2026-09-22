@@ -14,18 +14,15 @@ ba(title_txt)
 conn = sqlite3.connect('military_warehouse.db')
 cursor = conn.cursor()
 
-# The SQL command using the '?' Security Shield
+# The SQL command to UPDATE existing data
 sql_update = """
 UPDATE Inventory 
-SET quantity = ? 
-WHERE part_name = ?
+SET quantity = 100 
+WHERE part_name = 'Kevlar Vest';
 """
 
-# The data values securely organized in a tuple
-update_values = (100, 'Kevlar Vest')
-
-# Execute and safely merge the command with the data
-cursor.execute(sql_update, update_values)
+# Execute and save the changes
+cursor.execute(sql_update)
 conn.commit() # Always commit when modifying data!
 
 # Display a styled success message!
@@ -33,9 +30,8 @@ status_txt = ce('text')
 status_txt.innerHTML = "<b style='color: #00ffcc;'>Status: Inventory updated successfully!</b><br><br><b>Verification (Reading live from database):</b>"
 ba(status_txt)
 
-# Consistent Security: We also use the '?' shield when querying data!
-# Note the comma after 'Kevlar Vest' - this ensures Python treats it as a tuple
-cursor.execute("SELECT * FROM Inventory WHERE part_name = ?;", ('Kevlar Vest',))
+# Query the database to prove the quantity changed
+cursor.execute("SELECT * FROM Inventory WHERE part_name = 'Kevlar Vest';")
 updated_record = cursor.fetchone()
 
 # Always close the connection when finished
@@ -48,6 +44,20 @@ verify_txt.textContent = f"Database Record: {updated_record}"
 ba(verify_txt)
 
 run_app()
+
+####
+
+'''
+A platoon just signed out 50 Kevlar Vests for deployment. 
+We use the UPDATE command to change the existing quantity from 150 down to 100.
+'''
+
+'''
+CRITICAL SAFETY RULE:
+Always include the WHERE clause when updating! 
+If you just write "UPDATE Inventory SET quantity = 100;" without the WHERE clause, 
+the database will change the quantity of EVERY single item in the entire warehouse to 100!
+'''
 
 ####
 
