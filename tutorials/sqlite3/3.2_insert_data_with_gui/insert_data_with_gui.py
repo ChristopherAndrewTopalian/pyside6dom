@@ -20,7 +20,6 @@ def refresh_table():
 def save_new_link():
     """Grabs user input, secures it with parameterized queries, and saves it."""
     # Grab the live text typed by the user into the GUI text boxes
-    # (Depending on how pyside6dom maps properties, this might be .value or .raw.text())
     user_date = date_input.value
     user_desc = desc_input.value
     user_link = link_input.value
