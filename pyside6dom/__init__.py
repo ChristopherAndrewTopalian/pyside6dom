@@ -67,6 +67,8 @@ _pending_theme = None
 ##----------------------------------------
 # DOMStyle allows element.style.color = 'white'
 ##----------------------------------------
+
+'''
 class DOMStyle:
     def __init__(self, element):
         # Store a reference to the DOMElement wrapper
@@ -96,6 +98,47 @@ class DOMStyle:
         # and forwards it to the method you renamed to set_style!
         self._element.set_style(css_string)
 ##----------------------------------------
+'''
+
+class DOMStyle:
+    def __init__(self, element):
+        # Store a reference to the DOMElement wrapper
+        object.__setattr__(self, '_element', element)
+        object.__setattr__(self, '_styles', {})
+
+    def __setattr__(self, key, value):
+        # NEW: INTERCEPT ABSOLUTE SIZING
+        # If the script calls element.style.width = '50px'
+        if key in ('width', 'height'):
+            # Strip out "px" or spaces and just get the number
+            val_str = str(value).replace('px', '').strip()
+            try:
+                num = int(float(val_str))
+                if key == 'width':
+                    self._element.width = num  # Triggers raw.setFixedWidth()
+                elif key == 'height':
+                    self._element.height = num # Triggers raw.setFixedHeight()
+            except ValueError:
+                pass # If it's something weird, just ignore and let standard CSS try
+        # --------------------------------------
+
+        # Convert JavaScript camelCase to CSS kebab-case 
+        css_property = re.sub(r'(?<!^)(=[A-Z])', r'-\1', key).lower()
+        css_property = ''.join(['-' + c.lower() if c.isupper() else c for c in key])
+
+        # Store the new style in our dictionary
+        self._styles[css_property] = value
+
+        # Build the complete CSS string from all stored styles
+        css_string = ""
+        for prop, val in self._styles.items():
+            css_string += f"{prop}: {val}; "
+
+        # Apply it to the underlying PySide6 widget
+        self._element.raw.setStyleSheet(css_string)
+
+    def __call__(self, css_string):
+        self._element.set_style(css_string)
 
 # ========================================== #
 #            DOM ELEMENT WRAPPER             #
@@ -329,6 +372,11 @@ class DOMElement:
         css_string = re.sub(r'\bvideo\b', 'QVideoWidget', css_string)
         css_string = re.sub(r'\btable_view\b', 'QTextBrowser', css_string)
 
+        # NEW: STOP QT FROM STRETCHING WIDGETS
+        # Translates "width:" to "max-width:" (but ignores if it is already "max-width")
+        css_string = re.sub(r'(?<!-)\bwidth\s*:', 'max-width:', css_string)
+        css_string = re.sub(r'(?<!-)\bheight\s*:', 'max-height:', css_string)
+
         # Advanced CSS with brackets (e.g., "button:hover { color: red; }")
         # because of the replacements above, "button:hover" is now "QPushButton:hover"
         if "{" in css_string:
@@ -538,6 +586,11 @@ def set_theme(css_string):
     css_string = re.sub(r'\boption\b', 'QAbstractItemView', css_string)
     css_string = re.sub(r'\bvideo\b', 'QVideoWidget', css_string)
     css_string = re.sub(r'\btable_view\b', 'QTextBrowser', css_string)
+
+    # NEW: STOP QT FROM STRETCHING WIDGETS
+    # Translates "width:" to "max-width:" (but ignores if it is already "max-width")
+    css_string = re.sub(r'(?<!-)\bwidth\s*:', 'max-width:', css_string)
+    css_string = re.sub(r'(?<!-)\bheight\s*:', 'max-height:', css_string)
     
     # Try to apply immediately. If it fails, save it for later!
     app = QApplication.instance()
