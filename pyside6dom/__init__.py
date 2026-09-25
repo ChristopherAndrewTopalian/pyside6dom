@@ -68,7 +68,6 @@ _pending_theme = None
 # DOMStyle allows element.style.color = 'white'
 ##----------------------------------------
 
-'''
 class DOMStyle:
     def __init__(self, element):
         # Store a reference to the DOMElement wrapper
@@ -76,44 +75,14 @@ class DOMStyle:
         object.__setattr__(self, '_styles', {})
 
     def __setattr__(self, key, value):
-        # Convert JavaScript camelCase to CSS kebab-case 
-        # (e.g., backgroundColor -> background-color)
-        css_property = re.sub(r'(?<!^)(=[A-Z])', r'-\1', key).lower()
-        css_property = ''.join(['-' + c.lower() if c.isupper() else c for c in key])
-
-        # Store the new style in our dictionary
-        self._styles[css_property] = value
-
-        # Build the complete CSS string from all stored styles
-        css_string = ""
-        for prop, val in self._styles.items():
-            css_string += f"{prop}: {val}; "
-
-        # Apply it to the underlying PySide6 widget using your .raw property!
-        self._element.raw.setStyleSheet(css_string)
-
-    # THE FIX FOR BACKWARD COMPATIBILITY
-    def __call__(self, css_string):
-        # When someone types element.style("..."), this catches the string 
-        # and forwards it to the method you renamed to set_style!
-        self._element.set_style(css_string)
-##----------------------------------------
-'''
-
-class DOMStyle:
-    def __init__(self, element):
-        # Store a reference to the DOMElement wrapper
-        object.__setattr__(self, '_element', element)
-        object.__setattr__(self, '_styles', {})
-
-    def __setattr__(self, key, value):
-        # NEW: ABSOLUTE SIZING
+        # ABSOLUTE SIZING
         if key in ('width', 'height'):
             val_str = str(value).replace('px', '').strip()
             try:
                 num = int(float(val_str))
                 if key == 'width': self._element.width = num 
                 elif key == 'height': self._element.height = num 
+                return
             except ValueError:
                 pass 
                 
@@ -126,9 +95,30 @@ class DOMStyle:
             if hasattr(self._element, 'layout'):
                 if value == 'row':
                     self._element.layout.setDirection(QBoxLayout.Direction.LeftToRight)
+                    # Pack items tightly to the Left and Top (Matches web flex-start)
+                    self._element.layout.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
                 elif value == 'column':
                     self._element.layout.setDirection(QBoxLayout.Direction.TopToBottom)
-            return # Stop here so it doesn't get passed to raw Qt CSS strings
+                    # Pack items tightly to the Top
+                    self._element.layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+            return
+
+        # NEW: FLEXBOX ALIGN ITEMS (Stop Stretching)
+        if key == 'alignItems':
+            if hasattr(self._element, 'layout'):
+                if value in ('flex-start', 'start'):
+                    # Packs items tightly to the left/top (Stops stretching!)
+                    self._element.layout.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
+                elif value == 'center':
+                    # Centers items without stretching
+                    self._element.layout.setAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignTop)
+                elif value in ('flex-end', 'end'):
+                    # Packs to the right
+                    self._element.layout.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTop)
+                elif value == 'stretch':
+                    # Qt's default is to stretch. Sending 0 clears the alignment overrides!
+                    self._element.layout.setAlignment(Qt.AlignmentFlag(0)) 
+            return # Stop here so it doesn't get passed as raw CSS
 
         # Convert JavaScript camelCase to CSS kebab-case 
         css_property = re.sub(r'(?<!^)(=[A-Z])', r'-\1', key).lower()
@@ -506,18 +496,15 @@ def ce(tag):
         scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
 
         content = QWidget()
-        # --- NEW: Use QBoxLayout here instead of QVBoxLayout ---
+        
+        # We keep the QBoxLayout so Flexbox features still work!
         layout = QBoxLayout(QBoxLayout.Direction.TopToBottom, content)
         layout.setAlignment(Qt.AlignmentFlag.AlignTop)
         layout.setSpacing(4)
-
-        # Zero out margins so the layout doesn't trigger a phantom horizontal scrollbar
         layout.setContentsMargins(0, 0, 0, 0)
 
         scroll.setWidget(content)
         elem = DOMElement(tag, scroll)
-        
-        # We bind the layout to the DOMElement so our Flexbox style engine can find it
         elem.layout = layout
         return elem
 
@@ -635,6 +622,9 @@ def init_window(title="App Window", width=420, height=500):
     
     _main_layout = QVBoxLayout(_root_window)
     _main_container = ce("scroll_div")
+
+    # Force the main window background to fill the screen
+    _main_container.raw.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
     _main_layout.addWidget(_main_container.raw)
 '''
 

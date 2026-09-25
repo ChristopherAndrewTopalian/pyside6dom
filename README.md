@@ -1,4 +1,4 @@
-# PySide6DOM v0.5.3
+# PySide6DOM v0.5.4
 **Bring the simplicity of the Web DOM to Python PySide6 Desktop Applications.**
 
 # Installation
