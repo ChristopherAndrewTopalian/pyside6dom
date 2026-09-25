@@ -68,7 +68,8 @@ ba(total_input)
 
 result_scroll_div = ce('scroll_div')
 result_scroll_div.style.border = '1px solid white'
-result_scroll_div.style.width = '200px'
+result_scroll_div.style.padding = '2px'
+result_scroll_div.style.width = '350px'
 ba(result_scroll_div)
 
 # Result Display

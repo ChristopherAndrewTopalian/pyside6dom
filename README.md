@@ -1,4 +1,4 @@
-# PySide6DOM v0.5.2
+# PySide6DOM v0.5.3
 **Bring the simplicity of the Web DOM to Python PySide6 Desktop Applications.**
 
 # Installation
@@ -123,7 +123,8 @@ run_app()
 * **`video`**: Video display element with Aspect Ratio
 * **`div`**: Standard container widget for grouping elements.
 * **`scroll_div`**: Scrollable container area for overflow content.
-* **`CSS keywords`**: div, text, button, scroll_div, select, option,
+* **`CSS keywords`**: div, text, button, scroll_div, select, option
+* **`flex`**: row and column
 ---
 
 ### Universal Properties & Methods

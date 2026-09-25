@@ -4,7 +4,7 @@ import os
 import sys
 import re
 from PySide6.QtWidgets import (
-    QApplication, QWidget, QVBoxLayout, QPushButton, 
+    QApplication, QWidget, QBoxLayout, QVBoxLayout, QHBoxLayout, QPushButton, 
     QLineEdit, QLabel, QSlider, QScrollArea, QCheckBox, 
     QComboBox, QSizePolicy, QPlainTextEdit, QTextBrowser
 )
@@ -107,20 +107,28 @@ class DOMStyle:
         object.__setattr__(self, '_styles', {})
 
     def __setattr__(self, key, value):
-        # NEW: INTERCEPT ABSOLUTE SIZING
-        # If the script calls element.style.width = '50px'
+        # NEW: ABSOLUTE SIZING
         if key in ('width', 'height'):
-            # Strip out "px" or spaces and just get the number
             val_str = str(value).replace('px', '').strip()
             try:
                 num = int(float(val_str))
-                if key == 'width':
-                    self._element.width = num  # Triggers raw.setFixedWidth()
-                elif key == 'height':
-                    self._element.height = num # Triggers raw.setFixedHeight()
+                if key == 'width': self._element.width = num 
+                elif key == 'height': self._element.height = num 
             except ValueError:
-                pass # If it's something weird, just ignore and let standard CSS try
-        # --------------------------------------
+                pass 
+                
+        # NEW: FLEXBOX LAYOUT ENGINE
+        if key == 'display' and value == 'flex':
+            # Qt layouts are inherently flex-like, so we can just absorb this
+            return 
+            
+        if key == 'flexDirection':
+            if hasattr(self._element, 'layout'):
+                if value == 'row':
+                    self._element.layout.setDirection(QBoxLayout.Direction.LeftToRight)
+                elif value == 'column':
+                    self._element.layout.setDirection(QBoxLayout.Direction.TopToBottom)
+            return # Stop here so it doesn't get passed to raw Qt CSS strings
 
         # Convert JavaScript camelCase to CSS kebab-case 
         css_property = re.sub(r'(?<!^)(=[A-Z])', r'-\1', key).lower()
@@ -481,7 +489,8 @@ def ce(tag):
         
     elif tag == "div":
         w = QWidget()
-        layout = QVBoxLayout(w)
+        # we now use a dynamic QBoxLayout instead of a fixed QVBoxLayout
+        layout = QBoxLayout(QBoxLayout.Direction.TopToBottom, w)
         layout.setAlignment(Qt.AlignmentFlag.AlignTop)
         layout.setContentsMargins(5, 5, 5, 5)
         elem = DOMElement(tag, w)
@@ -497,7 +506,8 @@ def ce(tag):
         scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
 
         content = QWidget()
-        layout = QVBoxLayout(content)
+        # --- NEW: Use QBoxLayout here instead of QVBoxLayout ---
+        layout = QBoxLayout(QBoxLayout.Direction.TopToBottom, content)
         layout.setAlignment(Qt.AlignmentFlag.AlignTop)
         layout.setSpacing(4)
 
@@ -506,6 +516,8 @@ def ce(tag):
 
         scroll.setWidget(content)
         elem = DOMElement(tag, scroll)
+        
+        # We bind the layout to the DOMElement so our Flexbox style engine can find it
         elem.layout = layout
         return elem
 
