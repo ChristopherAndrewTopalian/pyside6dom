@@ -45,6 +45,7 @@ for person in people:
     the_btn.textContent = person["name"]
     # p=person locks the current object into the lambda's memory
     the_btn.onclick = lambda p=person: print(f"{p['name']} scored: {p['score']}")
+    #the_btn.onclick = lambda p=person: print(p['name'] + " scored: " + str(p['score']))
     ba(the_btn, top_container)
 
 run_app()
