@@ -38,11 +38,11 @@ top_container.style.height = '85px'
 ba(top_container)
 
 for person in people:
-    btn1 = ce('button')
-    btn1.textContent = person["name"]
+    the_btn = ce('button')
+    the_btn.textContent = person["name"]
     # p=person locks the current object into the lambda's memory
-    btn1.onclick = lambda p=person: print(f"{p['name']} scored: {p['score']}")
-    ba(btn1, top_container)
+    the_btn.onclick = lambda p=person: print(f"{p['name']} scored: {p['score']}")
+    ba(the_btn, top_container)
 
 run_app()
 
