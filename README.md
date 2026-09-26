@@ -1,4 +1,4 @@
-# PySide6DOM v0.5.7
+# PySide6DOM v0.5.8
 **Bring the simplicity of the Web DOM to Python PySide6 Desktop Applications.**
 
 # Installation
@@ -164,6 +164,15 @@ The engine translates standard HTML tags into PySide6 widgets behind the scenes.
 
 ### CSS Properties
 * **`font-color`** ➔ `color`
+
+---
+
+## Works with all popular libraries:  
+* opencv
+* numpy
+* pandas
+* sqlite3
+etc...
 
 ---
 

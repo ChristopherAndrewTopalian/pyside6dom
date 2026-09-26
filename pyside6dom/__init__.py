@@ -8,8 +8,8 @@ from PySide6.QtWidgets import (
     QLineEdit, QLabel, QSlider, QScrollArea, QCheckBox, 
     QComboBox, QSizePolicy, QPlainTextEdit, QTextBrowser
 )
-from PySide6.QtCore import Qt, QTimer
-from PySide6.QtGui import QPixmap, QIcon
+from PySide6.QtCore import Qt, QTimer, QUrl
+from PySide6.QtGui import QImage, QPixmap, QIcon
 from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput, QSoundEffect
 from PySide6.QtMultimediaWidgets import QVideoWidget
 from PySide6.QtCore import QUrl
@@ -49,7 +49,7 @@ def get_full_year():
     return datetime.now().year
 
 def get_month():
-    '''Note: Python months are 1-12! (Unlike JS which is 0-11)'''
+    '''returns 1-12'''
     return datetime.now().month
 
 def get_date():
@@ -72,6 +72,16 @@ def get_minutes():
 def get_seconds():
     '''gets the seconds'''
     return datetime.now().second
+
+def is_target_date(target_string):
+    '''Get today's date object and instantly convert it to a string'''
+    today_str = str(datetime.date.today())
+
+    # Now we can safely compare text to text
+    if today_str == target_string:
+        return True
+    else:
+        return False
 
 ####
 
