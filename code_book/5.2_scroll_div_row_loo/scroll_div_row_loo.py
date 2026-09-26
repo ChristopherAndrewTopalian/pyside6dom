@@ -27,6 +27,9 @@ set_theme("""
         border-radius: 5px;
         margin: 5px;
     }
+    button:hover{
+        border-color: rgb(255, 255, 255);
+    }
 """)
 
 top_container = ce('scroll_div')
