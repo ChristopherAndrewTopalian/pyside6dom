@@ -10,7 +10,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QPixmap, QIcon
-from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput
+from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput, QSoundEffect
 from PySide6.QtMultimediaWidgets import QVideoWidget
 from PySide6.QtCore import QUrl
 
@@ -23,6 +23,31 @@ def cl(*args):
 # class to act as the 'console' namespace
 class console:
     log = cl
+
+####
+
+# ========================================== #
+#             UI AUDIO MANAGER
+# ========================================== #
+_ui_audio_cache = {}
+
+def play_sound(file_path):
+    """Plays a local .wav file instantly for UI feedback."""
+    if not os.path.exists(file_path):
+        cl(f"[Audio Missing] Pretend you heard: {file_path}")
+        return
+
+    if file_path not in _ui_audio_cache:
+        sfx = QSoundEffect()
+        sfx.setSource(QUrl.fromLocalFile(os.path.abspath(file_path)))
+        # Set volume from 0.0 to 1.0
+        sfx.setVolume(0.5) 
+        _ui_audio_cache[file_path] = sfx
+        
+    _ui_audio_cache[file_path].play()
+
+
+####
 
 # ========================================== #
 #               TIMER MANAGEMENT             #
@@ -300,6 +325,26 @@ class DOMElement:
         if isinstance(self.raw, QComboBox) and isinstance(val_list, list):
             self.raw.clear()
             self.raw.addItems([str(v) for v in val_list])
+
+    ####
+
+    @property
+    def onmouseover(self): return None
+
+    @onmouseover.setter
+    def onmouseover(self, callback_func):
+        # Qt's 'enterEvent' fires when the mouse enters the widget boundary
+        self.raw.enterEvent = lambda event: callback_func()
+
+    @property
+    def onmouseout(self): return None
+
+    @onmouseout.setter
+    def onmouseout(self, callback_func):
+        # Qt's 'leaveEvent' fires when the mouse leaves
+        self.raw.leaveEvent = lambda event: callback_func()
+
+    ####
 
     @property
     def onclick(self): return None
