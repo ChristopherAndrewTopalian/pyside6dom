@@ -1,4 +1,4 @@
-# PySide6DOM v0.5.5
+# PySide6DOM v0.5.6
 **Bring the simplicity of the Web DOM to Python PySide6 Desktop Applications.**
 
 # Installation
@@ -101,6 +101,7 @@ run_app()
 * `setInterval(callback, ms)`: Repeatedly runs a callback at the specified millisecond interval.
 * `cl(*args)` or `console.log(*args)`: Logs output to the console, mirroring web debugging.
 * Sound Implemented using .wav files  
+* show_commands(): shows a list of available commands  
 
 ---
 

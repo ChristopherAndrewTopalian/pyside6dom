@@ -14,10 +14,68 @@ from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput, QSoundEffect
 from PySide6.QtMultimediaWidgets import QVideoWidget
 from PySide6.QtCore import QUrl
 
+from datetime import datetime
+
+def show_commands():
+    """Prints a helpful list of all available DOM engine commands."""
+    print("\n" + "="*45)
+    print(" PYSIDE6 DOM ENGINE - AVAILABLE COMMANDS")
+    print("="*45 + "\n")
+    
+    for name, obj in globals().items():
+        # 1. Is it a function? 
+        # 2. Was it written in THIS file (not imported)? 
+        # 3. Is it public? (Doesn't start with '_')
+        if callable(obj) and getattr(obj, '__module__', '') == __name__ and not name.startswith('_'):
+            # Grab the "Docstring" (the comment immediately under the function)
+            description = obj.__doc__ if obj.__doc__ else "No description provided."
+            
+            # Print it cleanly to the console
+            print(f" > {name}()")
+            print(f"   {description.strip()}\n")
+            
+    print("="*45 + "\n")
+
+####
+
+# ===
+#  DATE & TIME HELPERS
+# ===
+
+def get_full_year():
+    """Returns the current 4-digit year (e.g., 2026)."""
+    return datetime.now().year
+
+def get_month():
+    '''Note: Python months are 1-12! (Unlike JS which is 0-11)'''
+    return datetime.now().month
+
+def get_date():
+    '''The day of the month (1-31)'''
+    return datetime.now().day
+
+def get_day():
+    ''' The day of the week. Python is 1(Mon) to 7(Sun).
+    If you want it to perfectly match JS (0=Sun to 6=Sat), use this math:'''
+    return int(datetime.now().strftime('%w'))
+
+def get_hours():
+    '''gets the hours'''
+    return datetime.now().hour
+
+def get_minutes():
+    '''gets the minutes'''
+    return datetime.now().minute
+
+def get_seconds():
+    '''gets the seconds'''
+    return datetime.now().second
+
 ####
 
 # shortcut for print, console.log
 def cl(*args):
+    '''shortcut for console.log'''
     print(*args)
 
 # class to act as the 'console' namespace
@@ -449,6 +507,7 @@ class DOMElement:
 # ========================================== 
 
 def ce(tag):
+    """Creates a new DOM element (e.g., 'div', 'button', 'scroll_div', 'input')."""
     tag = tag.lower()
     
     if tag == "button":
@@ -591,6 +650,7 @@ def ge(element_id):
     return _dom_registry.get(element_id, None)
 
 def ba(child, parent=None):
+    """Appends a child element to a parent container. Defaults to the main window."""
     target = parent if parent is not None else _main_container
     if hasattr(target, "layout") and target.layout is not None:
         target.layout.addWidget(child.raw)
