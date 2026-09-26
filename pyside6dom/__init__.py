@@ -17,24 +17,26 @@ from PySide6.QtCore import QUrl
 from datetime import datetime
 
 def show_commands():
-    """Prints a helpful list of all available DOM engine commands."""
-    print("\n" + "="*45)
-    print(" PYSIDE6 DOM ENGINE - AVAILABLE COMMANDS")
-    print("="*45 + "\n")
+    """Returns and prints a helpful list of all available DOM engine commands."""
+    lines = []
+    lines.append("="*45)
+    lines.append(" PYSIDE6DOM ENGINE - AVAILABLE COMMANDS")
+    lines.append("="*45 + "\n")
     
     for name, obj in globals().items():
-        # 1. Is it a function? 
-        # 2. Was it written in THIS file (not imported)? 
-        # 3. Is it public? (Doesn't start with '_')
         if callable(obj) and getattr(obj, '__module__', '') == __name__ and not name.startswith('_'):
-            # Grab the "Docstring" (the comment immediately under the function)
             description = obj.__doc__ if obj.__doc__ else "No description provided."
+            lines.append(f" > {name}()")
+            lines.append(f"   {description.strip()}\n")
             
-            # Print it cleanly to the console
-            print(f" > {name}()")
-            print(f"   {description.strip()}\n")
-            
-    print("="*45 + "\n")
+    lines.append("="*45)
+    
+    # Join all the lines together with line breaks into one giant string
+    final_text = "\n".join(lines)
+    
+    # Print to console like before, but ALSO return it for the GUI!
+    print(final_text)
+    return final_text
 
 ####
 
