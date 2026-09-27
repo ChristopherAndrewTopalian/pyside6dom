@@ -1,4 +1,4 @@
-# PySide6DOM v0.5.8
+# PySide6DOM v0.5.9
 **Bring the simplicity of the Web DOM to Python PySide6 Desktop Applications.**
 
 # Installation
@@ -102,6 +102,7 @@ run_app()
 * `cl(*args)` or `console.log(*args)`: Logs output to the console, mirroring web debugging.
 * Sound Implemented using .wav files  
 * show_commands(): shows a list of available commands  
+* true_ai: 16 logic gates built in (TAU, CON, XOR, XNOR, AND, NAND, OR, NOR, MI, MNI, CI, CNI, LP, CL, RP, RC
 
 ---
 
