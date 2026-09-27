@@ -64,7 +64,6 @@ def XNOR(a, b):
         return 1
     return 0
 
-# Python reserved keyword: renamed to AND
 def AND(a, b):
     if a == 1 and b == 1:
         return 1
@@ -75,7 +74,6 @@ def NAND(a, b):
         return 1
     return 0
 
-# Python reserved keyword: renamed to OR
 def OR(a, b):
     if a == 1 or b == 1:
         return 1
@@ -258,22 +256,47 @@ class DOMStyle:
         object.__setattr__(self, '_styles', {})
 
     def __setattr__(self, key, value):
-        # ABSOLUTE SIZING
+        # ABSOLUTE POSITIONING
+        if key == 'position':
+            self.__dict__['position'] = value
+            return # Qt CSS doesn't understand 'position: absolute', so we stop it here.
+
         if key in ('width', 'height'):
             val_str = str(value).replace('px', '').strip()
             try:
                 num = int(float(val_str))
-                if key == 'width': self._element.width = num 
-                elif key == 'height': self._element.height = num 
+                # Force the raw C++ widget to lock in its physical size!
+                if key == 'width': 
+                    self._element.raw.setFixedWidth(num)
+                elif key == 'height': 
+                    self._element.raw.setFixedHeight(num)
                 return
             except ValueError:
-                pass 
+                pass
+
+        if key in ('left', 'top'):
+            # THE FIX: Save the value into memory so the engine remembers it later!
+            self.__dict__[key] = value 
+            
+            val_str = str(value).replace('px', '').strip()
+            try:
+                num = int(float(val_str))
+                current_x = self._element.raw.x()
+                current_y = self._element.raw.y()
                 
-        # NEW: FLEXBOX LAYOUT ENGINE
+                if key == 'left': 
+                    self._element.raw.move(num, current_y)
+                elif key == 'top': 
+                    self._element.raw.move(current_x, num)
+                return
+            except ValueError:
+                pass
+
+        # FLEXBOX LAYOUT ENGINE
         if key == 'display' and value == 'flex':
             # Qt layouts are inherently flex-like, so we can just absorb this
             return 
-            
+
         if key == 'flexDirection':
             if hasattr(self._element, 'layout'):
                 if value == 'row':
@@ -683,6 +706,9 @@ def ce(tag):
         
     elif tag == "div":
         w = QWidget()
+        # Force Qt to paint CSS backgrounds/borders on empty divs!
+        w.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
+        
         # we now use a dynamic QBoxLayout instead of a fixed QVBoxLayout
         layout = QBoxLayout(QBoxLayout.Direction.TopToBottom, w)
         layout.setAlignment(Qt.AlignmentFlag.AlignTop)
@@ -749,13 +775,50 @@ def ce(tag):
 def ge(element_id):
     return _dom_registry.get(element_id, None)
 
-def ba(child, parent=None):
-    """Appends a child element to a parent container. Defaults to the main window."""
-    target = parent if parent is not None else _main_container
-    if hasattr(target, "layout") and target.layout is not None:
-        target.layout.addWidget(child.raw)
-    elif isinstance(target, QVBoxLayout):
-        target.addWidget(child.raw)
+def ba(child_elem, parent_elem=None):
+    """Appends a child element. Bypasses flexbox if position is absolute."""
+    from PySide6.QtWidgets import QMainWindow
+    
+    # THE FIX: Restored this to _main_container!
+    if parent_elem is None:
+        parent_elem = _main_container
+        
+    if child_elem is None or parent_elem is None:
+        return
+
+    # Check if the child wants to be free-floating
+    is_absolute = getattr(child_elem.style, 'position', '') == 'absolute'
+
+    if is_absolute:
+        # If the parent is a QMainWindow, attach to its central widget instead
+        # so the element doesn't get trapped underneath the background!
+        target_widget = parent_elem.raw
+        if isinstance(target_widget, QMainWindow) and target_widget.centralWidget():
+            target_widget = target_widget.centralWidget()
+
+        # Attach directly to the correct top-layer widget
+        child_elem.raw.setParent(target_widget)
+        
+        # Grab the saved coordinates
+        left_str = str(getattr(child_elem.style, 'left', '0')).replace('px', '')
+        top_str = str(getattr(child_elem.style, 'top', '0')).replace('px', '')
+        
+        try:
+            x = int(float(left_str)) if left_str else 0
+            y = int(float(top_str)) if top_str else 0
+            child_elem.raw.move(x, y) # Move to exact coordinates
+        except ValueError:
+            pass
+
+        # Force visibility and bring to front
+        child_elem.raw.show()
+        child_elem.raw.raise_() 
+    else:
+        # Standard flexbox append
+        if hasattr(parent_elem, 'layout') and parent_elem.layout is not None:
+            parent_elem.layout.addWidget(child_elem.raw)
+        else:
+            child_elem.raw.setParent(parent_elem.raw)
 
 def set_theme(css_string):
     """
