@@ -355,6 +355,12 @@ class DOMElement:
     def id(self, value):
         self._id = value
         _dom_registry[value] = self
+        self.raw.setObjectName(str(value)) # Enables #id CSS styling
+        
+        # Force Qt to instantly refresh the CSS paint job when an ID is added!
+        self.raw.style().unpolish(self.raw)
+        self.raw.style().polish(self.raw)
+        self.raw.update()
 
     # CLASS NAME SUPPORT
     @property

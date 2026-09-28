@@ -1,4 +1,4 @@
-# PySide6DOM v0.6.3
+# PySide6DOM v0.6.4
 **Bring the simplicity of the Web DOM to Python PySide6 Desktop Applications.**
 
 # Installation
@@ -106,6 +106,7 @@ run_app()
 * position absolute implemented with left and top
 * grid 
 * className
+* #selector can now be used in css
 * text-align
 
 ---
