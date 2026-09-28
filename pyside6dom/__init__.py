@@ -347,6 +347,19 @@ class DOMElement:
         self._id = value
         _dom_registry[value] = self
 
+    # CLASS NAME SUPPORT
+    @property
+    def className(self): 
+        return self.raw.property("class") or ""
+
+    @className.setter
+    def className(self, value):
+        self.raw.setProperty("class", str(value))
+        # Force Qt to instantly refresh the CSS paint job!
+        self.raw.style().unpolish(self.raw)
+        self.raw.style().polish(self.raw)
+        self.raw.update()
+
     @property
     def textContent(self):
         if hasattr(self.raw, "text"): return self.raw.text()
@@ -731,6 +744,10 @@ def set_theme(css_string):
     css_string = re.sub(r'\boption\b', 'QAbstractItemView', css_string)
     css_string = re.sub(r'\bvideo\b', 'QVideoWidget', css_string)
     css_string = re.sub(r'\btable_view\b', 'QTextBrowser', css_string)
+
+    # The (?<!\d) ensures we don't accidentally ruin decimal numbers like "0.5"
+    css_string = re.sub(r'(?<!\d)\.([a-zA-Z_][a-zA-Z0-9_-]*)', r'*[class~="\1"]', css_string)
+    
     css_string = re.sub(r'(?<!-)\bwidth\s*:', 'max-width:', css_string)
     css_string = re.sub(r'(?<!-)\bheight\s*:', 'max-height:', css_string)
     
