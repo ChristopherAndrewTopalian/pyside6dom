@@ -2,6 +2,8 @@
 
 from pyside6dom import *
 
+init_window("Our App", 600, 400)
+
 set_theme("""
     body {
         background-color: rgb(30, 30, 30);
@@ -24,8 +26,6 @@ set_theme("""
         border: 1px solid white;
     }
 """)
-
-init_window("Our App", 600, 400)
 
 welcomeMessage = ce('text')
 welcomeMessage.textContent = 'Welcome'

@@ -14,6 +14,23 @@ import webbrowser
 
 from pyside6dom import *
 
+####
+
+def goTo_url(url):
+    if url.startswith('http://') or url.startswith('https://'):
+        try:
+            webbrowser.open(url)
+            print("Web page opened successfully.")
+            print(url)
+        except Exception as e:
+            print("An error occurred:", e)
+    else:
+        print("Enter a URL starting with 'http://' or 'https://'")
+
+####
+
+init_window('Website Links', 700, 500)
+
 set_theme("""
     body {
         background-color: rgb(30, 30, 30);
@@ -33,23 +50,6 @@ set_theme("""
         border: 1px solid white;
     }
 """)
-
-####
-
-def goTo_url(url):
-    if url.startswith('http://') or url.startswith('https://'):
-        try:
-            webbrowser.open(url)
-            print("Web page opened successfully.")
-            print(url)
-        except Exception as e:
-            print("An error occurred:", e)
-    else:
-        print("Enter a URL starting with 'http://' or 'https://'")
-
-####
-
-init_window('Website Links', 700, 500)
 
 theTitle = ce('text')
 theTitle.textContent = 'Websites'

@@ -2,6 +2,8 @@
 
 from pyside6dom import *
 
+init_window('Our App', 700, 500)
+
 set_theme("""
     #howdy_txt {
         font-family: Arial;
@@ -10,8 +12,6 @@ set_theme("""
         color: rgb(0, 255, 255);
     }
 """)
-
-init_window('Our App', 700, 500)
 
 howdy_txt = ce('text')
 howdy_txt.id = 'howdy_txt'

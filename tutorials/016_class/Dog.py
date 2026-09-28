@@ -2,13 +2,6 @@
 
 from pyside6dom import *
 
-set_theme("""
-text {
-    font-size: 40px;
-    font-weight: bold;
-}
-""")
-
 ####
 
 class Dog:
@@ -24,6 +17,13 @@ rex = Dog("Rex", 20)
 ####
 
 init_window('Dog Class', 700, 500)
+
+set_theme("""
+text {
+    font-size: 40px;
+    font-weight: bold;
+}
+""")
 
 dog_label = ce('text')
 dog_label.textContent = fido.name + ' weighs ' + str(fido.weight) + ' lbs'

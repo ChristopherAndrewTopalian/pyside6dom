@@ -1,8 +1,9 @@
 # easy.py
 
-# easy.py
-
 from pyside6dom import *
+
+# Initialize the Application
+init_window("PySide6DOM Feature Showcase", 450, 650)
 
 set_theme("""
     body {
@@ -19,13 +20,13 @@ set_theme("""
         background-color: #555;
         border-color: rgb(0, 255, 255);
     }
+    button:pressed {
+        color: rgb(255, 0, 255);
+    }
     input {
         border: 1px solid white;
     }
 """)
-
-# Initialize the Application
-init_window("PySide6DOM Feature Showcase", 450, 650)
 
 # Worldwide Header
 header = ce("h1")
