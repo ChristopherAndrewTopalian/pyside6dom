@@ -1,4 +1,4 @@
-# text_style_css.py
+# text_style_css_selector.py
 
 from pyside6dom import *
 
