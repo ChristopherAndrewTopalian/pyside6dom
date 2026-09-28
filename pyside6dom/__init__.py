@@ -3,18 +3,17 @@
 import os
 import sys
 import re
+from datetime import datetime
+
 from PySide6.QtWidgets import (
-    QApplication, QWidget, QBoxLayout, QVBoxLayout, QHBoxLayout, QPushButton, 
-    QLineEdit, QLabel, QSlider, QScrollArea, QCheckBox, 
-    QComboBox, QSizePolicy, QPlainTextEdit, QTextBrowser
+    QApplication, QMainWindow, QWidget, QBoxLayout, QVBoxLayout, QHBoxLayout, 
+    QGridLayout, QPushButton, QLineEdit, QLabel, QSlider, QScrollArea, 
+    QCheckBox, QComboBox, QSizePolicy, QPlainTextEdit, QTextBrowser
 )
 from PySide6.QtCore import Qt, QTimer, QUrl
 from PySide6.QtGui import QImage, QPixmap, QIcon
 from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput, QSoundEffect
 from PySide6.QtMultimediaWidgets import QVideoWidget
-from PySide6.QtCore import QUrl
-
-from datetime import datetime
 
 def show_commands():
     """Returns and prints a helpful list of all available DOM engine commands."""
@@ -30,19 +29,13 @@ def show_commands():
             lines.append(f"   {description.strip()}\n")
             
     lines.append("="*45)
-    
-    # Join all the lines together with line breaks into one giant string
     final_text = "\n".join(lines)
-    
-    # Print to console like before, but ALSO return it for the GUI!
     print(final_text)
     return final_text
 
-####
-
-####
-# LOGIC GATES
-####
+# ========================================== #
+#               LOGIC GATES
+# ========================================== #
 
 def TAU(a, b):
     if (a == 0 and b == 0) or (a == 0 and b == 1) or (a == 1 and b == 0) or (a == 1 and b == 1):
@@ -124,8 +117,6 @@ def RC(a, b):
         return 1
     return 0
 
-####
-
 # ===
 #  DATE & TIME HELPERS
 # ===
@@ -169,18 +160,14 @@ def is_target_date(target_string):
     else:
         return False
 
-####
-
-# shortcut for print, console.log
+# ========================================== #
+#               CONSOLE ALIAS
+# ========================================== #
 def cl(*args):
-    '''shortcut for console.log'''
     print(*args)
 
-# class to act as the 'console' namespace
 class console:
     log = cl
-
-####
 
 # ========================================== #
 #             UI AUDIO MANAGER
@@ -196,24 +183,18 @@ def play_sound(file_path):
     if file_path not in _ui_audio_cache:
         sfx = QSoundEffect()
         sfx.setSource(QUrl.fromLocalFile(os.path.abspath(file_path)))
-        # Set volume from 0.0 to 1.0
         sfx.setVolume(0.5) 
         _ui_audio_cache[file_path] = sfx
         
     _ui_audio_cache[file_path].play()
 
-
-####
-
 # ========================================== #
-#               TIMER MANAGEMENT             #
-# ========================================== 
-
+#             TIMER MANAGEMENT
+# ========================================== #
 _timers = {}
 _timer_counter = 0
 
 def set_interval(callback_func, ms):
-    """Executes a function repeatedly, calling it every X milliseconds."""
     global _timer_counter
     _timer_counter += 1
     timer_id = f"timer_{_timer_counter}"
@@ -226,32 +207,27 @@ def set_interval(callback_func, ms):
     return timer_id
 
 def clear_interval(timer_id):
-    """Stops and removes a timer by its ID."""
     if timer_id in _timers:
         _timers[timer_id].stop()
         del _timers[timer_id]
 
-# THE ALIASES
 setInterval = set_interval
 clearInterval = clear_interval
 
 # ========================================== #
-#           WORLDWIDE REGISTRY
-# ========================================== 
-
+#            WORLDWIDE REGISTRY
+# ========================================== #
 _dom_registry = {}
 _app_instance = None
 _root_window = None
 _main_container = None
 _pending_theme = None
 
-##----------------------------------------
-# DOMStyle allows element.style.color = 'white'
-##----------------------------------------
-
+# ========================================== #
+#            DOM STYLE ENGINE
+# ========================================== #
 class DOMStyle:
     def __init__(self, element):
-        # Store a reference to the DOMElement wrapper
         object.__setattr__(self, '_element', element)
         object.__setattr__(self, '_styles', {})
 
@@ -259,108 +235,109 @@ class DOMStyle:
         # ABSOLUTE POSITIONING
         if key == 'position':
             self.__dict__['position'] = value
-            return # Qt CSS doesn't understand 'position: absolute', so we stop it here.
+            return 
 
         if key in ('width', 'height'):
             val_str = str(value).replace('px', '').strip()
             try:
                 num = int(float(val_str))
-                # Force the raw C++ widget to lock in its physical size!
-                if key == 'width': 
-                    self._element.raw.setFixedWidth(num)
-                elif key == 'height': 
-                    self._element.raw.setFixedHeight(num)
+                if key == 'width': self._element.raw.setFixedWidth(num)
+                elif key == 'height': self._element.raw.setFixedHeight(num)
                 return
             except ValueError:
                 pass
 
-        if key in ('left', 'top'):
-            # THE FIX: Save the value into memory so the engine remembers it later!
+        if key in ('left', 'top', 'right', 'bottom'):
             self.__dict__[key] = value 
             
-            val_str = str(value).replace('px', '').strip()
-            try:
-                num = int(float(val_str))
-                current_x = self._element.raw.x()
-                current_y = self._element.raw.y()
-                
-                if key == 'left': 
-                    self._element.raw.move(num, current_y)
-                elif key == 'top': 
-                    self._element.raw.move(current_x, num)
-                return
-            except ValueError:
-                pass
+            # Allow instant movement if the element is already parented
+            if key in ('left', 'top'):
+                val_str = str(value).replace('px', '').strip()
+                try:
+                    num = int(float(val_str))
+                    if key == 'left': self._element.raw.move(num, self._element.raw.y())
+                    elif key == 'top': self._element.raw.move(self._element.raw.x(), num)
+                    return
+                except ValueError:
+                    pass
+
+        # CSS GRID ENGINE
+        if key == 'display' and value == 'grid':
+            if hasattr(self._element, 'layout') and self._element.layout is not None:
+                QWidget().setLayout(self._element.layout) 
+            
+            grid = QGridLayout(self._element.raw)
+            self._element.layout = grid
+            
+            self._element.layout._auto_row = 0
+            self._element.layout._auto_col = 0
+            self._element.layout._max_cols = 3 
+            return
+            
+        if key == 'gridTemplateColumns':
+            self.__dict__[key] = value
+            if hasattr(self._element, 'layout') and isinstance(self._element.layout, QGridLayout):
+                cols = len(str(value).split())
+                match = re.search(r'repeat\((\d+)', str(value))
+                if match: cols = int(match.group(1))
+                self._element.layout._max_cols = max(1, cols)
+            return
+
+        if key in ('gridRow', 'gridColumn'):
+            self.__dict__[key] = value
+            return
 
         # FLEXBOX LAYOUT ENGINE
         if key == 'display' and value == 'flex':
-            # Qt layouts are inherently flex-like, so we can just absorb this
             return 
 
         if key == 'flexDirection':
-            if hasattr(self._element, 'layout'):
+            if hasattr(self._element, 'layout') and isinstance(self._element.layout, QBoxLayout):
                 if value == 'row':
                     self._element.layout.setDirection(QBoxLayout.Direction.LeftToRight)
-                    # Pack items tightly to the Left and Top (Matches web flex-start)
                     self._element.layout.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
                 elif value == 'column':
                     self._element.layout.setDirection(QBoxLayout.Direction.TopToBottom)
-                    # Pack items tightly to the Top
                     self._element.layout.setAlignment(Qt.AlignmentFlag.AlignTop)
             return
 
-        # NEW: FLEXBOX ALIGN ITEMS (Stop Stretching)
         if key == 'alignItems':
-            if hasattr(self._element, 'layout'):
+            if hasattr(self._element, 'layout') and isinstance(self._element.layout, QBoxLayout):
                 if value in ('flex-start', 'start'):
-                    # Packs items tightly to the left/top (Stops stretching!)
                     self._element.layout.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
                 elif value == 'center':
-                    # Centers items without stretching
                     self._element.layout.setAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignTop)
                 elif value in ('flex-end', 'end'):
-                    # Packs to the right
                     self._element.layout.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTop)
                 elif value == 'stretch':
-                    # Qt's default is to stretch. Sending 0 clears the alignment overrides!
                     self._element.layout.setAlignment(Qt.AlignmentFlag(0)) 
-            return # Stop here so it doesn't get passed as raw CSS
+            return
 
-        # Convert JavaScript camelCase to CSS kebab-case 
-        css_property = re.sub(r'(?<!^)(=[A-Z])', r'-\1', key).lower()
+        # CSS COMPILER
         css_property = ''.join(['-' + c.lower() if c.isupper() else c for c in key])
-
-        # Store the new style in our dictionary
         self._styles[css_property] = value
-
-        # Build the complete CSS string from all stored styles
+        
         css_string = ""
         for prop, val in self._styles.items():
             css_string += f"{prop}: {val}; "
-
-        # Apply it to the underlying PySide6 widget
         self._element.raw.setStyleSheet(css_string)
 
     def __call__(self, css_string):
         self._element.set_style(css_string)
 
 # ========================================== #
-#            DOM ELEMENT WRAPPER             #
-# ========================================== 
-
+#           DOM ELEMENT WRAPPER
+# ========================================== #
 class DOMElement:
     def __init__(self, tag, qt_widget):
         self.tag = tag
         self.raw = qt_widget
         self._id = ""
         self._children = []
-        # Instantiate the style engine in the background
         self._dom_style = DOMStyle(self)
 
-    # This intercepts `.style` so Qt doesn't crash
     @property
-    def style(self):
-        return self._dom_style
+    def style(self): return self._dom_style
 
     @property
     def id(self): return self._id
@@ -387,13 +364,10 @@ class DOMElement:
     @innerHTML.setter
     def innerHTML(self, value):
         if hasattr(self.raw, "setText"):
-            # Update this line to include QTextBrowser!
             if isinstance(self.raw, (QLabel, QTextBrowser)):
                 if isinstance(self.raw, QLabel):
                     self.raw.setTextFormat(Qt.TextFormat.RichText)
-
                 html_str = str(value)
-
                 if "<table" in html_str and "<style>" not in html_str:
                     default_table_css = """
                     <style>
@@ -403,7 +377,6 @@ class DOMElement:
                     </style>
                     """
                     html_str = default_table_css + html_str
-
                 self.raw.setText(html_str)
             else:
                 self.raw.setText(str(value))
@@ -411,7 +384,7 @@ class DOMElement:
     @property
     def value(self):
         if isinstance(self.raw, QLineEdit): return self.raw.text()
-        elif isinstance(self.raw, QPlainTextEdit): return self.raw.toPlainText() #
+        elif isinstance(self.raw, QPlainTextEdit): return self.raw.toPlainText() 
         elif isinstance(self.raw, QSlider): return self.raw.value() / 10.0
         elif isinstance(self.raw, QComboBox): return self.raw.currentText()
         return None
@@ -424,59 +397,42 @@ class DOMElement:
         elif isinstance(self.raw, QComboBox): self.raw.setCurrentText(str(val))
 
     @property
-    def src(self):
-        return self._src if hasattr(self, "_src") else ""
+    def src(self): return self._src if hasattr(self, "_src") else ""
 
     @src.setter
     def src(self, file_path):
         self._src = file_path
-        
-        # Handle Images
         if isinstance(self.raw, QLabel) and self.tag == "img":
-            pixmap = QPixmap(str(file_path))
-            self.raw.setPixmap(pixmap)
-            
-        # Handle Video
+            self.raw.setPixmap(QPixmap(str(file_path)))
         elif self.tag == "video" and hasattr(self, "player"):
             if str(file_path).startswith("http"):
                 self.player.setSource(QUrl(file_path))
             else:
                 self.player.setSource(QUrl.fromLocalFile(os.path.abspath(file_path)))
 
-
     @property
-    def width(self):
-        return self.raw.width()
+    def width(self): return self.raw.width()
 
     @width.setter
     def width(self, val):
         val = int(val)
         self.raw.setFixedWidth(val)
-        
-        # HTML Image Emulation: Auto-calculate proportional height
         if self.tag == "img" and self.raw.pixmap():
             orig_w = self.raw.pixmap().width()
             orig_h = self.raw.pixmap().height()
-            if orig_w > 0:
-                prop_h = int(val * (orig_h / orig_w))
-                self.raw.setFixedHeight(prop_h)
+            if orig_w > 0: self.raw.setFixedHeight(int(val * (orig_h / orig_w)))
 
     @property
-    def height(self):
-        return self.raw.height()
+    def height(self): return self.raw.height()
 
     @height.setter
     def height(self, val):
         val = int(val)
         self.raw.setFixedHeight(val)
-        
-        # HTML Image Emulation: Auto-calculate proportional width
         if self.tag == "img" and self.raw.pixmap():
             orig_w = self.raw.pixmap().width()
             orig_h = self.raw.pixmap().height()
-            if orig_h > 0:
-                prop_w = int(val * (orig_w / orig_h))
-                self.raw.setFixedWidth(prop_w)
+            if orig_h > 0: self.raw.setFixedWidth(int(val * (orig_w / orig_h)))
 
     @property
     def placeholder(self):
@@ -507,14 +463,11 @@ class DOMElement:
             self.raw.clear()
             self.raw.addItems([str(v) for v in val_list])
 
-    ####
-
     @property
     def onmouseover(self): return None
 
     @onmouseover.setter
     def onmouseover(self, callback_func):
-        # Qt's 'enterEvent' fires when the mouse enters the widget boundary
         self.raw.enterEvent = lambda event: callback_func()
 
     @property
@@ -522,10 +475,7 @@ class DOMElement:
 
     @onmouseout.setter
     def onmouseout(self, callback_func):
-        # Qt's 'leaveEvent' fires when the mouse leaves
         self.raw.leaveEvent = lambda event: callback_func()
-
-    ####
 
     @property
     def onclick(self): return None
@@ -533,50 +483,30 @@ class DOMElement:
     @onclick.setter
     def onclick(self, callback_func):
         if hasattr(self.raw, "clicked"): 
-            # We use a lambda to absorb Qt's sneaky boolean, then call the function cleanly
             self.raw.clicked.connect(lambda checked=False: callback_func())
 
-
     @property
-    def oninput(self):
-        return getattr(self, '_oninput', None)
+    def oninput(self): return getattr(self, '_oninput', None)
 
     @oninput.setter
     def oninput(self, callback_func):
         self._oninput = callback_func
         expected_args = callback_func.__code__.co_argcount
         
-        # A smart wrapper that absorbs any number of arguments (0, 1, or more)
         def signal_router(*args):
-            if expected_args == 0:
-                callback_func()
+            if expected_args == 0: callback_func()
             else:
-                # If PySide6 emitted an argument (like a normal input or slider)
-                if len(args) > 0:
-                    callback_func(args[0])
-                # If PySide6 emitted NOTHING (like a textarea), grab the value manually
-                else:
-                    callback_func(self.value)
+                if len(args) > 0: callback_func(args[0])
+                else: callback_func(self.value)
 
-        # Connect Inputs & TextAreas
-        if hasattr(self.raw, 'textChanged'):
-            self.raw.textChanged.connect(signal_router)
-                
-        # Connect Sliders
-        elif hasattr(self.raw, 'valueChanged'):
-            self.raw.valueChanged.connect(signal_router)
+        if hasattr(self.raw, 'textChanged'): self.raw.textChanged.connect(signal_router)
+        elif hasattr(self.raw, 'valueChanged'): self.raw.valueChanged.connect(signal_router)
 
     def set_style(self, css_string):
-        # Run all the web-to-Qt translations first
-
-        # WEB TO QT CSS TRANSLATOR
         css_string = css_string.replace("body", "QMainWindow, QWidget#central_widget")
         css_string = css_string.replace("font-color", "color")
         
-        # Translate compound words FIRST
         css_string = re.sub(r'\bscroll_div\b', 'QScrollArea', css_string)
-        
-        # Translate base tags using \b (word boundaries) so it doesn't break CSS properties!
         css_string = re.sub(r'\bdiv\b', 'QWidget', css_string)
         css_string = re.sub(r'\bbutton\b', 'QPushButton', css_string)
         css_string = re.sub(r'\binput\b', 'QLineEdit', css_string)
@@ -585,8 +515,6 @@ class DOMElement:
         css_string = re.sub(r'\bdropdown\b', 'QComboBox', css_string)
         css_string = re.sub(r'\bcheckbox\b', 'QCheckBox', css_string)
         css_string = re.sub(r'\bslider\b', 'QSlider', css_string)
-        
-        # Translate all text/image tags to QLabel
         css_string = re.sub(r'\btext\b', 'QLabel', css_string)
         css_string = re.sub(r'\bimg\b', 'QLabel', css_string)
         css_string = re.sub(r'\bh1\b', 'QLabel', css_string)
@@ -596,245 +524,197 @@ class DOMElement:
         css_string = re.sub(r'\bvideo\b', 'QVideoWidget', css_string)
         css_string = re.sub(r'\btable_view\b', 'QTextBrowser', css_string)
 
-        # NEW: STOP QT FROM STRETCHING WIDGETS
-        # Translates "width:" to "max-width:" (but ignores if it is already "max-width")
         css_string = re.sub(r'(?<!-)\bwidth\s*:', 'max-width:', css_string)
         css_string = re.sub(r'(?<!-)\bheight\s*:', 'max-height:', css_string)
 
-        # Advanced CSS with brackets (e.g., "button:hover { color: red; }")
-        # because of the replacements above, "button:hover" is now "QPushButton:hover"
         if "{" in css_string:
             self.raw.setStyleSheet(css_string)
-
-        # Inline web-style CSS (e.g., "border: 1px solid white;")
         else:
             obj_name = self.raw.objectName()
             if not obj_name:
                 obj_name = f"dom_node_{id(self.raw)}"
                 self.raw.setObjectName(obj_name)
-            
-            # Wrap the string in a strict ID selector
-            scoped_css = f"#{obj_name} {{ {css_string} }}"
-            self.raw.setStyleSheet(scoped_css)
+            self.raw.setStyleSheet(f"#{obj_name} {{ {css_string} }}")
 
     def play(self):
-        if self.tag == "video" and hasattr(self, "player"):
-            self.player.play()
+        if self.tag == "video" and hasattr(self, "player"): self.player.play()
 
     def pause(self):
-        if self.tag == "video" and hasattr(self, "player"):
-            self.player.pause()
+        if self.tag == "video" and hasattr(self, "player"): self.player.pause()
 
 # ========================================== #
-#               DOM PARSER (ce)              #
-# ========================================== 
-
+#               DOM PARSER (ce)
+# ========================================== #
 def ce(tag):
-    """Creates a new DOM element (e.g., 'div', 'button', 'scroll_div', 'input')."""
     tag = tag.lower()
-    
     if tag == "button":
         w = QPushButton()
         w.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
         return DOMElement(tag, w)
-
     elif tag in ("h1", "h2", "h3", "h4", "h5", "h6"):
         w = QLabel()
         w.setWordWrap(True)
         w.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
-        
         elem = DOMElement(tag, w)
-        
-        # HTML browser-standard font sizes (based on a 16px root)
-        heading_sizes = {
-            "h1": "32px",  # 2.00em
-            "h2": "24px",  # 1.50em
-            "h3": "19px",  # 1.17em
-            "h4": "16px",  # 1.00em
-            "h5": "13px",  # 0.83em
-            "h6": "11px"   # 0.67em
-        }
-
-        # Apply the default native HTML styling
+        heading_sizes = {"h1":"32px", "h2":"24px", "h3":"19px", "h4":"16px", "h5":"13px", "h6":"11px"}
         elem.style.fontWeight = 'bold'
         elem.style.fontSize = heading_sizes[tag]
         return elem
-
     elif tag == "p":
         w = QLabel()
-        w.setWordWrap(True)  # Paragraphs must always wrap
+        w.setWordWrap(True)
         w.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
-
         elem = DOMElement(tag, w)
-
-        # HTML browser-standard paragraph size
         elem.style.fontSize = '16px'
         elem.style.fontWeight = 'normal'
         return elem
-
     elif tag in ("text", "span", "label"):
         w = QLabel()
-        w.setWordWrap(False) # Inline data strings do not wrap; they trigger horizontal scrollbars!
+        w.setWordWrap(False)
         w.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
         return DOMElement(tag, w)
-        
     elif tag == "input":
         w = QLineEdit()
         w.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         return DOMElement(tag, w)
-
     elif tag == "textarea":
         w = QPlainTextEdit()
         w.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         return DOMElement(tag, w)
-        
     elif tag == "slider":
         w = QSlider(Qt.Orientation.Horizontal)
         w.setMinimum(0)
         w.setMaximum(100)
         return DOMElement(tag, w)
-        
     elif tag == "checkbox":
         w = QCheckBox()
         w.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
         return DOMElement(tag, w)
-        
     elif tag in ("select", "dropdown"):
         w = QComboBox()
         w.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         return DOMElement(tag, w)
-        
     elif tag == "div":
         w = QWidget()
-        # Force Qt to paint CSS backgrounds/borders on empty divs!
         w.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
-        
-        # we now use a dynamic QBoxLayout instead of a fixed QVBoxLayout
         layout = QBoxLayout(QBoxLayout.Direction.TopToBottom, w)
         layout.setAlignment(Qt.AlignmentFlag.AlignTop)
         layout.setContentsMargins(5, 5, 5, 5)
         elem = DOMElement(tag, w)
         elem.layout = layout
         return elem
-
     elif tag == "scroll_div":
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
-
-        # Act like HTML 'overflow: auto'
         scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
         scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
-
         content = QWidget()
-        
-        # We keep the QBoxLayout so Flexbox features still work!
         layout = QBoxLayout(QBoxLayout.Direction.TopToBottom, content)
         layout.setAlignment(Qt.AlignmentFlag.AlignTop)
         layout.setSpacing(4)
         layout.setContentsMargins(0, 0, 0, 0)
-
         scroll.setWidget(content)
         elem = DOMElement(tag, scroll)
         elem.layout = layout
         return elem
-
     elif tag == "table_view":
         w = QTextBrowser()
-        # This tells the browser NOT to squish the table, forcing the horizontal scrollbar!
         w.setLineWrapMode(QTextBrowser.LineWrapMode.NoWrap) 
         return DOMElement(tag, w)
-
     elif tag == "img":
         w = QLabel()
-        w.setScaledContents(True) # Makes it behave like HTML CSS sizing
+        w.setScaledContents(True) 
         w.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         return DOMElement(tag, w)
-
     elif tag == "video":
         w = QVideoWidget()
         w.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         elem = DOMElement(tag, w)
-        
-        # Create the invisible brain and speaker
         elem.player = QMediaPlayer()
         elem.audio = QAudioOutput()
-        
-        # Wire them together
         elem.player.setAudioOutput(elem.audio)
         elem.player.setVideoOutput(w)
-
         return elem
-
     raise ValueError(f"Unknown tag: {tag}")
 
-
 # ========================================== #
-#        LAYOUT & WINDOW MANAGEMENT          #
-# ==========================================
-
+#        LAYOUT & WINDOW MANAGEMENT
+# ========================================== #
 def ge(element_id):
     return _dom_registry.get(element_id, None)
 
 def ba(child_elem, parent_elem=None):
-    """Appends a child element. Bypasses flexbox if position is absolute."""
-    from PySide6.QtWidgets import QMainWindow
-    
-    # THE FIX: Restored this to _main_container!
     if parent_elem is None:
         parent_elem = _main_container
         
     if child_elem is None or parent_elem is None:
         return
 
-    # Check if the child wants to be free-floating
     is_absolute = getattr(child_elem.style, 'position', '') == 'absolute'
 
+    # --- ABSOLUTE POSITIONING LOGIC ---
     if is_absolute:
-        # If the parent is a QMainWindow, attach to its central widget instead
-        # so the element doesn't get trapped underneath the background!
         target_widget = parent_elem.raw
         if isinstance(target_widget, QMainWindow) and target_widget.centralWidget():
             target_widget = target_widget.centralWidget()
 
-        # Attach directly to the correct top-layer widget
         child_elem.raw.setParent(target_widget)
         
-        # Grab the saved coordinates
-        left_str = str(getattr(child_elem.style, 'left', '0')).replace('px', '')
-        top_str = str(getattr(child_elem.style, 'top', '0')).replace('px', '')
+        parent_w = target_widget.width()
+        parent_h = target_widget.height()
         
-        try:
-            x = int(float(left_str)) if left_str else 0
-            y = int(float(top_str)) if top_str else 0
-            child_elem.raw.move(x, y) # Move to exact coordinates
-        except ValueError:
-            pass
+        child_elem.raw.adjustSize() 
+        child_w = child_elem.raw.width()
+        child_h = child_elem.raw.height()
 
-        # Force visibility and bring to front
+        x, y = 0, 0
+
+        if 'right' in child_elem.style.__dict__:
+            right_val = int(float(str(child_elem.style.right).replace('px', '')))
+            x = parent_w - child_w - right_val
+        elif 'left' in child_elem.style.__dict__:
+            x = int(float(str(child_elem.style.left).replace('px', '')))
+
+        if 'bottom' in child_elem.style.__dict__:
+            bottom_val = int(float(str(child_elem.style.bottom).replace('px', '')))
+            y = parent_h - child_h - bottom_val
+        elif 'top' in child_elem.style.__dict__:
+            y = int(float(str(child_elem.style.top).replace('px', '')))
+            
+        child_elem.raw.move(x, y)
         child_elem.raw.show()
         child_elem.raw.raise_() 
+
+    # --- GRID / FLEXBOX LOGIC ---
     else:
-        # Standard flexbox append
         if hasattr(parent_elem, 'layout') and parent_elem.layout is not None:
-            parent_elem.layout.addWidget(child_elem.raw)
+            if isinstance(parent_elem.layout, QGridLayout):
+                grid = parent_elem.layout
+                
+                explicit_row = getattr(child_elem.style, 'gridRow', None)
+                explicit_col = getattr(child_elem.style, 'gridColumn', None)
+                
+                r = (int(explicit_row) - 1) if explicit_row else grid._auto_row
+                c = (int(explicit_col) - 1) if explicit_col else grid._auto_col
+                
+                print(f"[Grid Auto-Flow] Placing {child_elem.tag} at Row: {r}, Col: {c}")
+                grid.addWidget(child_elem.raw, r, c)
+                
+                if not explicit_row and not explicit_col:
+                    grid._auto_col += 1
+                    if grid._auto_col >= grid._max_cols:
+                        grid._auto_col = 0
+                        grid._auto_row += 1
+            else:
+                parent_elem.layout.addWidget(child_elem.raw)
         else:
             child_elem.raw.setParent(parent_elem.raw)
 
 def set_theme(css_string):
-    """
-    Translates standard HTML/CSS selectors into PySide6 QSS classes,
-    allowing users to style the app using pure web syntax.
-    """
-    global _pending_theme  # <--- Bring in the buffer
-
-    # WEB TO QT CSS TRANSLATOR
+    global _pending_theme 
     css_string = css_string.replace("body", "QMainWindow, QWidget#central_widget")
     css_string = css_string.replace("font-color", "color")
-    
-    # Translate compound words FIRST
     css_string = re.sub(r'\bscroll_div\b', 'QScrollArea', css_string)
-    
-    # Translate base tags using \b (word boundaries) so it doesn't break CSS properties
     css_string = re.sub(r'\bdiv\b', 'QWidget', css_string)
     css_string = re.sub(r'\bbutton\b', 'QPushButton', css_string)
     css_string = re.sub(r'\binput\b', 'QLineEdit', css_string)
@@ -843,8 +723,6 @@ def set_theme(css_string):
     css_string = re.sub(r'\bdropdown\b', 'QComboBox', css_string)
     css_string = re.sub(r'\bcheckbox\b', 'QCheckBox', css_string)
     css_string = re.sub(r'\bslider\b', 'QSlider', css_string)
-    
-    # Translate all text/image tags to QLabel
     css_string = re.sub(r'\btext\b', 'QLabel', css_string)
     css_string = re.sub(r'\bimg\b', 'QLabel', css_string)
     css_string = re.sub(r'\bh1\b', 'QLabel', css_string)
@@ -853,65 +731,26 @@ def set_theme(css_string):
     css_string = re.sub(r'\boption\b', 'QAbstractItemView', css_string)
     css_string = re.sub(r'\bvideo\b', 'QVideoWidget', css_string)
     css_string = re.sub(r'\btable_view\b', 'QTextBrowser', css_string)
-
-    # NEW: STOP QT FROM STRETCHING WIDGETS
-    # Translates "width:" to "max-width:" (but ignores if it is already "max-width")
     css_string = re.sub(r'(?<!-)\bwidth\s*:', 'max-width:', css_string)
     css_string = re.sub(r'(?<!-)\bheight\s*:', 'max-height:', css_string)
     
-    # Try to apply immediately. If it fails, save it for later!
     app = QApplication.instance()
-    if app:
-        app.setStyleSheet(css_string)
-    else:
-        _pending_theme = css_string
+    if app: app.setStyleSheet(css_string)
+    else: _pending_theme = css_string
 
-# The Aliases (Keeps old scripts alive, allows preference)
 set_global_style = set_theme
-
-########
-
-'''
-def init_window(title="App Window", width=420, height=500):
-    global _app_instance, _root_window, _main_container, _pending_theme
-    
-    # Safely get or create the app
-    _app_instance = QApplication.instance() or QApplication(sys.argv)
-    _app_instance.setStyle("Fusion")
-
-    # Catch the pending theme
-    if _pending_theme:
-        _app_instance.setStyleSheet(_pending_theme)
-        _pending_theme = None
-    
-    _root_window = QWidget()
-    _root_window.setWindowTitle(title)
-    _root_window.resize(width, height)
-    
-    _main_layout = QVBoxLayout(_root_window)
-    _main_container = ce("scroll_div")
-
-    # Force the main window background to fill the screen
-    _main_container.raw.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-    _main_layout.addWidget(_main_container.raw)
-'''
 
 def init_window(title="App Window", width=420, height=500, icon_path=None):
     global _app_instance, _root_window, _main_container, _pending_theme
     
-    # THE CROSS-PLATFORM TASKBAR FIX
-    # os.name == 'nt' ensures this ONLY runs on Windows.
-    # Mac ('posix') and Linux ('posix') will completely ignore this block.
     if os.name == 'nt':
         import ctypes
         myappid = 'CollegeOfScripting.PySide6DOM.App.1' 
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
     
-    # Safely get or create the app
     _app_instance = QApplication.instance() or QApplication(sys.argv)
     _app_instance.setStyle("Fusion")
 
-    # Catch the pending theme
     if _pending_theme:
         _app_instance.setStyleSheet(_pending_theme)
         _pending_theme = None
@@ -920,7 +759,6 @@ def init_window(title="App Window", width=420, height=500, icon_path=None):
     _root_window.setWindowTitle(title)
     _root_window.resize(width, height)
     
-    # APPLY THE ICON (This works natively on all platforms)
     if icon_path and os.path.exists(icon_path):
         _app_instance.setWindowIcon(QIcon(icon_path))
     
@@ -943,13 +781,10 @@ def run_app():
 #
 #     http://www.apache.org/licenses/LICENSE-2.0
 #
-# GitHub: https://github.com/ChristopherAndrewTopalian/pyside6dom
-#
-# PyPI: https://pypi.org/project/pyside6dom/
+# College of Scripting Music & Science
 #
 # GitHub: https://github.com/ChristopherAndrewTopalian
 #
 # GitHub: https://github.com/ChristopherTopalian
-#
 # Google Sites: https://sites.google.com/view/CollegeOfScripting
 
