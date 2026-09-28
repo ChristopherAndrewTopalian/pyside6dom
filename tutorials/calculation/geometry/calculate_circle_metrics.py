@@ -18,7 +18,7 @@ init_window("Circle Geometry", 420, 400)
 set_theme("""
     body { background-color: rgb(20, 25, 30); }
     input { 
-        width: 300px; /* <--- THIS WILL NOW WORK IN YOUR UPDATED ENGINE! */
+        width: 300px;
         padding: 10px; 
         font-size: 20px; 
         font-weight: bold;
