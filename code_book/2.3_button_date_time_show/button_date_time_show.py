@@ -1,25 +1,28 @@
-# button_date_time.py
+# button_date_time_show.py
 
 from pyside6dom import *
 import datetime as dt
 
 def get_date_time_12():
     currentDateTime = dt.datetime.now()
-    # formatted date MM-DD-YY
     date = currentDateTime.strftime("%m-%d-%y")
-    # formatted time HH:MM AM/PM
     time = currentDateTime.strftime("%I:%M %p")
-    formattedDateTime = date + " " + time
-    return formattedDateTime
-
-####
+    return date + " " + time
 
 init_window('Our App', 700, 500)
 
 howdy_btn = ce('button')
 howdy_btn.textContent = 'Date/Time'
-howdy_btn.onclick = lambda: print(get_date_time_12())
+def update_time_label():
+    ge('output_txt').textContent = get_date_time_12()
+howdy_btn.onclick = update_time_label 
 ba(howdy_btn)
+
+output_txt = ce('text')
+output_txt.id = 'output_txt'
+output_txt.style.fontSize = '30px'
+output_txt.style.fontWeight = 'bold'
+ba(output_txt)
 
 run_app()
 
