@@ -40,6 +40,7 @@ set_theme("""
         color: white;
         font-size: 24px;
         font-weight: bold;
+        text-align: center;
     }
 """)
 
@@ -75,6 +76,7 @@ for p in players:
     score_lbl = ce('text')
     score_lbl.className = 'player_score'
     score_lbl.textContent = str(p["score"])
+    #score_lbl.style.textAlign = 'center'
     ba(score_lbl, card)
 
 run_app()

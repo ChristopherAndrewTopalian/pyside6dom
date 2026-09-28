@@ -313,6 +313,15 @@ class DOMStyle:
                     self._element.layout.setAlignment(Qt.AlignmentFlag(0)) 
             return
 
+        # INLINE TEXT ALIGNMENT
+        if key == 'textAlign':
+            # Hijack the key so the compiler below automatically turns it into 'qproperty-alignment'
+            key = 'qpropertyAlignment' 
+            
+            if value == 'center': value = 'AlignCenter'
+            elif value == 'right': value = 'AlignRight'
+            elif value == 'left': value = 'AlignLeft'
+
         # CSS COMPILER
         css_property = ''.join(['-' + c.lower() if c.isupper() else c for c in key])
         self._styles[css_property] = value
@@ -727,6 +736,11 @@ def set_theme(css_string):
     global _pending_theme 
     css_string = css_string.replace("body", "QMainWindow, QWidget#central_widget")
     css_string = css_string.replace("font-color", "color")
+
+    # Translate standard HTML text-align to Qt's native property
+    css_string = re.sub(r'text-align\s*:\s*center', "qproperty-alignment: 'AlignCenter'", css_string)
+    css_string = re.sub(r'text-align\s*:\s*right', "qproperty-alignment: 'AlignRight'", css_string)
+    css_string = re.sub(r'text-align\s*:\s*left', "qproperty-alignment: 'AlignLeft'", css_string)
     css_string = re.sub(r'\bscroll_div\b', 'QScrollArea', css_string)
     css_string = re.sub(r'\bdiv\b', 'QWidget', css_string)
     css_string = re.sub(r'\bbutton\b', 'QPushButton', css_string)
