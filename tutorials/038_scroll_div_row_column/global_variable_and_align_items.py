@@ -52,8 +52,8 @@ sayHiBtn = ce('button')
 sayHiBtn.textContent = 'Hi'
 def handle_click_say():
     global click_tracker
-    welcomeMessage.textContent = 'Hi'
     click_tracker += 1
+    welcomeMessage.textContent = 'Hi'
     ge('right_panel').value = str(click_tracker)
 sayHiBtn.onclick = handle_click_say
 ba(sayHiBtn, button_container)
@@ -62,8 +62,8 @@ sayHowdyBtn = ce('button')
 sayHowdyBtn.textContent = 'Howdy'
 def handle_click_howdy():
     global click_tracker
-    welcomeMessage.textContent = 'Howdy'
     click_tracker += 1
+    welcomeMessage.textContent = 'Howdy'
     ge('right_panel').value = str(click_tracker)
 sayHowdyBtn.onclick = handle_click_howdy
 ba(sayHowdyBtn, button_container)
@@ -72,8 +72,8 @@ sayThisBtn = ce('button')
 sayThisBtn.textContent = 'Custom'
 def handle_click_this(message):
     global click_tracker
-    welcomeMessage.textContent = message
     click_tracker += 1
+    welcomeMessage.textContent = message
     ge('right_panel').value = str(click_tracker)
 sayThisBtn.onclick = lambda: handle_click_this('Hey Now')
 ba(sayThisBtn, button_container)
