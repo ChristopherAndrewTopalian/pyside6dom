@@ -2,7 +2,7 @@
 
 from pyside6dom import *
 
-init_window("Our App", 600, 400)
+init_window("Scroll Div", 600, 400)
 
 welcomeMessage = ce('text')
 welcomeMessage.textContent = 'Welcome'
@@ -14,7 +14,7 @@ ba(welcomeMessage)
 messageBtns_scroll_box = ce('scroll_div')
 messageBtns_scroll_box.style.border = '2px solid rgb(255, 255, 255)'
 messageBtns_scroll_box.style.backgroundColor = 'rgb(0, 0, 0)'
-#messageBtns_scroll_box.style.minHeight = '200px'
+messageBtns_scroll_box.style.height = '100px'
 ba(messageBtns_scroll_box)
 
 # Create buttons and append them TO the scroll box
@@ -38,6 +38,13 @@ def handle_click_message(message):
     welcomeMessage.textContent = message
 sayThisBtn.onclick = lambda: handle_click_message('Hey Now')
 messageBtns_scroll_box.append(sayThisBtn)
+
+sayYoBtn = ce('button')
+sayYoBtn.textContent = 'Yo'
+def handle_click_yo():
+    welcomeMessage.textContent = 'Yo'
+sayYoBtn.onclick = handle_click_yo
+messageBtns_scroll_box.append(sayYoBtn)
 
 run_app()
 
