@@ -402,14 +402,19 @@ class DOMElement:
 
     @textContent.setter
     def textContent(self, value):
-        # 1. Native Qt Text Update
         if hasattr(self.raw, "setText"): 
             self.raw.setText(str(value))
-        # 2. The HTML DOM Illusion for containers!
+            
         elif self.tag in ("div", "scroll_div", "row_div"):
-            inner_text = ce('text')
-            inner_text.textContent = str(value)
-            self.append(inner_text)
+            # If the secret text node doesn't exist yet, create it!
+            if not hasattr(self, "_secret_text_node"):
+                self._secret_text_node = ce('text')
+                # Force it to be perfectly transparent so it blends into the div
+                self._secret_text_node.raw.setStyleSheet("background: transparent; border: none; margin: 0px; padding: 0px;")
+                self.append(self._secret_text_node)
+            
+            # Update the existing secret text node
+            self._secret_text_node.textContent = str(value)
 
     @property
     def innerHTML(self):
@@ -418,7 +423,6 @@ class DOMElement:
 
     @innerHTML.setter
     def innerHTML(self, value):
-        # Native Qt Rich Text Update
         if hasattr(self.raw, "setText"):
             if isinstance(self.raw, (QLabel, QTextBrowser)):
                 if isinstance(self.raw, QLabel):
@@ -437,11 +441,14 @@ class DOMElement:
             else:
                 self.raw.setText(str(value))
                 
-        # The HTML DOM Illusion for containers!
         elif self.tag in ("div", "scroll_div", "row_div"):
-            inner_html_elem = ce('text')
-            inner_html_elem.innerHTML = str(value) # Triggers the rich text formatting above
-            self.append(inner_html_elem)
+            # Same safety check for innerHTML!
+            if not hasattr(self, "_secret_text_node"):
+                self._secret_text_node = ce('text')
+                self._secret_text_node.raw.setStyleSheet("background: transparent; border: none; margin: 0px; padding: 0px;")
+                self.append(self._secret_text_node)
+                
+            self._secret_text_node.innerHTML = str(value)
 
     @property
     def value(self):
@@ -781,6 +788,7 @@ def set_theme(css_string):
     css_string = re.sub(r'text-align\s*:\s*center', "qproperty-alignment: 'AlignCenter'", css_string)
     css_string = re.sub(r'text-align\s*:\s*right', "qproperty-alignment: 'AlignRight'", css_string)
     css_string = re.sub(r'text-align\s*:\s*left', "qproperty-alignment: 'AlignLeft'", css_string)
+    
     css_string = re.sub(r'\bscroll_div\b', 'QScrollArea', css_string)
     css_string = re.sub(r'\bdiv\b', 'QWidget', css_string)
     css_string = re.sub(r'\bbutton\b', 'QPushButton', css_string)
@@ -804,7 +812,38 @@ def set_theme(css_string):
     
     css_string = re.sub(r'(?<!-)\bwidth\s*:', 'max-width:', css_string)
     css_string = re.sub(r'(?<!-)\bheight\s*:', 'max-height:', css_string)
+
+    # ========================================== #
+    # CSS TEXT INHERITANCE COMPILER
+    # Automatically copies font/color rules to child text nodes
+    # so the CSS behaves exactly like the Web DOM!
+    # ========================================== #
+    blocks = re.findall(r'([^{]+)\{([^}]+)\}', css_string)
+    compiled_css = ""
     
+    # These are the properties we want to forcefully "cascade" down to inner text nodes
+    text_properties = ('color', 'font-size', 'font-weight', 'font-family', 'qproperty-alignment', 'font-style')
+    
+    for selectors, rules in blocks:
+        # 1. Keep the original block for the parent div (handles borders, padding, backgrounds)
+        compiled_css += f"{selectors} {{ {rules} }}\n"
+        
+        # 2. Extract ONLY text-related rules
+        extracted_text_rules = []
+        for rule in rules.split(';'):
+            if ':' in rule:
+                prop = rule.split(':')[0].strip().lower()
+                if prop in text_properties:
+                    extracted_text_rules.append(rule.strip())
+        
+        # 3. If we found text rules, create a silent descendant selector for QLabels!
+        if extracted_text_rules:
+            lbl_selectors = [f"{sel.strip()} QLabel" for sel in selectors.split(',')]
+            compiled_css += f"{', '.join(lbl_selectors)} {{ {'; '.join(extracted_text_rules)}; background: transparent; border: none; }}\n"
+            
+    css_string = compiled_css
+    # ========================================== #
+
     app = QApplication.instance()
     if app: app.setStyleSheet(css_string)
     else: _pending_theme = css_string
