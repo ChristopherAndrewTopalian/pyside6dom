@@ -10,11 +10,11 @@ ba(message_container)
 
 hi_txt = ce('text')
 hi_txt.textContent = 'Hi Everyone'
-message_container.append(hi_txt)
+ba(hi_txt, message_container)
 
 howdy_txt = ce('text')
 howdy_txt.textContent = 'Howdy'
-message_container.append(howdy_txt)
+ba(howdy_txt, message_container)
 
 run_app()
 
