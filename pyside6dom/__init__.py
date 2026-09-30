@@ -668,7 +668,15 @@ def ce(tag):
         w.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
         layout = QBoxLayout(QBoxLayout.Direction.TopToBottom, w)
         layout.setAlignment(Qt.AlignmentFlag.AlignTop)
-        layout.setContentsMargins(5, 5, 5, 5)
+        
+        # ===
+        # THE HTML DOM FIX
+        # Strip Qt's default desktop spacing to 0 so 
+        # divs stack skin-to-skin just like the Web!
+        # ===
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
+        
         elem = DOMElement(tag, w)
         elem.layout = layout
         return elem
