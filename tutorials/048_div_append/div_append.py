@@ -1,4 +1,4 @@
-# append_div.py
+# div_append.py
 
 from pyside6dom import *
 
