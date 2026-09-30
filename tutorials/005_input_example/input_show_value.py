@@ -1,4 +1,4 @@
-# pyside6dom_example.py
+# input_show_value.py
 
 from pyside6dom import *
 
@@ -19,7 +19,9 @@ ba(enter_btn)
 result_label = ce('text')
 result_label.id = 'result_label'
 result_label.textContent = 'Result'
-result_label.style("font-size: 30px; font-weight: bold")
+result_label.style.fontSize = '30px'
+result_label.style.fontWeight = 'bold'
+# result_label.style("font-size: 30px; font-weight: bold")
 ba(result_label)
 
 run_app()

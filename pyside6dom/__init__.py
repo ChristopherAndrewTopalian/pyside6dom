@@ -402,7 +402,14 @@ class DOMElement:
 
     @textContent.setter
     def textContent(self, value):
-        if hasattr(self.raw, "setText"): self.raw.setText(str(value))
+        # 1. Native Qt Text Update
+        if hasattr(self.raw, "setText"): 
+            self.raw.setText(str(value))
+        # 2. The HTML DOM Illusion for containers!
+        elif self.tag in ("div", "scroll_div", "row_div"):
+            inner_text = ce('text')
+            inner_text.textContent = str(value)
+            self.append(inner_text)
 
     @property
     def innerHTML(self):
@@ -411,6 +418,7 @@ class DOMElement:
 
     @innerHTML.setter
     def innerHTML(self, value):
+        # Native Qt Rich Text Update
         if hasattr(self.raw, "setText"):
             if isinstance(self.raw, (QLabel, QTextBrowser)):
                 if isinstance(self.raw, QLabel):
@@ -428,6 +436,12 @@ class DOMElement:
                 self.raw.setText(html_str)
             else:
                 self.raw.setText(str(value))
+                
+        # The HTML DOM Illusion for containers!
+        elif self.tag in ("div", "scroll_div", "row_div"):
+            inner_html_elem = ce('text')
+            inner_html_elem.innerHTML = str(value) # Triggers the rich text formatting above
+            self.append(inner_html_elem)
 
     @property
     def value(self):
