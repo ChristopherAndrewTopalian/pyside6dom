@@ -387,6 +387,14 @@ class DOMElement:
         """
         ba(child_element, self)
 
+    def remove(self):
+        """
+        Mimics JavaScript's element.remove()
+        Safely deletes the widget from the screen and clears it from memory.
+        """
+        self.raw.setParent(None)
+        self.raw.deleteLater()
+
     @property
     def textContent(self):
         if hasattr(self.raw, "text"): return self.raw.text()
