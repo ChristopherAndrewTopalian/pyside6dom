@@ -1,17 +1,27 @@
-# minimal_app_with_icon.py
+# append_div.py
 
 from pyside6dom import *
 
-init_window('OurApp', 700, 600, '001.png')
+init_window('Our App', 400, 300)
+
+# Use ba() to attach the main container to the window (just like document.body.append)
+main_panel = ce('div')
+ba(main_panel)
+
+# attach our_title to the main_panel
+our_title = ce('text')
+our_title.textContent = "Welcome to the App"
+main_panel.append(our_title) 
+
+# attach hi_btn to the main_panel
+hi_btn = ce('button')
+hi_btn.textContent = "Click Me"
+hi_btn.onclick = lambda: print('hi')
+main_panel.append(hi_btn)
 
 run_app()
 
 ####
-
-'''
-We must run this from the folder
-because it must reference the texture.
-'''
 
 # Dedicated to God the Father
 # (c) Copyright 2026 Christopher Andrew Topalian
@@ -22,13 +32,10 @@ because it must reference the texture.
 #
 #     http://www.apache.org/licenses/LICENSE-2.0
 #
-# GitHub: https://github.com/ChristopherAndrewTopalian/pyside6dom
-#
-# PyPI: https://pypi.org/project/pyside6dom/
+# College of Scripting Music & Science
 #
 # GitHub: https://github.com/ChristopherAndrewTopalian
 #
 # GitHub: https://github.com/ChristopherTopalian
-#
 # Google Sites: https://sites.google.com/view/CollegeOfScripting
 

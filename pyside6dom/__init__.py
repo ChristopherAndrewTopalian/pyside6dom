@@ -3,6 +3,11 @@
 import os
 import sys
 import re
+import json      # For saving/loading data (like localStorage)
+import math      # For advanced kinematics and geometry
+import random    # For games and generative art
+from pathlib import Path
+
 from datetime import datetime
 
 from PySide6.QtWidgets import (
@@ -374,6 +379,13 @@ class DOMElement:
         self.raw.style().unpolish(self.raw)
         self.raw.style().polish(self.raw)
         self.raw.update()
+
+    def append(self, child_element):
+        """
+        Mimics JavaScript's element.append(child)
+        Because 'self' is the parent, we just pass both to your existing 'ba' function!
+        """
+        ba(child_element, self)
 
     @property
     def textContent(self):
