@@ -1,0 +1,60 @@
+# textarea.py
+
+from pyside6dom import *
+
+init_window("Notepad App", 500, 400)
+
+notes_title = ce('h1')
+notes_title.textContent = "Notes"
+notes_title.style.marginBottom = '10px'
+notes_title.style.color = 'rgb(0, 255, 255)'
+#notes_title.style("color: rgb(0, 255, 255); margin-bottom: 10px;")
+ba(notes_title)
+
+note_pad = ce('textarea')
+note_pad.placeholder = "Start typing your notes here...\n(Press Enter for a new line)"
+note_pad.style.backgroundColor = 'rgb(25, 25, 25)'
+note_pad.style.color = 'rgb(0, 255, 255)'
+note_pad.style.fontFamily = 'Arial'
+note_pad.style.fontSize = '25px'
+#note_pad.style("background-color: rgb(26, 26, 26); color: rgb(0, 255, 255); font-family: Arial; font-size: 24px;")
+
+# Zero-argument function exactly like vanilla JS
+def update_count():
+    # We pull the text length directly from the element's value
+    char_count.textContent = f"Characters: {len(note_pad.value)}"
+
+# Grouped right with the element creation
+note_pad.oninput = update_count
+ba(note_pad)
+
+char_count = ce('text')
+char_count.textContent = "Characters: 0"
+char_count.style.color = 'rgb(130, 130, 130)'
+char_count.style.textAlign = 'right'
+#char_count.style("color: rgb(130, 130, 130); text-align: right;")
+ba(char_count)
+
+run_app()
+
+####
+
+# Dedicated to God the Father
+# (c) Copyright 2026 Christopher Andrew Topalian
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# GitHub: https://github.com/ChristopherAndrewTopalian/pyside6dom
+#
+# PyPI: https://pypi.org/project/pyside6dom/
+#
+# GitHub: https://github.com/ChristopherAndrewTopalian
+#
+# GitHub: https://github.com/ChristopherTopalian
+#
+# Google Sites: https://sites.google.com/view/CollegeOfScripting
+

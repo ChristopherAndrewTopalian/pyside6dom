@@ -36,14 +36,17 @@ set_theme("""
         background-color: #555;
         border-color: rgb(0, 255, 255);
     }
+    button:active {
+        color: white;
+    }
     input {
         border: 1px solid white;
     }
 """)
 
-theTitle = ce('text')
-theTitle.textContent = 'Websites'
-ba(theTitle)
+our_title = ce('text')
+our_title.textContent = 'Websites'
+ba(our_title)
 
 web_btns_scroll_box = ce('scroll_div')
 web_btns_scroll_box.style('border: 1px solid white;')
@@ -52,6 +55,7 @@ ba(web_btns_scroll_box)
 google_btn = ce('button')
 google_btn.textContent = 'Google'
 google_btn.onclick = lambda: goTo_url('https://www.google.com')
+#web_btns_scroll_box.append(google_btn)
 ba(google_btn, web_btns_scroll_box)
 
 vidmax_btn = ce('button')
