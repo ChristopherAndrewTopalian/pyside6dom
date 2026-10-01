@@ -1,15 +1,5 @@
 # dictionary_of_dictionaries_show_all.py
 
-import sys
-import os
-
-# Local Testing
-# This grabs the folder the script is in, then goes up one or two levels to the root.
-current_dir = os.path.dirname(os.path.abspath(__file__))
-project_root = os.path.dirname(os.path.dirname(current_dir)) 
-sys.path.insert(0, project_root)
-# --------------------------
-
 from pyside6dom import *
 
 people = {
@@ -72,40 +62,19 @@ people = {
 
 init_window('Scores', 700, 600)
 
-set_theme("""
-    body { background-color: rgb(20, 20, 20); }
-    button {
-        padding: 10px 20px;
-        font-weight: normal;
-        background-color: rgb(40, 45, 55);
-        color: rgb(0, 255, 200);
-        border: 2px solid rgb(255, 255, 255);
-        border-radius: 5px;
-        margin: 5px;
-    }
-    button:hover {
-        border-color: rgb(0, 255, 255);
-    }
-""")
-
 output_label = ce('text')
 ba(output_label)
 
 people_scroll_box = ce('scroll_div')
 people_scroll_box.id = 'people_scroll_box'
-people_scroll_box.style.border = '1px solid rgb(255, 255, 255)'
-people_scroll_box.style.height = '200px'
-#people_scroll_box.style("border: 1px solid rgb(255, 255, 255);")
+people_scroll_box.style("border: 1px solid rgb(255, 255, 255);")
 ba(people_scroll_box)
 
 for person_key, person_data in people.items():
     name_btn = ce('button')
     # Display the properly capitalized first and last name on the button
     name_btn.textContent = f"{person_data['first_name']} {person_data['last_name']}: {person_data['score']}"
-    name_btn.style.fontSize = '25px'
-    name_btn.style.fontWeight = 'bold'
-    name_btn.style.color = 'aqua'
-    #name_btn.style("font-size: 25px; font-weight: bold; color: aqua;")
+    name_btn.style("font-size: 25px; font-weight: bold; color: aqua;")
 
     # Freeze the lowercase key AND the inner dictionary data
     def handle_click(p_key=person_key, p_data=person_data):
@@ -115,7 +84,7 @@ for person_key, person_data in people.items():
         output_label.textContent = f"Dictionary Key: '{p_key}' -> Student: {p_data['first_name']} {p_data['last_name']}, Score: {p_data['score']}"
 
     name_btn.onclick = handle_click
-    people_scroll_box.append(name_btn)
+    ba(name_btn, people_scroll_box)
 
 ####
 

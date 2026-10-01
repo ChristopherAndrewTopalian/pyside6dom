@@ -334,7 +334,9 @@ class DOMStyle:
         css_string = ""
         for prop, val in self._styles.items():
             css_string += f"{prop}: {val}; "
-        self._element.raw.setStyleSheet(css_string)
+            
+        # Route it through your master compiler
+        self._element.set_style(css_string)
 
     def __call__(self, css_string):
         self._element.set_style(css_string)
