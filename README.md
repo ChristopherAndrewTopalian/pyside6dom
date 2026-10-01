@@ -1,4 +1,4 @@
-# PySide6DOM v0.7.0
+# PySide6DOM v0.7.1
 **Bring the simplicity of the Web DOM to Python PySide6 Desktop Applications.**
 
 # Installation
@@ -112,6 +112,7 @@ run_app()
 * mainDiv.remove()
 * div supports textContent and innerHTML 
 * div has 0px margin
+* button:active 
 
 ---
 

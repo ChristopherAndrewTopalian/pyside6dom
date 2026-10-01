@@ -19,7 +19,7 @@ set_theme("""
         background-color: #555;
         border-color: rgb(0, 255, 255);
     }
-    button:pressed {
+    button:active {
         font-weight: bold;
     }
     input {

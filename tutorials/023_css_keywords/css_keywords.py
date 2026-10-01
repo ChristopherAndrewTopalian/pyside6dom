@@ -29,7 +29,7 @@ set_theme("""
         margin-top: 15px;
     }
     button:hover { background-color: #0099ff; }
-    button:pressed { background-color: #005c99; }
+    button:active { background-color: #005c99; }
     
     select {
         padding: 6px;

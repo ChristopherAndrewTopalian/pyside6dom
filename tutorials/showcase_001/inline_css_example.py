@@ -65,7 +65,7 @@ submit_btn.style("""
         font-weight: bold;
     }
     button:hover { background-color: rgb(0, 180, 180); }
-    button:pressed { background-color: rgb(255, 255, 255); }
+    button:active { background-color: rgb(255, 255, 255); }
 """)
 ba(submit_btn, action_panel) # Appended to action_panel, NOT the main window
 

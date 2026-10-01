@@ -20,7 +20,7 @@ set_theme("""
         background-color: #555;
         border-color: rgb(0, 255, 255);
     }
-    button:pressed {
+    button:active {
         color: rgb(255, 0, 255);
     }
     input {

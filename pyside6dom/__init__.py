@@ -574,8 +574,17 @@ class DOMElement:
     def set_style(self, css_string):
         css_string = css_string.replace("body", "QMainWindow, QWidget#central_widget")
         css_string = css_string.replace("font-color", "color")
+
+        # Translate standard HTML text-align to Qt's native property
+        css_string = re.sub(r'text-align\s*:\s*center', "qproperty-alignment: 'AlignCenter'", css_string)
+        css_string = re.sub(r'text-align\s*:\s*right', "qproperty-alignment: 'AlignRight'", css_string)
+        css_string = re.sub(r'text-align\s*:\s*left', "qproperty-alignment: 'AlignLeft'", css_string)
+
+        # Translate HTML :active state to Qt's native :pressed state
+        css_string = css_string.replace(":active", ":pressed")
         
         css_string = re.sub(r'\bscroll_div\b', 'QScrollArea', css_string)
+        css_string = re.sub(r'\brow_div\b', 'QWidget', css_string)
         css_string = re.sub(r'\bdiv\b', 'QWidget', css_string)
         css_string = re.sub(r'\bbutton\b', 'QPushButton', css_string)
         css_string = re.sub(r'\binput\b', 'QLineEdit', css_string)
@@ -596,14 +605,34 @@ class DOMElement:
         css_string = re.sub(r'(?<!-)\bwidth\s*:', 'max-width:', css_string)
         css_string = re.sub(r'(?<!-)\bheight\s*:', 'max-height:', css_string)
 
-        if "{" in css_string:
-            self.raw.setStyleSheet(css_string)
-        else:
+        # First, make sure it has a valid target block (e.g., #dom_node_123 { ... })
+        if "{" not in css_string:
             obj_name = self.raw.objectName()
             if not obj_name:
                 obj_name = f"dom_node_{id(self.raw)}"
                 self.raw.setObjectName(obj_name)
-            self.raw.setStyleSheet(f"#{obj_name} {{ {css_string} }}")
+            css_string = f"#{obj_name} {{ {css_string} }}"
+
+        # Run the Text Compiler on inline styles too!
+        blocks = re.findall(r'([^{]+)\{([^}]+)\}', css_string)
+        compiled_css = ""
+        text_properties = ('color', 'font-size', 'font-weight', 'font-family', 'qproperty-alignment', 'font-style')
+        
+        for selectors, rules in blocks:
+            compiled_css += f"{selectors} {{ {rules} }}\n"
+            extracted_text_rules = []
+            for rule in rules.split(';'):
+                if ':' in rule:
+                    prop = rule.split(':')[0].strip().lower()
+                    if prop in text_properties:
+                        extracted_text_rules.append(rule.strip())
+            
+            if extracted_text_rules:
+                lbl_selectors = [f"{sel.strip()} QLabel" for sel in selectors.split(',')]
+                compiled_css += f"{', '.join(lbl_selectors)} {{ {'; '.join(extracted_text_rules)}; background: transparent; border: none; }}\n"
+                
+        # Apply the compiled string
+        self.raw.setStyleSheet(compiled_css)
 
     def play(self):
         if self.tag == "video" and hasattr(self, "player"): self.player.play()
@@ -796,8 +825,12 @@ def set_theme(css_string):
     css_string = re.sub(r'text-align\s*:\s*center', "qproperty-alignment: 'AlignCenter'", css_string)
     css_string = re.sub(r'text-align\s*:\s*right', "qproperty-alignment: 'AlignRight'", css_string)
     css_string = re.sub(r'text-align\s*:\s*left', "qproperty-alignment: 'AlignLeft'", css_string)
+
+    # Translate HTML :active state to Qt's native :pressed state
+    css_string = css_string.replace(":active", ":pressed")
     
     css_string = re.sub(r'\bscroll_div\b', 'QScrollArea', css_string)
+    css_string = re.sub(r'\brow_div\b', 'QWidget', css_string) # <--- ADDED!
     css_string = re.sub(r'\bdiv\b', 'QWidget', css_string)
     css_string = re.sub(r'\bbutton\b', 'QPushButton', css_string)
     css_string = re.sub(r'\binput\b', 'QLineEdit', css_string)
@@ -823,20 +856,14 @@ def set_theme(css_string):
 
     # ========================================== #
     # CSS TEXT INHERITANCE COMPILER
-    # Automatically copies font/color rules to child text nodes
-    # so the CSS behaves exactly like the Web DOM!
     # ========================================== #
     blocks = re.findall(r'([^{]+)\{([^}]+)\}', css_string)
     compiled_css = ""
     
-    # These are the properties we want to forcefully "cascade" down to inner text nodes
     text_properties = ('color', 'font-size', 'font-weight', 'font-family', 'qproperty-alignment', 'font-style')
     
     for selectors, rules in blocks:
-        # 1. Keep the original block for the parent div (handles borders, padding, backgrounds)
         compiled_css += f"{selectors} {{ {rules} }}\n"
-        
-        # 2. Extract ONLY text-related rules
         extracted_text_rules = []
         for rule in rules.split(';'):
             if ':' in rule:
@@ -844,14 +871,13 @@ def set_theme(css_string):
                 if prop in text_properties:
                     extracted_text_rules.append(rule.strip())
         
-        # 3. If we found text rules, create a silent descendant selector for QLabels!
         if extracted_text_rules:
             lbl_selectors = [f"{sel.strip()} QLabel" for sel in selectors.split(',')]
             compiled_css += f"{', '.join(lbl_selectors)} {{ {'; '.join(extracted_text_rules)}; background: transparent; border: none; }}\n"
             
     css_string = compiled_css
     # ========================================== #
-
+    
     app = QApplication.instance()
     if app: app.setStyleSheet(css_string)
     else: _pending_theme = css_string
