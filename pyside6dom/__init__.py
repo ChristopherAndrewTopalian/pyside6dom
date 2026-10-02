@@ -537,6 +537,35 @@ class DOMElement:
         if hasattr(self.raw, "setPlaceholderText"): self.raw.setPlaceholderText(str(text))
 
     @property
+    def readOnly(self):
+        if hasattr(self.raw, "isReadOnly"): return self.raw.isReadOnly()
+        return False
+
+    @readOnly.setter
+    def readOnly(self, val):
+        if hasattr(self.raw, "setReadOnly"): 
+            self.raw.setReadOnly(bool(val))
+
+    # Alias for lowercase 'readonly' to prevent typos
+    @property
+    def readonly(self): return self.readOnly
+
+    @readonly.setter
+    def readonly(self, val): self.readOnly = val
+
+    @property
+    def disabled(self):
+        if hasattr(self.raw, "isEnabled"): return not self.raw.isEnabled()
+        return False
+
+    @disabled.setter
+    def disabled(self, val):
+        if hasattr(self.raw, "setEnabled"): 
+            # In Qt, 'setEnabled(False)' is the equivalent of HTML 'disabled=True'
+            self.raw.setEnabled(not bool(val))
+    # ===
+
+    @property
     def checked(self):
         if isinstance(self.raw, QCheckBox): return self.raw.isChecked()
         return False

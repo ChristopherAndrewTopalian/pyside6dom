@@ -64,7 +64,8 @@ output_txt.id = 'output_txt'
 output_txt.style.marginTop = '15px'
 output_txt.style.fontSize = '20px'
 output_txt.style.height = '400px'
-output_txt.raw.setReadOnly(True)
+#output_txt.raw.setReadOnly(True)
+output_txt.readOnly = 'true'
 ba(output_txt)
 
 run_app()

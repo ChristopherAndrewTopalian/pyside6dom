@@ -13,7 +13,8 @@ result_txt.style.width = '700'
 result_txt.style.height = '500'
 result_txt.style.backgroundColor = '#1e1e1e'
 result_txt.style.color = '#569cd6'
-result_txt.raw.setReadOnly(True)
+#result_txt.raw.setReadOnly(True)
+result_txt.readOnly = 'true'
 ba(result_txt)
 
 # Get the file path
