@@ -43,7 +43,7 @@ def add_to_list():
         "role": role_input.value
     }
     
-    # Push it to the "Array" (List)
+    # Push it to the list
     people.append(new_person)
     
     # Format it beautifully as a string with indents
