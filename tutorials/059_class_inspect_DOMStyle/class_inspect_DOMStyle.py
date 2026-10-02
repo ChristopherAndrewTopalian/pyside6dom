@@ -9,7 +9,7 @@ init_window('Class Inspector', 800, 600)
 result_txt = ce('textarea')
 result_txt.id = 'result_txt'
 result_txt.style.fontSize = '24px' 
-result_txt.style.fontFamily = 'Consolas, monospace'
+result_txt.style.fontFamily = 'Arial'
 result_txt.style.width = '700'
 result_txt.style.height = '500'
 result_txt.style.backgroundColor = '#1e1e1e'
