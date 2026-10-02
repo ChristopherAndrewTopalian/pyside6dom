@@ -20,7 +20,7 @@ set_theme('''
     }
 ''')
 
-# Our "Array of Objects"
+# we make an empty list
 people = []
 
 # Input: Name
