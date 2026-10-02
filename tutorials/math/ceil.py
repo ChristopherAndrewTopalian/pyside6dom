@@ -4,10 +4,10 @@ from pyside6dom import *
 
 init_window('math.ceil', 700, 500)
 
-ourNumber = 23.3
+our_number = 23.3
 
 result_txt = ce('div')
-result_txt.textContent = math.ceil(ourNumber)
+result_txt.textContent = math.ceil(our_number)
 result_txt.style.fontSize = '100px'
 result_txt.style.fontWeight = 'bold'
 ba(result_txt)
