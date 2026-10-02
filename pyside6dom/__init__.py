@@ -303,7 +303,7 @@ class DOMStyle:
                     self._element.layout.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
                 elif value == 'column':
                     self._element.layout.setDirection(QBoxLayout.Direction.TopToBottom)
-                    self._element.layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+                    self._element.layout.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
             return
 
         if key == 'alignItems':
@@ -317,6 +317,29 @@ class DOMStyle:
                 elif value == 'stretch':
                     self._element.layout.setAlignment(Qt.AlignmentFlag(0)) 
             return
+
+        # ===
+        # Flex Layout Spacing Translators
+        # ===
+        if key == 'padding':
+            # If it's a layout container, set C++ margins
+            if hasattr(self._element, 'layout') and self._element.layout:
+                try:
+                    val = int(str(value).replace('px', '').strip())
+                    self._element.layout.setContentsMargins(val, val, val, val)
+                except: pass
+            # DO NOT RETURN! We let this fall through to the CSS Compiler
+            # so that simple elements (like buttons) still get standard CSS padding!
+                
+        if key == 'gap':
+            # Translate gap to C++ setSpacing
+            if hasattr(self._element, 'layout') and self._element.layout:
+                try:
+                    val = int(str(value).replace('px', '').strip())
+                    self._element.layout.setSpacing(val)
+                except: pass
+            return # Qt CSS doesn't understand 'gap', so we safely exit here.
+        # ===
 
         # INLINE TEXT ALIGNMENT
         if key == 'textAlign':
