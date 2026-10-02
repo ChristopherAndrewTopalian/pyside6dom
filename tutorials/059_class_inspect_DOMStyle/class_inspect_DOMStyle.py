@@ -1,14 +1,15 @@
-# class_inspect.py
+# class_inspect_DOMStyle.py
 
 import inspect
 from pyside6dom import *
 
-init_window('Inspect DOMStyle File', 800, 600)
+init_window('Class Inspector', 800, 600)
 
+# Create the UI
 result_txt = ce('textarea')
 result_txt.id = 'result_txt'
 result_txt.style.fontSize = '24px' 
-result_txt.style.fontFamily = 'Arial'
+result_txt.style.fontFamily = 'Consolas, monospace'
 result_txt.style.width = '700'
 result_txt.style.height = '500'
 result_txt.style.backgroundColor = '#1e1e1e'
@@ -16,16 +17,13 @@ result_txt.style.color = '#569cd6'
 result_txt.raw.setReadOnly(True)
 ba(result_txt)
 
-# Get the file path
-our_query = inspect.getfile(DOMStyle)
-
-# Read the file and populate the element
-if os.path.isfile(our_query):
-    with open(our_query, 'r') as file:
-        content = file.read()
-        result_txt.value = content 
-else:
-    result_txt.value = "File not found."
+# Extract ONLY the target class
+try:
+    # This single line grabs the exact source code for the DOMStyle class
+    class_code = inspect.getsource(DOMStyle)
+    result_txt.value = class_code
+except Exception as err:
+    result_txt.value = f"Error extracting code: {err}"
 
 run_app()
 
