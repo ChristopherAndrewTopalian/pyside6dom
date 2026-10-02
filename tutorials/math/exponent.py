@@ -1,21 +1,13 @@
-# is_prime.py
+# exponent.py
 
 from pyside6dom import *
 
-def is_prime(n):
-    if n < 2:
-        return False
-    for i in range(2, int(n**0.5) + 1):
-        if n % i == 0:
-            return False
-    return True
+init_window('exponent', 700, 500)
 
-init_window('Is Number Prime', 700, 500)
-
-our_number = 23
+our_number = 8
 
 result_txt = ce('div')
-result_txt.textContent = is_prime(our_number)
+result_txt.textContent = our_number ** 2
 result_txt.style.fontSize = '100px'
 result_txt.style.fontWeight = 'bold'
 ba(result_txt)
