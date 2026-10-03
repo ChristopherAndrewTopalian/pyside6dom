@@ -60,13 +60,12 @@ def add_to_list():
     # Clear inputs and return focus
     name_input.value = ''
     role_input.value = ''
-    #name_input.raw.setFocus()
     name_input.focus()
 
 # The Button submits
 enter_btn.onclick = add_to_list
 
-# Hitting Enter on the Name box jumps the cursor to the Role box!
+# Hitting Enter on the Name box jumps the cursor to the Role box
 name_input.onenter = role_input.focus 
 
 # Hitting Enter on the Role box submits the data
@@ -79,7 +78,6 @@ output_txt.id = 'output_txt'
 output_txt.style.marginTop = '15px'
 output_txt.style.fontSize = '20px'
 output_txt.style.height = '400px'
-#output_txt.raw.setReadOnly(True)
 output_txt.readOnly = 'true'
 ba(output_txt)
 
