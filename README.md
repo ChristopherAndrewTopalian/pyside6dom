@@ -1,4 +1,4 @@
-# PySide6DOM v0.7.4
+# PySide6DOM v0.7.5
 **Bring the simplicity of the Web DOM to Python PySide6 Desktop Applications.**
 
 # Installation
@@ -113,6 +113,9 @@ run_app()
 * div supports textContent and innerHTML 
 * div has 0px margin
 * button:active 
+* element.readOnly = 'true' or element.readOnly = 'false'
+* element.focus()
+* element.blur()
 
 ---
 

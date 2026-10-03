@@ -37,6 +37,13 @@ enter_btn = ce('button')
 enter_btn.textContent = 'Add Person'
 
 def add_to_list():
+    # Only add if they actually typed something!
+    if name_input.value == '' or role_input.value == '':
+        # If they hit enter while empty, remove focus (blur) so they know it failed
+        name_input.blur() 
+        role_input.blur()
+        return
+
     # Create the "Object" (Dictionary)
     new_person = {
         "name": name_input.value,
@@ -53,7 +60,8 @@ def add_to_list():
     # Clear inputs and return focus
     name_input.value = ''
     role_input.value = ''
-    name_input.raw.setFocus()
+    #name_input.raw.setFocus()
+    name_input.focus()
 
 enter_btn.onclick = add_to_list
 ba(enter_btn)

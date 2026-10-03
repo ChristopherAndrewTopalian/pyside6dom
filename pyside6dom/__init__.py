@@ -694,6 +694,16 @@ class DOMElement:
     def pause(self):
         if self.tag == "video" and hasattr(self, "player"): self.player.pause()
 
+    def focus(self):
+        """Mimics JavaScript's element.focus()"""
+        if hasattr(self.raw, "setFocus"):
+            self.raw.setFocus()
+
+    def blur(self):
+        """Mimics JavaScript's element.blur()"""
+        if hasattr(self.raw, "clearFocus"):
+            self.raw.clearFocus()
+
 # ========================================== #
 #               DOM PARSER (ce)
 # ========================================== #
