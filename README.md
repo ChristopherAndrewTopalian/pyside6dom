@@ -1,4 +1,4 @@
-# PySide6DOM v0.7.5
+# PySide6DOM v0.7.6
 **Bring the simplicity of the Web DOM to Python PySide6 Desktop Applications.**
 
 # Installation
@@ -116,6 +116,7 @@ run_app()
 * element.readOnly = 'true' or element.readOnly = 'false'
 * element.focus()
 * element.blur()
+*element.onenter for enter button presses
 
 ---
 

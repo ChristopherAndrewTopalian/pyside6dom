@@ -625,6 +625,15 @@ class DOMElement:
         if hasattr(self.raw, 'textChanged'): self.raw.textChanged.connect(signal_router)
         elif hasattr(self.raw, 'valueChanged'): self.raw.valueChanged.connect(signal_router)
 
+    @property
+    def onenter(self): return None
+
+    @onenter.setter
+    def onenter(self, callback_func):
+        # QLineEdit has a built-in signal specifically for the Enter key
+        if hasattr(self.raw, "returnPressed"):
+            self.raw.returnPressed.connect(callback_func)
+
     def set_style(self, css_string):
         css_string = css_string.replace("body", "QMainWindow, QWidget#central_widget")
         css_string = css_string.replace("font-color", "color")
