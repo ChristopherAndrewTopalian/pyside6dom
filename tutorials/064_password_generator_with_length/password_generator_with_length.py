@@ -1,37 +1,46 @@
-# password_generator.py
+# password_generator_with_length.py
 
 from pyside6dom import *
+import random
 
 init_window('Password Generator', 700, 600)
 
-letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g','h', 'i', 'j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S','T', 'U', 'V', 'W', 'X', 'Y', 'Z']
-
-numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-
-symbols = ['~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')','_']
+letters = list('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')
+numbers = list('0123456789')
+symbols = list('~!@#$%^&*()_')
 
 def generate_password():
-    all = letters + numbers + symbols
-
-    password = random.sample(all, 12)
-
-    password_string = ", ".join(map(str, password))
-
-    password = password_string.replace(",", "")    
-    return password
-
+    all_chars = letters + numbers + symbols
+    
+    # Grab the length directly from the input box right now.
+    try:
+        current_length = int(password_length_input.value)
+    except ValueError:
+        current_length = 12 # Fallback if the user typed a letter by accident
+        
+    password_list = random.choices(all_chars, k=current_length)
+    return "".join(map(str, password_list))
 
 password_div = ce('input')
-password_div.value = generate_password()
 password_div.style.fontSize = '30px'
 password_div.style.fontWeight = 'bold'
-password_div.readOnly = 'false'
+password_div.readOnly = True
 ba(password_div)
+
+password_length_input = ce('input')
+password_length_input.value = 12 
+ba(password_length_input)
+
+# Boot up the first password AFTER the input box is created
+password_div.value = generate_password()
 
 random_password_btn = ce('button')
 random_password_btn.textContent = 'Random'
+
 def handle_click():
+    # When clicked, generate_password() fires and immediately reads the new input value
     password_div.value = generate_password()
+
 random_password_btn.onclick = handle_click
 ba(random_password_btn)
 
