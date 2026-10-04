@@ -126,39 +126,61 @@ def RC(a, b):
 #  DATE & TIME HELPERS
 # ===
 
-def get_full_year():
+def get_year():
     """Returns the current 4-digit year (e.g., 2026)."""
-    return datetime.now().year
+    return datetime.today().year
 
 def get_month():
-    '''returns 1-12'''
-    return datetime.now().month
+    """Returns the current month number (1-12)."""
+    return datetime.today().month
 
-def get_date():
-    '''The day of the month (1-31)'''
-    return datetime.now().day
+def get_day_of_month():
+    """Returns the day of the month (1-31)."""
+    return datetime.today().day
 
-def get_day():
-    ''' The day of the week. Python is 1(Mon) to 7(Sun).
-    If you want it to perfectly match JS (0=Sun to 6=Sat), use this math:'''
-    return int(datetime.now().strftime('%w'))
+def get_day_name():
+    """Returns the full name of the day (e.g., 'Monday', 'Tuesday')."""
+    return datetime.today().strftime("%A")
+
+def get_day_of_week():
+    """Returns the day of the week as an integer (0-6).
+    Matches JS DOM getDay(): 0=Sunday ... 6=Saturday."""
+    return int(datetime.today().strftime('%w'))
+
+def get_day_of_week_iso():
+    """Returns the day of the week as an integer (1-7).
+    Matches ISO standard: 1=Monday ... 7=Sunday."""
+    return datetime.today().isoweekday()
+
+def get_month_day_year():
+    """Returns today's date formatted as MM-DD-YYYY."""
+    return datetime.today().strftime("%m-%d-%Y")
+
+def get_year_month_day():
+    """Returns today's date formatted as YYYY-MM-DD."""
+    return datetime.today().strftime("%Y-%m-%d")
+
+# TIME FUNCTIONS
 
 def get_hours():
-    '''gets the hours'''
+    """Returns the current hour in 24-hour format (0-23)."""
     return datetime.now().hour
 
 def get_minutes():
-    '''gets the minutes'''
+    """Returns the current minute (0-59)."""
     return datetime.now().minute
 
 def get_seconds():
-    '''gets the seconds'''
+    """Returns the current second (0-59)."""
     return datetime.now().second
 
-def is_target_date(target_string):
-    '''Get today's date object and instantly convert it to a string'''
-    today_str = str(datetime.date.today())
+# UTILITY
 
+def is_target_date(target_string):
+    ''' Compare today yy-mm-dd with target_string'''
+    # Get today's date object and instantly convert it to a string
+    today_str = str(datetime.today().strftime("%Y-%m-%d"))
+    
     # Now we can safely compare text to text
     if today_str == target_string:
         return True
