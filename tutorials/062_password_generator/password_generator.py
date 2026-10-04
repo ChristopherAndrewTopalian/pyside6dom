@@ -21,16 +21,17 @@ def generate_password():
     return password
 
 
-password_div = ce('div')
-password_div.textContent = generate_password()
+password_div = ce('input')
+password_div.value = generate_password()
 password_div.style.fontSize = '30px'
 password_div.style.fontWeight = 'bold'
+password_div.readOnly = 'false'
 ba(password_div)
 
 random_password_btn = ce('button')
 random_password_btn.textContent = 'Random'
 def handle_click():
-    password_div.textContent = generate_password()
+    password_div.value = generate_password()
 random_password_btn.onclick = handle_click
 ba(random_password_btn)
 
