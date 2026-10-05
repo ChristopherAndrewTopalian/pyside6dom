@@ -1,4 +1,4 @@
-# PySide6DOM v0.8.0
+# PySide6DOM v0.8.1
 **Bring the simplicity of the Web DOM to Python PySide6 Desktop Applications.**
 
 # Installation
@@ -120,6 +120,8 @@ run_app()
 * addEventListener
 * anchor element, text-decoration textDecoration, href, target
 * element.click()
+* open_file(which_file)
+* show_in_file_explorer(which_file)
 
 ---
 

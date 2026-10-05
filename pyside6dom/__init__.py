@@ -6,6 +6,7 @@ import re
 import json      # For saving/loading data (like localStorage)
 import math      # For advanced kinematics and geometry
 import random    # For games and generative art
+import subprocess
 from pathlib import Path
 
 from datetime import datetime
@@ -186,6 +187,39 @@ def is_target_date(target_string):
         return True
     else:
         return False
+
+# ===
+# FILE
+# ===
+
+def open_file(whichFilePath):
+    '''Open the specified File'''
+    if os.path.exists(whichFilePath):
+        if sys.platform == 'win32':
+            os.startfile(whichFilePath)
+        elif sys.platform == 'darwin':
+            subprocess.call(('open', whichFilePath))
+        else:
+            subprocess.call(('xdg-open', whichFilePath))
+    else:
+        print('File not found:', whichFilePath)
+
+####
+
+def show_in_file_explorer(path):
+    """Reveal a file, highlighted, in the OS file manager."""
+    path = str(Path(path).resolve())
+
+    if sys.platform == 'win32':
+        subprocess.Popen(f'explorer /select,"{path}"')
+    elif sys.platform == 'darwin':
+        subprocess.Popen(['open', '-R', path])
+    else:
+        # Most Linux file managers don't support "select this file" —
+        # opening the containing folder is the reliable fallback
+        subprocess.Popen(['xdg-open', str(Path(path).parent)])
+
+####
 
 # ========================================== #
 #               CONSOLE ALIAS
