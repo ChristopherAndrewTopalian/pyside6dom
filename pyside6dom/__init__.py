@@ -775,6 +775,11 @@ class DOMElement:
         if hasattr(self.raw, "clearFocus"):
             self.raw.clearFocus()
 
+    def click(self):
+        """Mimics JavaScript's element.click()"""
+        if hasattr(self.raw, "click"):
+            self.raw.click()
+
     # === 
     # THE ADD_EVENT_LISTENER SWITCHBOARD
     # ===
