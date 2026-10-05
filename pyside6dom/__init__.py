@@ -16,7 +16,7 @@ from PySide6.QtWidgets import (
     QCheckBox, QComboBox, QSizePolicy, QPlainTextEdit, QTextBrowser
 )
 from PySide6.QtCore import Qt, QTimer, QUrl
-from PySide6.QtGui import QImage, QPixmap, QIcon
+from PySide6.QtGui import QImage, QPixmap, QIcon, QDesktopServices
 from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput, QSoundEffect
 from PySide6.QtMultimediaWidgets import QVideoWidget
 
@@ -363,6 +363,23 @@ class DOMStyle:
             return # Qt CSS doesn't understand 'gap', so we safely exit here.
         # ===
 
+        # ===
+        # INLINE TEXT DECORATION 
+        # Bypasses the CSS Engine to prevent QLabel warnings!
+        # ===
+        if key == 'textDecoration':
+            font = self._element.raw.font()
+            if value == 'underline':
+                font.setUnderline(True)
+            elif value == 'line-through':
+                font.setStrikeOut(True)
+            elif value in ('none', ''):
+                font.setUnderline(False)
+                font.setStrikeOut(False)
+            
+            self._element.raw.setFont(font)
+            return # Exit instantly so it doesn't hit the CSS compiler
+
         # INLINE TEXT ALIGNMENT
         if key == 'textAlign':
             # Hijack the key so the compiler below automatically turns it into 'qproperty-alignment'
@@ -557,6 +574,29 @@ class DOMElement:
     @placeholder.setter
     def placeholder(self, text):
         if hasattr(self.raw, "setPlaceholderText"): self.raw.setPlaceholderText(str(text))
+
+    # ===
+    # HTML DOM Standard: Anchor Tags
+    # ===
+    @property
+    def href(self): return getattr(self, "_href", "")
+
+    @href.setter
+    def href(self, url):
+        self._href = url
+        # The Magic: Override the mouse click to open the computer's real web browser!
+        def open_link(event):
+            QDesktopServices.openUrl(QUrl(str(url)))
+        self.raw.mousePressEvent = open_link
+
+    @property
+    def target(self): return getattr(self, "_target", "")
+
+    @target.setter
+    def target(self, val):
+        # QDesktopServices always opens in a new tab/window by default, 
+        # but capturing 'target' here prevents your JS scripts from throwing an error!
+        self._target = val
 
     @property
     def readOnly(self):
@@ -811,6 +851,15 @@ def ce(tag):
         elem.style.fontSize = '16px'
         elem.style.fontWeight = 'normal'
         return elem
+
+    elif tag == "a":
+        w = QLabel()
+        w.setWordWrap(True)
+        w.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
+        # Instantly make the mouse look like a clickable web link!
+        w.setCursor(Qt.CursorShape.PointingHandCursor) 
+        return DOMElement(tag, w)
+    
     elif tag in ("text", "span", "label"):
         w = QLabel()
         w.setWordWrap(False)
