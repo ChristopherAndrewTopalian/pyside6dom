@@ -1,4 +1,4 @@
-# PySide6DOM v0.8.1
+# PySide6DOM v0.8.2
 **Bring the simplicity of the Web DOM to Python PySide6 Desktop Applications.**
 
 # Installation
@@ -122,6 +122,7 @@ run_app()
 * element.click()
 * open_file(which_file)
 * show_in_file_explorer(which_file)
+* oncontextmenu | onrightclick for right mouse button, onauxclick for middle mouse button
 
 ---
 

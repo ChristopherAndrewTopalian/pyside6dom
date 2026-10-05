@@ -704,6 +704,57 @@ class DOMElement:
         if hasattr(self.raw, "clicked"): 
             self.raw.clicked.connect(lambda checked=False: callback_func())
 
+    # ===
+    # ADVANCED MOUSE ROUTER (Right & Middle Clicks)
+    # ===
+    def _install_mouse_router(self):
+        # Prevent installing this multiple times on the same element
+        if hasattr(self, '_mouse_router_active'): return
+        self._mouse_router_active = True
+        
+        def custom_mouse_press(event):
+            # Intercept Right Click (Context Menu)
+            if event.button() == Qt.MouseButton.RightButton:
+                if getattr(self, '_oncontextmenu', None):
+                    self._oncontextmenu()
+                    
+            # Intercept Middle Click (Wheel Click / Aux Click)
+            elif event.button() == Qt.MouseButton.MiddleButton:
+                if getattr(self, '_onauxclick', None):
+                    self._onauxclick()
+                    
+            # IMPORTANT: Pass the event back to the C++ engine so 
+            # standard Left Clicks and anchor tags still work perfectly!
+            type(self.raw).mousePressEvent(self.raw, event)
+            
+        self.raw.mousePressEvent = custom_mouse_press
+
+    @property
+    def oncontextmenu(self): return getattr(self, '_oncontextmenu', None)
+
+    @oncontextmenu.setter
+    def oncontextmenu(self, callback_func):
+        self._oncontextmenu = callback_func
+        self._install_mouse_router()
+
+    # The Custom Alias you requested!
+    @property
+    def onrightclick(self): return self.oncontextmenu
+
+    @onrightclick.setter
+    def onrightclick(self, callback_func): 
+        self.oncontextmenu = callback_func
+
+    @property
+    def onauxclick(self): return getattr(self, '_onauxclick', None)
+
+    @onauxclick.setter
+    def onauxclick(self, callback_func):
+        self._onauxclick = callback_func
+        self._install_mouse_router()
+
+    # ===
+
     @property
     def oninput(self): return getattr(self, '_oninput', None)
 
@@ -861,6 +912,12 @@ class DOMElement:
                 
             self.raw.keyPressEvent = key_interceptor
             
+        elif event_type in ('contextmenu', 'rightclick'):
+            self.oncontextmenu = callback
+            
+        elif event_type == 'auxclick':
+            self.onauxclick = callback
+
         else:
             print(f"Warning: '{event_type}' is not yet mapped in PySide6DOM.")
 

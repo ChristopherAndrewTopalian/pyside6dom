@@ -1,0 +1,38 @@
+# open_file_and_show_in_file_explorer.pyw
+
+from pyside6dom import *
+
+init_window('Open File and Show in File Explorer', 700, 600)
+
+howdy_btn = ce('button')
+howdy_btn.textContent = 'Howdy'
+howdy_btn.onclick = lambda: open_file('howdy.pyw')
+howdy_btn.oncontextmenu = lambda: show_in_file_explorer('howdy.pyw')
+ba(howdy_btn)
+
+hi_everyone_btn = ce('button')
+hi_everyone_btn.textContent = 'Hi Everyone'
+hi_everyone_btn.onclick = lambda: open_file('hi_everyone.pyw')
+hi_everyone_btn.oncontextmenu = lambda: show_in_file_explorer('hi_everyone.pyw')
+ba(hi_everyone_btn)
+
+run_app()
+
+####
+
+# Dedicated to God the Father
+# (c) Copyright 2026 Christopher Andrew Topalian
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# College of Scripting Music & Science
+#
+# GitHub: https://github.com/ChristopherAndrewTopalian
+#
+# GitHub: https://github.com/ChristopherTopalian
+# Google Sites: https://sites.google.com/view/CollegeOfScripting
+
