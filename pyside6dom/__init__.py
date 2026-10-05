@@ -735,6 +735,56 @@ class DOMElement:
         if hasattr(self.raw, "clearFocus"):
             self.raw.clearFocus()
 
+    # === 
+    # THE ADD_EVENT_LISTENER SWITCHBOARD
+    # ===
+    def addEventListener(self, event_type, callback):
+        """The Master Switchboard for Web Standard Events"""
+        event_type = event_type.lower()
+        
+        if event_type == 'click':
+            # Qt's .connect() automatically stacks, so this mimics JS perfectly!
+            if hasattr(self.raw, "clicked"): 
+                self.raw.clicked.connect(lambda checked=False: callback())
+                
+        elif event_type == 'input':
+            if hasattr(self.raw, 'textChanged'): 
+                self.raw.textChanged.connect(lambda val: callback(val))
+            elif hasattr(self.raw, 'valueChanged'):
+                self.raw.valueChanged.connect(lambda val: callback(val))
+                
+        elif event_type in ('mouseenter', 'mouseover'):
+            self.raw.enterEvent = lambda event: callback()
+            
+        elif event_type in ('mouseleave', 'mouseout'):
+            self.raw.leaveEvent = lambda event: callback()
+            
+        elif event_type == 'keydown':
+            # ---
+            # We create a fake JS Event object so event.key works!
+            # ---
+            def key_interceptor(event):
+                key_name = event.text()
+                # Normalize the C++ Enter key so it matches JS standard 'Enter'
+                if event.key() == Qt.Key.Key_Return or event.key() == Qt.Key.Key_Enter:
+                    key_name = 'Enter'
+                    
+                # Build the fake JS object on the fly
+                class JSEvent: pass
+                js_evt = JSEvent()
+                js_evt.key = key_name
+                js_evt.preventDefault = lambda: event.accept()
+                
+                callback(js_evt)
+                
+                # IMPORTANT: Fire the original Qt event so inputs don't break when typing!
+                type(self.raw).keyPressEvent(self.raw, event) 
+                
+            self.raw.keyPressEvent = key_interceptor
+            
+        else:
+            print(f"Warning: '{event_type}' is not yet mapped in PySide6DOM.")
+
 # ========================================== #
 #               DOM PARSER (ce)
 # ========================================== #
@@ -1004,6 +1054,36 @@ def init_window(title="App Window", width=420, height=500, icon_path=None):
     _main_layout = QVBoxLayout(_root_window)
     _main_container = ce("scroll_div")
     _main_layout.addWidget(_main_container.raw)
+
+# ===
+# GLOBAL WINDOW EVENTS
+# === #
+class GlobalWindowTarget:
+    """Mimics the browser's global 'window' object for game loops and global key captures."""
+    def addEventListener(self, event_type, callback):
+        event_type = event_type.lower()
+        if event_type == 'keydown':
+            if _root_window is None:
+                print("Error: Call init_window() before adding window events.")
+                return
+                
+            def global_key_interceptor(event):
+                key_name = event.text()
+                if event.key() == Qt.Key.Key_Return or event.key() == Qt.Key.Key_Enter:
+                    key_name = 'Enter'
+                    
+                class JSEvent: pass
+                js_evt = JSEvent()
+                js_evt.key = key_name
+                js_evt.preventDefault = lambda: event.accept()
+                
+                callback(js_evt)
+                type(_root_window).keyPressEvent(_root_window, event)
+                
+            _root_window.keyPressEvent = global_key_interceptor
+
+# Instantiate the global 'window' variable so students can use it instantly!
+window = GlobalWindowTarget()
 
 def run_app():
     _root_window.show()
