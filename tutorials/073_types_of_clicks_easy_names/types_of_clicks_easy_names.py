@@ -1,4 +1,4 @@
-# types_of_clicks_easy_names.pyw
+# types_of_clicks_easy_names.py
 
 from pyside6dom import *
 

@@ -1,4 +1,4 @@
-# types_of_clicks.pyw
+# types_of_clicks.py
 
 from pyside6dom import *
 
