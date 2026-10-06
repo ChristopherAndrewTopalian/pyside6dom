@@ -737,7 +737,7 @@ class DOMElement:
         self._oncontextmenu = callback_func
         self._install_mouse_router()
 
-    # The Custom Alias you requested!
+    # The Custom Alias
     @property
     def onrightclick(self): return self.oncontextmenu
 
@@ -752,6 +752,22 @@ class DOMElement:
     def onauxclick(self, callback_func):
         self._onauxclick = callback_func
         self._install_mouse_router()
+
+    # The Middle Click Alias
+    @property
+    def onmiddleclick(self): return self.onauxclick
+
+    @onmiddleclick.setter
+    def onmiddleclick(self, callback_func): 
+        self.onauxclick = callback_func
+
+    # The Left Click Alias
+    @property
+    def onleftclick(self): return self.onclick
+
+    @onleftclick.setter
+    def onleftclick(self, callback_func): 
+        self.onclick = callback_func
 
     # ===
 
@@ -872,8 +888,8 @@ class DOMElement:
         """The Master Switchboard for Web Standard Events"""
         event_type = event_type.lower()
         
-        if event_type == 'click':
-            # Qt's .connect() automatically stacks, so this mimics JS perfectly!
+        if event_type in ('click', 'leftclick'):
+            # Qt's .connect() automatically stacks, so this mimics JS
             if hasattr(self.raw, "clicked"): 
                 self.raw.clicked.connect(lambda checked=False: callback())
                 
@@ -915,7 +931,7 @@ class DOMElement:
         elif event_type in ('contextmenu', 'rightclick'):
             self.oncontextmenu = callback
             
-        elif event_type == 'auxclick':
+        elif event_type in ('auxclick', 'middleclick'):
             self.onauxclick = callback
 
         else:
