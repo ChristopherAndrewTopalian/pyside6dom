@@ -126,7 +126,19 @@ run_app()
 * onauxclick or onmiddleclick for middle mouse button
 * onclick or onleftclick for left mouse button click
 * dom.get_year()
+* dom.get_month()
+* dom.get_day_of_month()
+* dom.get_day_name()
+* dom.get_day_of_week()
+* dom.get_day_of_week_iso()
+* dom.get_month_day_year()
+* dom.get_year_month_day()
+* dom.get_hours()
 * dom.get_minutes()
+* dom.get_seconds()
+* dom.is_target_date(target_string)
+* dom.open_file(whichFilePath)
+* dom.show_in_file_explorer(path)
 
 ---
 
