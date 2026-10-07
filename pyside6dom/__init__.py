@@ -129,56 +129,69 @@ def RC(a, b):
 
 class dom:
     '''Namespace class for this engine's utility functions'''
+
+    @staticmethod
     def get_year():
         """Returns the current 4-digit year (e.g., 2026)."""
         return datetime.today().year
 
+    @staticmethod
     def get_month():
         """Returns the current month number (1-12)."""
         return datetime.today().month
 
+    @staticmethod
     def get_day_of_month():
         """Returns the day of the month (1-31)."""
         return datetime.today().day
 
+    @staticmethod
     def get_day_name():
         """Returns the full name of the day (e.g., 'Monday', 'Tuesday')."""
         return datetime.today().strftime("%A")
 
+    @staticmethod
     def get_day_of_week():
         """Returns the day of the week as an integer (0-6).
         Matches JS DOM getDay(): 0=Sunday ... 6=Saturday."""
         return int(datetime.today().strftime('%w'))
 
+    @staticmethod
     def get_day_of_week_iso():
         """Returns the day of the week as an integer (1-7).
         Matches ISO standard: 1=Monday ... 7=Sunday."""
         return datetime.today().isoweekday()
 
+    @staticmethod
     def get_month_day_year():
         """Returns today's date formatted as MM-DD-YYYY."""
         return datetime.today().strftime("%m-%d-%Y")
 
+    @staticmethod
     def get_year_month_day():
         """Returns today's date formatted as YYYY-MM-DD."""
         return datetime.today().strftime("%Y-%m-%d")
 
     # TIME FUNCTIONS
 
+    @staticmethod
     def get_hours():
         """Returns the current hour in 24-hour format (0-23)."""
         return datetime.now().hour
 
+    @staticmethod
     def get_minutes():
         """Returns the current minute (0-59)."""
         return datetime.now().minute
 
+    @staticmethod
     def get_seconds():
         """Returns the current second (0-59)."""
         return datetime.now().second
 
     # UTILITY
 
+    @staticmethod
     def is_target_date(target_string):
         ''' Compare today yy-mm-dd with target_string'''
         # Get today's date object and instantly convert it to a string
@@ -194,6 +207,7 @@ class dom:
     # FILE
     # ===
 
+    @staticmethod
     def open_file(whichFilePath):
         '''Open the specified File'''
         if os.path.exists(whichFilePath):
@@ -206,7 +220,7 @@ class dom:
         else:
             print('File not found:', whichFilePath)
 
-
+    @staticmethod
     def show_in_file_explorer(path):
         """Reveal a file, highlighted, in the OS file manager."""
         path = str(Path(path).resolve())
