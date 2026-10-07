@@ -1,4 +1,4 @@
-# PySide6DOM v0.8.3
+# PySide6DOM v0.8.4
 **Bring the simplicity of the Web DOM to Python PySide6 Desktop Applications.**
 
 # Installation
@@ -125,6 +125,8 @@ run_app()
 * oncontextmenu or onrightclick for right mouse button, 
 * onauxclick or onmiddleclick for middle mouse button
 * onclick or onleftclick for left mouse button click
+* dom.get_year()
+* dom.get_minutes()
 
 ---
 
