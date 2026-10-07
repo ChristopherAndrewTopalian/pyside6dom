@@ -6,12 +6,12 @@ init_window('Open File', 700, 600)
 
 howdy_btn = ce('button')
 howdy_btn.textContent = 'Howdy'
-howdy_btn.onclick = lambda: show_in_file_explorer('howdy.pyw')
+howdy_btn.onclick = lambda: dom.show_in_file_explorer('howdy.pyw')
 ba(howdy_btn)
 
 hi_everyone_btn = ce('button')
 hi_everyone_btn.textContent = 'Hi Everyone'
-hi_everyone_btn.onclick = lambda: show_in_file_explorer('hi_everyone.pyw')
+hi_everyone_btn.onclick = lambda: dom.show_in_file_explorer('hi_everyone.pyw')
 ba(hi_everyone_btn)
 
 run_app()

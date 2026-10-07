@@ -127,97 +127,98 @@ def RC(a, b):
 #  DATE & TIME HELPERS
 # ===
 
-def get_year():
-    """Returns the current 4-digit year (e.g., 2026)."""
-    return datetime.today().year
+class dom:
+    '''Namespace class for this engine's utility functions'''
+    def get_year():
+        """Returns the current 4-digit year (e.g., 2026)."""
+        return datetime.today().year
 
-def get_month():
-    """Returns the current month number (1-12)."""
-    return datetime.today().month
+    def get_month():
+        """Returns the current month number (1-12)."""
+        return datetime.today().month
 
-def get_day_of_month():
-    """Returns the day of the month (1-31)."""
-    return datetime.today().day
+    def get_day_of_month():
+        """Returns the day of the month (1-31)."""
+        return datetime.today().day
 
-def get_day_name():
-    """Returns the full name of the day (e.g., 'Monday', 'Tuesday')."""
-    return datetime.today().strftime("%A")
+    def get_day_name():
+        """Returns the full name of the day (e.g., 'Monday', 'Tuesday')."""
+        return datetime.today().strftime("%A")
 
-def get_day_of_week():
-    """Returns the day of the week as an integer (0-6).
-    Matches JS DOM getDay(): 0=Sunday ... 6=Saturday."""
-    return int(datetime.today().strftime('%w'))
+    def get_day_of_week():
+        """Returns the day of the week as an integer (0-6).
+        Matches JS DOM getDay(): 0=Sunday ... 6=Saturday."""
+        return int(datetime.today().strftime('%w'))
 
-def get_day_of_week_iso():
-    """Returns the day of the week as an integer (1-7).
-    Matches ISO standard: 1=Monday ... 7=Sunday."""
-    return datetime.today().isoweekday()
+    def get_day_of_week_iso():
+        """Returns the day of the week as an integer (1-7).
+        Matches ISO standard: 1=Monday ... 7=Sunday."""
+        return datetime.today().isoweekday()
 
-def get_month_day_year():
-    """Returns today's date formatted as MM-DD-YYYY."""
-    return datetime.today().strftime("%m-%d-%Y")
+    def get_month_day_year():
+        """Returns today's date formatted as MM-DD-YYYY."""
+        return datetime.today().strftime("%m-%d-%Y")
 
-def get_year_month_day():
-    """Returns today's date formatted as YYYY-MM-DD."""
-    return datetime.today().strftime("%Y-%m-%d")
+    def get_year_month_day():
+        """Returns today's date formatted as YYYY-MM-DD."""
+        return datetime.today().strftime("%Y-%m-%d")
 
-# TIME FUNCTIONS
+    # TIME FUNCTIONS
 
-def get_hours():
-    """Returns the current hour in 24-hour format (0-23)."""
-    return datetime.now().hour
+    def get_hours():
+        """Returns the current hour in 24-hour format (0-23)."""
+        return datetime.now().hour
 
-def get_minutes():
-    """Returns the current minute (0-59)."""
-    return datetime.now().minute
+    def get_minutes():
+        """Returns the current minute (0-59)."""
+        return datetime.now().minute
 
-def get_seconds():
-    """Returns the current second (0-59)."""
-    return datetime.now().second
+    def get_seconds():
+        """Returns the current second (0-59)."""
+        return datetime.now().second
 
-# UTILITY
+    # UTILITY
 
-def is_target_date(target_string):
-    ''' Compare today yy-mm-dd with target_string'''
-    # Get today's date object and instantly convert it to a string
-    today_str = str(datetime.today().strftime("%Y-%m-%d"))
-    
-    # Now we can safely compare text to text
-    if today_str == target_string:
-        return True
-    else:
-        return False
-
-# ===
-# FILE
-# ===
-
-def open_file(whichFilePath):
-    '''Open the specified File'''
-    if os.path.exists(whichFilePath):
-        if sys.platform == 'win32':
-            os.startfile(whichFilePath)
-        elif sys.platform == 'darwin':
-            subprocess.call(('open', whichFilePath))
+    def is_target_date(target_string):
+        ''' Compare today yy-mm-dd with target_string'''
+        # Get today's date object and instantly convert it to a string
+        today_str = str(datetime.today().strftime("%Y-%m-%d"))
+        
+        # Now we can safely compare text to text
+        if today_str == target_string:
+            return True
         else:
-            subprocess.call(('xdg-open', whichFilePath))
-    else:
-        print('File not found:', whichFilePath)
+            return False
 
-####
+    # ===
+    # FILE
+    # ===
 
-def show_in_file_explorer(path):
-    """Reveal a file, highlighted, in the OS file manager."""
-    path = str(Path(path).resolve())
+    def open_file(whichFilePath):
+        '''Open the specified File'''
+        if os.path.exists(whichFilePath):
+            if sys.platform == 'win32':
+                os.startfile(whichFilePath)
+            elif sys.platform == 'darwin':
+                subprocess.call(('open', whichFilePath))
+            else:
+                subprocess.call(('xdg-open', whichFilePath))
+        else:
+            print('File not found:', whichFilePath)
 
-    if sys.platform == 'win32':
-        subprocess.Popen(f'explorer /select,"{path}"')
-    elif sys.platform == 'darwin':
-        subprocess.Popen(['open', '-R', path])
-    else:
-        # Most Linux file managers don't support "select this file" —
-        # opening the containing folder is the reliable fallback
-        subprocess.Popen(['xdg-open', str(Path(path).parent)])
+
+    def show_in_file_explorer(path):
+        """Reveal a file, highlighted, in the OS file manager."""
+        path = str(Path(path).resolve())
+
+        if sys.platform == 'win32':
+            subprocess.Popen(f'explorer /select,"{path}"')
+        elif sys.platform == 'darwin':
+            subprocess.Popen(['open', '-R', path])
+        else:
+            # Most Linux file managers don't support "select this file" —
+            # opening the containing folder is the reliable fallback
+            subprocess.Popen(['xdg-open', str(Path(path).parent)])
 
 ####
 

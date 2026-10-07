@@ -4,15 +4,10 @@ from pyside6dom import *
 
 import datetime as dt
 
-def get_year():
-    today = dt.date.today()
-    year = today.year
-    return year
-
 init_window('Our App', 700, 600)
 
 year_txt = ce('text')
-year_txt.textContent = get_year()
+year_txt.textContent = dom.get_year()
 year_txt.style.fontFamily = 'Arial'
 year_txt.style.fontSize = '70px'
 year_txt.style.fontWeight = 'bold'
@@ -27,10 +22,10 @@ output_txt.style.fontWeight = 'bold'
 output_txt.style.color = 'rgb(0, 255, 255)'
 ba(output_txt)
 
-if (get_year() == 2026):
+if (dom.get_year() == 2026):
     output_txt.textContent = "It's still 2026"
 else:
-    output_txt.textContent = "It's the year "+ get_year()
+    output_txt.textContent = "It's the year "+ dom.get_year()
 
 run_app()
 

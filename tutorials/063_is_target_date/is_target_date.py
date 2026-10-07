@@ -5,7 +5,7 @@ from pyside6dom import *
 init_window('OurApp', 700, 500)
 
 result = ce('div')
-result.textContent = is_target_date('2026-10-05')
+result.textContent = dom.is_target_date('2026-10-05')
 ba(result)
 
 run_app()
