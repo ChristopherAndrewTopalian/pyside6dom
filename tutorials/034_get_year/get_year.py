@@ -1,8 +1,6 @@
-# input_upper.py
+# get_year.py
 
 from pyside6dom import *
-
-import datetime as dt
 
 init_window('Our App', 700, 600)
 
