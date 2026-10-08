@@ -493,6 +493,44 @@ class DOMElement:
         self.raw.style().polish(self.raw)
         self.raw.update()
 
+    # ========================================== #
+    # HTML DOM Standard: Title (Tooltip)
+    # ========================================== #
+    @property
+    def title(self): 
+        return getattr(self, "_title", "")
+
+    @title.setter
+    def title(self, text):
+        self._title = str(text)
+        self._update_tooltip()
+
+    @property
+    def titleFontSize(self): 
+        return getattr(self, "_title_font_size", "14px") # Default is larger than HTML!
+
+    @titleFontSize.setter
+    def titleFontSize(self, size):
+        # Safely handle if a user types 18 or "18px"
+        val = str(size)
+        if val.isdigit(): val += "px"
+        
+        self._title_font_size = val
+        self._update_tooltip()
+        
+    def _update_tooltip(self):
+        """Secretly wraps the tooltip in HTML so Qt renders it with a custom font size."""
+        if not getattr(self, "_title", ""):
+            self.raw.setToolTip("")
+            return
+            
+        size = self.titleFontSize
+        text = self._title
+        
+        # Qt natively parses this inline HTML!
+        rich_tooltip = f'<span style="font-size: {size};">{text}</span>'
+        self.raw.setToolTip(rich_tooltip)
+
     def append(self, child_element):
         """
         Mimics JavaScript's element.append(child)
@@ -712,34 +750,40 @@ class DOMElement:
         self.raw.leaveEvent = lambda event: callback_func()
 
     @property
-    def onclick(self): return None
+    def onclick(self): return getattr(self, '_onclick_callback', None)
 
     @onclick.setter
     def onclick(self, callback_func):
         if hasattr(self.raw, "clicked"): 
             self.raw.clicked.connect(lambda checked=False: callback_func())
+        else:
+            # If it's NOT a button, force it through the universal mouse router!
+            self._onclick_callback = callback_func
+            self._install_mouse_router()
 
-    # ===
-    # ADVANCED MOUSE ROUTER (Right & Middle Clicks)
-    # ===
+    # ========================================== #
+    # ADVANCED MOUSE ROUTER (Universal Clicks)
+    # ========================================== #
     def _install_mouse_router(self):
-        # Prevent installing this multiple times on the same element
         if hasattr(self, '_mouse_router_active'): return
         self._mouse_router_active = True
         
         def custom_mouse_press(event):
+            # Universal Left Click (For Divs, Images, and Text!)
+            if event.button() == Qt.MouseButton.LeftButton:
+                if getattr(self, '_onclick_callback', None):
+                    self._onclick_callback()
+                    
             # Intercept Right Click (Context Menu)
-            if event.button() == Qt.MouseButton.RightButton:
+            elif event.button() == Qt.MouseButton.RightButton:
                 if getattr(self, '_oncontextmenu', None):
                     self._oncontextmenu()
                     
-            # Intercept Middle Click (Wheel Click / Aux Click)
+            # Intercept Middle Click
             elif event.button() == Qt.MouseButton.MiddleButton:
                 if getattr(self, '_onauxclick', None):
                     self._onauxclick()
                     
-            # IMPORTANT: Pass the event back to the C++ engine so 
-            # standard Left Clicks and anchor tags still work perfectly!
             type(self.raw).mousePressEvent(self.raw, event)
             
         self.raw.mousePressEvent = custom_mouse_press
@@ -915,10 +959,18 @@ class DOMElement:
                 self.raw.valueChanged.connect(lambda val: callback(val))
                 
         elif event_type in ('mouseenter', 'mouseover'):
-            self.raw.enterEvent = lambda event: callback()
+            def custom_enter(event):
+                callback()
+                # Pass the event back to Qt so Tooltips and native styles still work!
+                type(self.raw).enterEvent(self.raw, event)
+            self.raw.enterEvent = custom_enter
             
         elif event_type in ('mouseleave', 'mouseout'):
-            self.raw.leaveEvent = lambda event: callback()
+            def custom_leave(event):
+                callback()
+                # Pass the event back to Qt!
+                type(self.raw).leaveEvent(self.raw, event)
+            self.raw.leaveEvent = custom_leave
             
         elif event_type == 'keydown':
             # ---
