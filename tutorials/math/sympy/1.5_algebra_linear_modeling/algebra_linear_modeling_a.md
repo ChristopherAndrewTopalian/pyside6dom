@@ -1,6 +1,6 @@
+// algebra_linear_modeling_a.md
 
-
-Here is Question 5 from the ACCUPLACER sample test. It covers **Linear Modeling**—building an equation to track a changing state over time.
+**Linear Modeling** - building an equation to track a changing state over time.
 
 ### Question 5: Linear Modeling
 
