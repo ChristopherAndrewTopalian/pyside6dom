@@ -16,9 +16,9 @@ pip install pyside6dom
 <details>
 <summary> PySide6DOM Full App Examples </summary>
 
-> ###### [PySide6Dom PyTorch Image Classifier](https://github.com/ChristopherAndrewTopalian/CATopalian_PY_PySide6DOM_PyTorch_Image_Classifier)  
+> ##### [PySide6Dom PyTorch Image Classifier](https://github.com/ChristopherAndrewTopalian/CATopalian_PY_PySide6DOM_PyTorch_Image_Classifier)  
 
-> ###### [PySide6DOM Earthquake Map](https://github.com/ChristopherAndrewTopalian/CATopalian_PY_PySide6DOM_Earthquake_Map)
+> ##### [PySide6DOM Earthquake Map](https://github.com/ChristopherAndrewTopalian/CATopalian_PY_PySide6DOM_Earthquake_Map)
 </details>
 
 ---
