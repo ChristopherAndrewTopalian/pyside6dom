@@ -1,14 +1,13 @@
-# types_of_clicks.py
+# title_attribute.py
 
 from pyside6dom import *
 
-init_window('Types of Clicks', 700, 600)
+init_window('Title Attribute', 700, 500)
 
 howdy_btn = ce('button')
 howdy_btn.textContent = 'Howdy'
-howdy_btn.onclick = lambda: print('Left Click')
-howdy_btn.oncontextmenu = lambda: print('Right Click')
-howdy_btn.onauxclick = lambda: print('Middle Button Click')
+howdy_btn.title = 'Click to see a message in console'
+howdy_btn.onclick = lambda: print('Howdy')
 ba(howdy_btn)
 
 run_app()
