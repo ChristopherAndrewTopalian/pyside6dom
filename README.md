@@ -13,6 +13,10 @@ pip install pyside6dom
 ## PySide6DOM Tutorials:
 > ## [Tutorials](https://github.com/ChristopherAndrewTopalian/pyside6dom/tree/main/tutorials)
 
+> ###### [PySide6Dom PyTorch Image Classifier](https://github.com/ChristopherAndrewTopalian/CATopalian_PY_PySide6DOM_PyTorch_Image_Classifier)  
+
+> ###### [PySide6DOM Earthquake Map](https://github.com/ChristopherAndrewTopalian/CATopalian_PY_PySide6DOM_Earthquake_Map)
+
 ---
 
 **PySide6DOM** bridges the gap between web development and systems programming. It wraps the raw power of the PySide6 (C++/Qt) rendering engine inside the familiar, intuitive Document Object Model (DOM) paradigm used by JavaScript and HTML.  
