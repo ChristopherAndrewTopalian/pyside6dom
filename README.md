@@ -147,6 +147,8 @@ run_app()
 * dom.is_target_date(target_string)
 * dom.open_file(whichFilePath)
 * dom.show_in_file_explorer(path)
+* element.title
+* element.titleFontSize
 
 ---
 
@@ -217,6 +219,8 @@ The engine translates standard HTML tags into PySide6 widgets behind the scenes.
 * numpy
 * pandas
 * sqlite3
+* pytorch
+* sympy
 etc...
 
 ---

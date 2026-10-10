@@ -1,0 +1,26 @@
+
+Here is some text that we have written using our Notebook app.
+Here is some text that we have written using our Notebook app.
+
+Here is some more text that we have written using our Notebook app.
+Here is some text that we have written using our Notebook app.
+
+Here is some more text that we have written using our Notebook app.
+
+Here is another line.
+
+Here is another line here.
+
+We put more text here. 
+
+This is a file with text in it.
+Here is some text we have written.
+
+We already wrote some text earlier in the file, but for now this Notebook doesn't read the file, but only appends to the exiting file.
+Here are some more notes here.
+Here are some more notes here.
+Here are some more notes here.
+
+We write notes here.
+
+Remember that this version of the Notebook app only appends to the file, but does not read the file.
