@@ -848,6 +848,16 @@ class DOMElement:
         elif hasattr(self.raw, 'valueChanged'): self.raw.valueChanged.connect(signal_router)
 
     @property
+    def onchange(self): return getattr(self, '_onchange', None)
+
+    @onchange.setter
+    def onchange(self, callback_func):
+        self._onchange = callback_func
+        # This Qt signal ONLY fires when the user releases the mouse
+        if hasattr(self.raw, 'sliderReleased'):
+            self.raw.sliderReleased.connect(lambda: callback_func(self.value))
+
+    @property
     def onenter(self): return None
 
     @onenter.setter

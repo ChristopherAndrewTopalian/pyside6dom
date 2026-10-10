@@ -1,4 +1,4 @@
-# PySide6DOM v0.8.6
+# PySide6DOM v0.8.7
 **Bring the simplicity of the Web DOM to Python PySide6 Desktop Applications.**
 
 # Installation
@@ -149,6 +149,7 @@ run_app()
 * dom.show_in_file_explorer(path)
 * element.title
 * element.titleFontSize
+* input onchange
 
 ---
 
