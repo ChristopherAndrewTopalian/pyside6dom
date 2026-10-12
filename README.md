@@ -1,4 +1,4 @@
-# PySide6DOM v0.8.7
+# PySide6DOM v0.8.8
 **Bring the simplicity of the Web DOM to Python PySide6 Desktop Applications.**
 
 # Installation
@@ -150,6 +150,11 @@ run_app()
 * element.title
 * element.titleFontSize
 * input onchange
+* element.style.width = '100%'
+* element.style.height = '100%'
+* element.style.bottom = '100px'
+* element.style.right = '100px'
+* element.style.overflow = 'hidden'
 
 ---
 

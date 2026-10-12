@@ -299,6 +299,63 @@ _root_window = None
 _main_container = None
 _pending_theme = None
 
+####
+
+# ========================================== #
+#            RESPONSIVE LAYOUT ENGINE
+# ========================================== #
+_responsive_registry = set()
+
+def _trigger_layout_update(elem=None):
+    """Forces a math recalculation for percentages and absolute right/bottom positions."""
+    targets = [elem] if elem else _responsive_registry
+    
+    for e in targets:
+        if not e or not e.raw: continue
+        
+        parent_w = e.raw.parentWidget()
+        if not parent_w: continue 
+            
+        # NEW: The Phantom Scrollbar Fix!
+        # Jump up TWO levels to the actual QScrollArea widget. 
+        # This completely ignores temporary scrollbars when measuring!
+        if parent_w.parentWidget() and parent_w.parentWidget().objectName() == "qt_scrollarea_viewport":
+            parent_w = parent_w.parentWidget().parentWidget()
+            
+        pw = parent_w.width()
+        ph = parent_w.height()
+        
+        # Percentage Dimensions
+        w_val = str(getattr(e.style, 'width', ''))
+        if '%' in w_val:
+            pct = float(w_val.replace('%', '')) / 100.0
+            e.raw.setFixedWidth(int(pw * pct))
+            
+        h_val = str(getattr(e.style, 'height', ''))
+        if '%' in h_val:
+            pct = float(h_val.replace('%', '')) / 100.0
+            e.raw.setFixedHeight(int(ph * pct))
+            
+        # Absolute Right/Bottom Positioning
+        if getattr(e.style, 'position', '') == 'absolute':
+            e.raw.adjustSize() 
+            cw = e.raw.width()
+            ch = e.raw.height()
+            
+            x, y = e.raw.x(), e.raw.y()
+            
+            right_val = getattr(e.style, 'right', None)
+            if right_val is not None:
+                x = pw - cw - int(float(str(right_val).replace('px', '')))
+                
+            bottom_val = getattr(e.style, 'bottom', None)
+            if bottom_val is not None:
+                y = ph - ch - int(float(str(bottom_val).replace('px', '')))
+                
+            e.raw.move(x, y)
+
+####
+
 # ========================================== #
 #            DOM STYLE ENGINE
 # ========================================== #
@@ -314,9 +371,19 @@ class DOMStyle:
             return 
 
         if key in ('width', 'height'):
-            val_str = str(value).replace('px', '').strip()
+            val_str = str(value).strip()
+
+            # The Percentage Interceptor
+            if '%' in val_str:
+                self.__dict__[key] = val_str
+                _responsive_registry.add(self._element)
+                _trigger_layout_update(self._element)
+                return
+
+            val_str = val_str.replace('px', '')
             try:
                 num = int(float(val_str))
+                self.__dict__[key] = num
                 if key == 'width': self._element.raw.setFixedWidth(num)
                 elif key == 'height': self._element.raw.setFixedHeight(num)
                 return
@@ -325,6 +392,10 @@ class DOMStyle:
 
         if key in ('left', 'top', 'right', 'bottom'):
             self.__dict__[key] = value 
+
+            # If using right/bottom, track it for window resizes!
+            if key in ('right', 'bottom'):
+                _responsive_registry.add(self._element)
             
             # Allow instant movement if the element is already parented
             if key in ('left', 'top'):
@@ -333,9 +404,23 @@ class DOMStyle:
                     num = int(float(val_str))
                     if key == 'left': self._element.raw.move(num, self._element.raw.y())
                     elif key == 'top': self._element.raw.move(self._element.raw.x(), num)
-                    return
                 except ValueError:
                     pass
+                    
+            _trigger_layout_update(self._element)
+
+        # OVERFLOW SUPPORT
+        if key == 'overflow':
+            self.__dict__[key] = value
+            # If the element is a scroll_div, translate 'hidden' to Qt's scrollbar policies
+            if hasattr(self._element.raw, 'setHorizontalScrollBarPolicy'):
+                if value == 'hidden':
+                    self._element.raw.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+                    self._element.raw.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+                elif value in ('auto', 'scroll'):
+                    self._element.raw.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+                    self._element.raw.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+            return
 
         # CSS GRID ENGINE
         if key == 'display' and value == 'grid':
@@ -1199,6 +1284,10 @@ def ba(child_elem, parent_elem=None):
         else:
             child_elem.raw.setParent(parent_elem.raw)
 
+    # NEW: Instantly calculate percentages now that it has a parent!
+    if child_elem in _responsive_registry:
+        _trigger_layout_update(child_elem)
+
 def set_theme(css_string):
     global _pending_theme 
     css_string = css_string.replace("body", "QMainWindow, QWidget#central_widget")
@@ -1290,8 +1379,30 @@ def init_window(title="App Window", width=420, height=500, icon_path=None):
         _app_instance.setWindowIcon(QIcon(icon_path))
     
     _main_layout = QVBoxLayout(_root_window)
+    # The 9-pixel Margin Assassin! Strip the C++ borders so the canvas is flush!
+    _main_layout.setContentsMargins(0, 0, 0, 0) 
+    _main_layout.setSpacing(0)
+    
     _main_container = ce("scroll_div")
+    # Strip the default 1px sunken border from Qt's scroll area
+    _main_container.raw.setStyleSheet("QScrollArea { border: none; background: transparent; }")
     _main_layout.addWidget(_main_container.raw)
+
+    # The Debounced Global Resize Broadcaster
+    _root_window._resize_timer = QTimer()
+    _root_window._resize_timer.setSingleShot(True)
+    _root_window._resize_timer.timeout.connect(_trigger_layout_update)
+
+    def global_resize_event(event):
+        # Let Qt handle the physical window scaling
+        type(_root_window).resizeEvent(_root_window, event)
+
+        # THE DEBOUNCER: 
+        # Every single time the window moves a pixel, this timer resets.
+        # It will only fire the math 100ms AFTER the window completely stops moving.
+        _root_window._resize_timer.start(100) 
+
+    _root_window.resizeEvent = global_resize_event
 
 # ===
 # GLOBAL WINDOW EVENTS
@@ -1325,6 +1436,8 @@ window = GlobalWindowTarget()
 
 def run_app():
     _root_window.show()
+    # Run the math exactly once AFTER the OS draws the 700x600 window
+    _trigger_layout_update()
     sys.exit(_app_instance.exec())
 
 ####
