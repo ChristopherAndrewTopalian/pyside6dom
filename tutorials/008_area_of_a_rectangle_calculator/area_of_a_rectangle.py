@@ -4,11 +4,9 @@ from pyside6dom import *
 
 def calculate_rectangle_area(length, width):
     try:
-        # The safety net catches the crash caused by "2454235-235-25-25"
         area = float(length) * float(width)
         return area
     except ValueError:
-        # 🎯 Your custom message will now print successfully!
         print("Error: Could not convert input to a number.")
         return None
 
