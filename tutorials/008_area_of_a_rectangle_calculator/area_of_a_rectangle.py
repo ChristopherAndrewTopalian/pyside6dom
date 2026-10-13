@@ -72,6 +72,7 @@ def handle_click():
     # Clear both input boxes so they are ready for the next numbers
     length_input.value = ""
     width_input.value = ""
+    # place mouse cursor in length input
     length_input.focus()
 
 enter_btn.onclick = handle_click
