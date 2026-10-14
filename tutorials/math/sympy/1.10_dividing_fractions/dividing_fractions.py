@@ -14,8 +14,6 @@ total = fraction_a / fraction_b
 
 # We create our div to hold the text
 result = ce('div')
-
-# We update our string to use the division sign
 result.textContent = "Our Equation:\n" + str(fraction_a) + " / " + str(fraction_b) + " = " + str(total)
 result.style.fontFamily = 'Arial'
 result.style.fontSize = '50px'
