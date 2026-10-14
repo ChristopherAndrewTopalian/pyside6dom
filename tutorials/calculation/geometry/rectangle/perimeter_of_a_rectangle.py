@@ -4,7 +4,7 @@ from pyside6dom import *
 
 def calculate_rectangle_perimeter(length, width):
     try:
-        perimeter = 2 * (float(length) * float(width))
+        perimeter = 2 * (float(length) + float(width))
         return perimeter
     except ValueError:
         print("Error: Could not convert input to a number.")
