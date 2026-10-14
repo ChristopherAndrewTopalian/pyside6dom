@@ -13,6 +13,10 @@ our_container.style.display = 'flex'
 our_container.style.flexDirection = 'column'
 ba(our_container)
 
+rect_label = ce('div')
+rect_label.textContent = 'Rectangles'
+our_container.append(rect_label)
+
 area_of_rect_btn = ce('button')
 area_of_rect_btn.textContent = 'Area of a Rectangle'
 area_of_rect_btn.onclick = lambda: dom.open_file(rectangle_area)
