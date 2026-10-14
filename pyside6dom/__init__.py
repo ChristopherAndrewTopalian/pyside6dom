@@ -12,7 +12,7 @@ from pathlib import Path
 from datetime import datetime
 
 from PySide6.QtWidgets import (
-    QApplication, QMainWindow, QWidget, QBoxLayout, QVBoxLayout, QHBoxLayout, 
+    QApplication, QMainWindow, QWidget, QFrame, QBoxLayout, QVBoxLayout, QHBoxLayout, 
     QGridLayout, QPushButton, QLineEdit, QLabel, QSlider, QScrollArea, 
     QCheckBox, QComboBox, QSizePolicy, QPlainTextEdit, QTextBrowser
 )
@@ -477,15 +477,6 @@ class DOMStyle:
         # ===
         # Flex Layout Spacing Translators
         # ===
-        if key == 'padding':
-            # If it's a layout container, set C++ margins
-            if hasattr(self._element, 'layout') and self._element.layout:
-                try:
-                    val = int(str(value).replace('px', '').strip())
-                    self._element.layout.setContentsMargins(val, val, val, val)
-                except: pass
-            # DO NOT RETURN! We let this fall through to the CSS Compiler
-            # so that simple elements (like buttons) still get standard CSS padding!
                 
         if key == 'gap':
             # Translate gap to C++ setSpacing
@@ -964,8 +955,8 @@ class DOMElement:
         css_string = css_string.replace(":active", ":pressed")
         
         css_string = re.sub(r'\bscroll_div\b', 'QScrollArea', css_string)
-        css_string = re.sub(r'\brow_div\b', 'QWidget', css_string)
-        css_string = re.sub(r'\bdiv\b', 'QWidget', css_string)
+        css_string = re.sub(r'\brow_div\b', 'QFrame', css_string)
+        css_string = re.sub(r'\bdiv\b', 'QFrame', css_string)
         css_string = re.sub(r'\bbutton\b', 'QPushButton', css_string)
         css_string = re.sub(r'\binput\b', 'QLineEdit', css_string)
         css_string = re.sub(r'\btextarea\b', 'QPlainTextEdit', css_string)
@@ -1161,7 +1152,7 @@ def ce(tag):
         w.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         return DOMElement(tag, w)
     elif tag == "div":
-        w = QWidget()
+        w = QFrame()
         w.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
         layout = QBoxLayout(QBoxLayout.Direction.TopToBottom, w)
         layout.setAlignment(Qt.AlignmentFlag.AlignTop)

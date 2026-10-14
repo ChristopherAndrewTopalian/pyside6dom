@@ -28,13 +28,20 @@ set_theme('''
         font-size: 30px;
         font-weight: bold;
     }
+
+    #perimeter_label
+    {
+        /*padding: 2px 40px;*/
+    }
 ''')
 
 perimeter_label = ce('div')
+perimeter_label.id = 'perimeter_label'
 perimeter_label.textContent = 'Perimeter of a Rectangle'
 perimeter_label.style.fontSize = '32px'
 perimeter_label.style.fontWeight = 'bold'
 perimeter_label.style.color = 'rgb(0, 255, 255)'
+perimeter_label.style.paddingLeft = '8px'
 perimeter_label.style.marginBottom = '2px'
 ba(perimeter_label)
 
