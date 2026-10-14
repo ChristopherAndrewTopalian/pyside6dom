@@ -54,10 +54,14 @@ ba(width_input)
 
 enter_btn = ce('button')
 enter_btn.textContent = 'Calculate Area'
+
 def handle_click():
     length = length_input.value
     width = width_input.value
-    #area = length * width
+    
+    # Safety Check: Don't calculate if the boxes are empty!
+    if not length or not width: return
+    
     area = calculate_rectangle_area(length, width)
 
     # make new element for this calculation
@@ -76,6 +80,11 @@ def handle_click():
     length_input.focus()
 
 enter_btn.onclick = handle_click
+
+# Hitting Enter inside either text box triggers the math
+length_input.onenter = handle_click
+width_input.onenter = handle_click
+
 ba(enter_btn)
 
 ####
