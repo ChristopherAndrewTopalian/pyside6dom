@@ -32,7 +32,7 @@ base_folder = Path.cwd()
 # .rglob() searches all subfolders automatically
 for pyw_file in base_folder.rglob('*.pyw'):
     # We skip the engine script itself so it doesn't make a button for itself
-    if pyw_file.name == 'calculation_engine_pro.pyw':
+    if pyw_file.name == 'calculation_engine.pyw' or pyw_file.name == 'calculation_engine_pro.pyw':
         continue
 
     # pyw_file is a Path object, so we convert it to a string for our functions
