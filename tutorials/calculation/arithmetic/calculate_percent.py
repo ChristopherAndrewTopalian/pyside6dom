@@ -10,7 +10,9 @@ def calculate_percent(percent, total):
 init_window("Percentage Calculator", 400, 350)
 
 set_theme("""
-    body { background-color: rgb(20, 20, 20); }
+    body {
+        background-color: rgb(20, 20, 20);
+    }
     input { 
         padding: 10px; 
         font-size: 24px; 
@@ -19,7 +21,9 @@ set_theme("""
         border-radius: 5px; 
         margin-bottom: 10px;
     }
-    input:focus { border: 2px solid rgb(0, 255, 255); }
+    input:focus {
+        border: 2px solid rgb(0, 255, 255);
+    }
 """)
 
 # Title

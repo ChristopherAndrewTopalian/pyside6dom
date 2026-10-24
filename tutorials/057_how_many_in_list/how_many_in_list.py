@@ -4,6 +4,15 @@ from pyside6dom import *
 
 init_window('OurApp', 700, 600)
 
+set_theme('''
+    div {
+        padding: 2px 5px;
+        font-family: Arial;
+        font-size: 40px;
+        font-weight: bold;
+    }
+''')
+
 people = [
     "Jane",
     "Joan",
