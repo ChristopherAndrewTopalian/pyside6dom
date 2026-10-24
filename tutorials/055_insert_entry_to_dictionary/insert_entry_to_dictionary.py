@@ -24,8 +24,11 @@ def add_to_dictionary():
     people[name_input.value] = 'Online'
     ge('output_txt').value = people
     name_input.value = ''
+    name_input.focus()
 enter_btn.onclick = add_to_dictionary
 ba(enter_btn)
+
+name_input.onenter = add_to_dictionary
 
 output_txt = ce('textarea')
 output_txt.id = 'output_txt'
