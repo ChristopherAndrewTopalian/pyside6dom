@@ -40,11 +40,12 @@ ba(side_input)
 enter_btn = ce('button')
 enter_btn.id = 'enter_btn'
 enter_btn.textContent = 'Enter'
-def handle_click():
+def q():
     side = float(side_input.value)
     area = side * side
     ge('result_label').textContent = area
-enter_btn.onclick = handle_click
+    side_input.value = ''
+enter_btn.onclick = q
 ba(enter_btn)
 
 result_label = ce('div')
