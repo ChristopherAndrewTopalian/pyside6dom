@@ -9,7 +9,8 @@ run_app()
 ####
 
 '''
-Creates a Dark Theme Window of specified Width and Height
+Creates a Dark Theme Window of
+specified Width and Height
 '''
 
 # Dedicated to God the Father
