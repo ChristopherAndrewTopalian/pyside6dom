@@ -22,6 +22,7 @@ set_theme('''
 
 area_label = ce('div')
 area_label.textContent = 'Area of a Square Calculator'
+area_label.style.padding = '2px 10px'
 area_label.style.fontSize = '40px'
 area_label.style.fontWeight = 'bold'
 area_label.style.color = 'rgb(0, 255, 255)'
@@ -30,9 +31,14 @@ ba(area_label)
 
 side_input = ce('input')
 side_input.placeholder = 'Enter a Side Length'
+def q():
+    ge('enter_btn').click()
+    side_input.value = ''
+side_input.onenter = q
 ba(side_input)
 
 enter_btn = ce('button')
+enter_btn.id = 'enter_btn'
 enter_btn.textContent = 'Enter'
 def handle_click():
     side = float(side_input.value)
@@ -41,11 +47,12 @@ def handle_click():
 enter_btn.onclick = handle_click
 ba(enter_btn)
 
-result_label = ce('text')
+result_label = ce('div')
 result_label.id = 'result_label'
 result_label.textContent = 'Result'
 result_label.style.fontSize = '40px'
 result_label.style.fontWeight = 'bold'
+result_label.style.padding = '2px 4px'
 #result_label.style("font-size: 40px; font-weight: bold")
 ba(result_label)
 
