@@ -18,6 +18,20 @@ set_theme('''
     {
         margin: 2px;
     }
+    button
+    {
+        background-color: rgb(0, 0, 0);
+        border: 1px solid rgb(255, 255, 255);
+        color: rgb(255, 255, 255);
+    }
+    button:hover
+    {
+        border-color: aqua;
+    }
+    button:active
+    {
+        color: rgb(255, 0, 255);
+    }
 ''')
 
 area_label = ce('div')
