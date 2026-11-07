@@ -1,4 +1,4 @@
-# PySide6DOM v0.8.9
+# PySide6DOM v0.9.0
 **Bring the simplicity of the Web DOM to Python PySide6 Desktop Applications.**
 
 # Installation
@@ -155,6 +155,7 @@ run_app()
 * element.style.bottom = '100px'
 * element.style.right = '100px'
 * element.style.overflow = 'hidden'
+* Matplotlib compatibility
 
 ---
 

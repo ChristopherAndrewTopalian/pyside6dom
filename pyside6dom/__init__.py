@@ -1215,9 +1215,20 @@ def ba(child_elem, parent_elem=None):
     if child_elem is None or parent_elem is None:
         return
 
+    # THE NATIVE WIDGET BRIDGE 
+    # If the student passed a raw PySide6 widget (like a Matplotlib FigureCanvas) 
+    # instead of a custom pyside6dom wrapper, we append it directly to the layout and exit
+    if not hasattr(child_elem, 'raw'):
+        if hasattr(parent_elem, 'layout') and parent_elem.layout is not None:
+            parent_elem.layout.addWidget(child_elem)
+        else:
+            child_elem.setParent(parent_elem.raw)
+        return
+    # ---
+
     is_absolute = getattr(child_elem.style, 'position', '') == 'absolute'
 
-    # --- ABSOLUTE POSITIONING LOGIC ---
+    # ABSOLUTE POSITIONING LOGIC 
     if is_absolute:
         target_widget = parent_elem.raw
         if isinstance(target_widget, QMainWindow) and target_widget.centralWidget():
@@ -1250,7 +1261,7 @@ def ba(child_elem, parent_elem=None):
         child_elem.raw.show()
         child_elem.raw.raise_() 
 
-    # --- GRID / FLEXBOX LOGIC ---
+    # GRID / FLEXBOX LOGIC
     else:
         if hasattr(parent_elem, 'layout') and parent_elem.layout is not None:
             if isinstance(parent_elem.layout, QGridLayout):
@@ -1275,7 +1286,7 @@ def ba(child_elem, parent_elem=None):
         else:
             child_elem.raw.setParent(parent_elem.raw)
 
-    # NEW: Instantly calculate percentages now that it has a parent!
+    # Instantly calculate percentages now that it has a parent
     if child_elem in _responsive_registry:
         _trigger_layout_update(child_elem)
 
